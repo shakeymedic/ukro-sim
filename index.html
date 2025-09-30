@@ -1,1 +1,56 @@
-.
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UKRO High-Fidelity Scenario Simulator (Instructor)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- PDF export libs -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #111827; }
+    .btn { border-bottom-width: 4px; transition: all 0.1s ease-in-out; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background-color: #0057b7; border-color: #003d82; color:#fff; }
+    .btn-primary:hover { background-color: #0069d9; }
+    .btn-secondary { background-color: #d90429; border-color: #a3001d; color:#fff; }
+    .btn-secondary:hover { background-color: #e63946; }
+    .btn-tertiary { background-color: #f59e0b; border-color: #b45309; color:#111; }
+    .btn-tertiary:hover { background-color: #fbbf24; }
+    .chip { display:inline-block; padding:0.1rem 0.5rem; border-radius:9999px; font-size:0.75rem; }
+    .chip-ev { background:#064e3b; color:#bbf7d0; }
+    .chip-uhss { background:#1f2937; color:#e5e7eb; }
+    @media print {
+      body { background-color: white; color: black; }
+      #main-menu, #controls, #startSimBtn, header, footer { display: none !important; }
+      #setup-screen { display: block !important; box-shadow: none; border: none; padding: 0; }
+      .bg-gray-800, .bg-gray-900 { background-color: #f3f4f6; border: 1px solid #d1d5db; }
+      .text-white { color: black !important; }
+      canvas { border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body class="text-gray-200 p-4">
+  <div class="w-full max-w-7xl mx-auto">
+    <header class="text-center mb-6">
+      <h1 class="text-3xl md:text-4xl font-bold text-white">UKRO High-Fidelity Scenario Simulator</h1>
+      <p class="text-lg text-gray-400 mt-2">Instructor Control Panel</p>
+    </header>
+
+    <div id="app" class="w-full"></div>
+
+    <footer class="text-center mt-8 py-6 border-t border-gray-700 text-gray-500 text-sm">
+      <p>Developed by Dr Jake Turner for West Midlands Evidence Based Emergency Medicine Ltd.</p>
+      <p>Feedback: <a href="mailto:Jaketurner2503@gmail.com?subject=UKRO%20Simulator%20Feedback" class="text-blue-400 hover:underline">Email Us</a></p>
+      <p class="mt-2">Licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" class="text-blue-400 hover:underline">CC BY-NC-SA 4.0</a></p>
+    </footer>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
