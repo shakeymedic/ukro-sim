@@ -729,7 +729,8 @@ function rotateX(x, y, deg) {
 function rotateY(x, y, deg) {
   const r = (deg * Math.PI) / 180; return x * Math.sin(r) + y * Math.cos(r);
 }
-function rand(min, max) { return Math.random() * (max - min) + min; }
+// Duplicate rand function removed to avoid redeclaration error. The global `rand` defined earlier will be used instead.
+// function rand(min, max) { return Math.random() * (max - min) + min; }
 // log.js
 
 let incidentLog = [];
