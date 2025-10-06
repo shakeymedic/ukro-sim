@@ -36,6 +36,18 @@ function makeCasualty(id) {
 
   const vitals = { ...injury.vitals };
   const prevVitals = { ...injury.vitals };
+  // Extended observations
+  vitals.Glucose = typeof vitals.Glucose === 'number' ? vitals.Glucose : 5.6; // mmol/L
+  vitals.PupilL = vitals.PupilL || 'reactive';
+  vitals.PupilR = vitals.PupilR || 'reactive';
+  vitals.PupilLSize = typeof vitals.PupilLSize === 'number' ? vitals.PupilLSize : 3; // mm
+  vitals.PupilRSize = typeof vitals.PupilRSize === 'number' ? vitals.PupilRSize : 3; // mm
+  prevVitals.Glucose = vitals.Glucose;
+  prevVitals.PupilL = vitals.PupilL;
+  prevVitals.PupilR = vitals.PupilR;
+  prevVitals.PupilLSize = vitals.PupilLSize;
+  prevVitals.PupilRSize = vitals.PupilRSize;
+
 
   return {
     id,
