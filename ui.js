@@ -190,7 +190,25 @@ function bindInterventions(allCasualties) {
 }
 
 export function renderLiveSim(scenario) {
-  const app = document.getElementById('app');
+  
+  // Ensure flashing CSS exists
+  if (!document.getElementById('flash-css')) {
+    const style = document.createElement('style');
+    style.id = 'flash-css';
+    style.textContent = `
+      .flash-deterioration {
+        outline: 3px solid red;
+        animation: flash-border 1s infinite alternate;
+        box-shadow: 0 0 10px rgba(255,0,0,0.6);
+      }
+      @keyframes flash-border {
+        from { outline-color: transparent; box-shadow: none; }
+        to   { outline-color: red; box-shadow: 0 0 10px rgba(255,0,0,0.8); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+const app = document.getElementById('app');
   const allCasualties = scenario.casualties;
 
   const casCards = allCasualties.map(c => {
@@ -202,7 +220,10 @@ export function renderLiveSim(scenario) {
     return `
       <div class="bg-gray-900 p-3 rounded">
         <h4 class="font-bold">Casualty ${c.id + 1}</h4>
-        <div id="vitals-${c.id}" class="font-mono text-center my-2 p-2 bg-black rounded">${renderVitalLineWithTrends(c)}</div>
+        <div id="vitals-${c.id}" class="obs-box font-mono text-center my-2 p-2 bg-black rounded">${renderVitalLineWithTrends(c)}</div>
+<div id="ext-obs-${c.id}" class="text-xs text-gray-300 font-mono text-center">
+  Glucose: ${Number(c.vitals.Glucose).toFixed(1)} mmol/L &nbsp; | &nbsp;   Pupils: L ${c.vitals.PupilL} (${c.vitals.PupilLSize}mm) / R ${c.vitals.PupilR} (${c.vitals.PupilRSize}mm)
+</div>
         <div class="flex flex-wrap gap-2 justify-center">${ints || '<span class="text-gray-400 text-sm">No specific interventions</span>'}</div>
       </div>
     `;
@@ -256,9 +277,28 @@ export function renderLiveSim(scenario) {
           simulationTick(allCasualties);
           allCasualties.forEach(c => {
             const el = document.getElementById(`vitals-${c.id}`);
-            if (el) el.textContent = renderVitalLineWithTrends(c);
+            if (el) {
+              el.textContent = renderVitalLineWithTrends(c);
+              // Compute deterioration vs previous vitals
+              const v = c.vitals, p = c.prevVitals || v;
+              const deteriorated = (v.SpO2 < p.SpO2) || (v.SBP < p.SBP) || (v.HR > p.HR);
+              if (deteriorated) {
+                el.classList.add('flash-deterioration');
+              } else {
+                el.classList.remove('flash-deterioration');
+              }
+            }
+            const ext = document.getElementById(`ext-obs-${c.id}`);
+            if (ext) {
+              const glu = (typeof c.vitals.Glucose === 'number') ? c.vitals.Glucose.toFixed(1) : '—';
+              const pl = c.vitals.PupilL ?? '—';
+              const pr = c.vitals.PupilR ?? '—';
+              const pls = (typeof c.vitals.PupilLSize === 'number') ? c.vitals.PupilLSize : '—';
+              const prs = (typeof c.vitals.PupilRSize === 'number') ? c.vitals.PupilRSize : '—';
+              ext.textContent = `Glucose: ${glu} mmol/L | Pupils: L ${pl} (${pls}mm) / R ${pr} (${prs}mm)`;
+            }
           });
-        }, 15000);
+        }, 20000);
       }
     } else {
       addLog('Simulation Paused.', 'command');
