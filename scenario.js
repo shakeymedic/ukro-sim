@@ -1,247 +1,101 @@
 // scenario.js
-import { frameworkData } from './data.js';
+import { embedLiveSim } from './ui.js';
+import { addLog } from './log.js';
 
-const rand = (min, max) => Math.random() * (max - min) + min;
-const randInt = (min, max) => Math.floor(rand(min, max + 1));
-const choice = arr => arr[Math.floor(Math.random() * arr.length)];
-const pickKeys = obj => Object.keys(obj);
+// Builds casualties and scenario setup screen
+export function renderSetupScreen(scenario) {
+  const app = document.getElementById('app');
+  if (!app) return;
 
-const CANVAS_W = 900;
-const CANVAS_H = 520;
+  const casualtiesHtml = scenario.casualties.map(c => {
+    const injuries = (c.injuries || []).map(i => i.name).join(', ');
+    return `
+      <div class="bg-gray-900 p-3 rounded">
+        <h4 class="font-bold">Casualty ${c.id + 1}</h4>
+        <p><strong>Age:</strong> ${c.age}</p>
+        <p><strong>Injuries:</strong> ${injuries || 'None listed'}</p>
+        <p><strong>Initial Vitals:</strong> HR ${c.vitals.HR}, RR ${c.vitals.RR}, SBP ${c.vitals.SBP}, SpO₂ ${c.vitals.SpO2}%, GCS ${c.vitals.GCS}</p>
+      </div>
+    `;
+  }).join('');
 
-function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  app.innerHTML = `
+    <div id="setup-screen" class="bg-gray-800 p-6 rounded-lg shadow-2xl space-y-6">
+      <h2 class="text-2xl font-bold mb-4 text-center">Scenario Setup</h2>
+      <p class="text-gray-300">${scenario.description}</p>
 
-function near(anchorX, anchorY, radius = 80) {
-  const x = clamp(anchorX + rand(-radius, radius), 40, CANVAS_W - 40);
-  const y = clamp(anchorY + rand(-radius, radius), 40, CANVAS_H - 40);
-  return { x, y };
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">${casualtiesHtml}</div>
+
+      <div class="text-center mt-6">
+        <button id="proceedBtn" class="btn btn-primary w-full md:w-1/2">Proceed to Live Simulation</button>
+      </div>
+    </div>
+  `;
+
+  // New: embed live sim below setup screen on same page
+  const proceedBtn = document.getElementById('proceedBtn');
+  proceedBtn.addEventListener('click', e => {
+    e.target.style.display = 'none'; // hide the button
+    embedLiveSim(scenario); // append live sim section below setup
+  });
 }
 
-function randomLayoutType() {
-  return Math.random() < 0.6 ? 't-junction' : 'offset-headon';
-}
-
-function makeCasualty(id) {
-  const injuryKey = choice(pickKeys(frameworkData.injuries));
-  const injury = frameworkData.injuries[injuryKey];
-  const ageBuckets = [
-    () => randInt(6, 12),
-    () => randInt(16, 30),
-    () => randInt(31, 55),
-    () => randInt(65, 88)
-  ];
-  const age = Math.random() < 0.12 ? ageBuckets[0]() :
-              Math.random() < 0.55 ? ageBuckets[1]() :
-              Math.random() < 0.85 ? ageBuckets[2]() : ageBuckets[3]();
-
-  const vitals = { ...injury.vitals };
-  const prevVitals = { ...injury.vitals };
-  // Extended observations
-  vitals.Glucose = typeof vitals.Glucose === 'number' ? vitals.Glucose : 5.6; // mmol/L
-  vitals.PupilL = vitals.PupilL || 'reactive';
-  vitals.PupilR = vitals.PupilR || 'reactive';
-  vitals.PupilLSize = typeof vitals.PupilLSize === 'number' ? vitals.PupilLSize : 3; // mm
-  vitals.PupilRSize = typeof vitals.PupilRSize === 'number' ? vitals.PupilRSize : 3; // mm
-  prevVitals.Glucose = vitals.Glucose;
-  prevVitals.PupilL = vitals.PupilL;
-  prevVitals.PupilR = vitals.PupilR;
-  prevVitals.PupilLSize = vitals.PupilLSize;
-  prevVitals.PupilRSize = vitals.PupilRSize;
-
-
-  return {
+// Casualty builder with extended vitals
+export function makeCasualty(id, age, injuries, vitals = {}, prevVitals = {}) {
+  const c = {
     id,
     age,
-    injuries: [{ ...injury, key: injuryKey }],
-    vitals,
-    prevVitals,
-    treatedInjuries: new Set(),
-    entrapment: injury.canSelfExtricate ? 'No physical entrapment.' : 'Physical entrapment by intrusion.',
-    ample: {
-      A: choice(frameworkData.ampleHistory.allergies),
-      M: choice(frameworkData.ampleHistory.medications),
-      P: choice(frameworkData.ampleHistory.pastHistory),
-      L: choice(frameworkData.ampleHistory.lastMeal),
-      E: choice(frameworkData.ampleHistory.events)
-    }
+    injuries,
+    vitals: {
+      GCS: vitals.GCS ?? 15,
+      HR: vitals.HR ?? 80,
+      RR: vitals.RR ?? 16,
+      SBP: vitals.SBP ?? 120,
+      SpO2: vitals.SpO2 ?? 98,
+      // Extended observations
+      Glucose: vitals.Glucose ?? 5.6,       // mmol/L
+      PupilL: vitals.PupilL ?? 'reactive',
+      PupilR: vitals.PupilR ?? 'reactive',
+      PupilLSize: vitals.PupilLSize ?? 3,   // mm
+      PupilRSize: vitals.PupilRSize ?? 3,   // mm
+    },
+    prevVitals: {
+      GCS: prevVitals.GCS ?? vitals.GCS ?? 15,
+      HR: prevVitals.HR ?? vitals.HR ?? 80,
+      RR: prevVitals.RR ?? vitals.RR ?? 16,
+      SBP: prevVitals.SBP ?? vitals.SBP ?? 120,
+      SpO2: prevVitals.SpO2 ?? vitals.SpO2 ?? 98,
+      Glucose: prevVitals.Glucose ?? vitals.Glucose ?? 5.6,
+      PupilL: prevVitals.PupilL ?? vitals.PupilL ?? 'reactive',
+      PupilR: prevVitals.PupilR ?? vitals.PupilR ?? 'reactive',
+      PupilLSize: prevVitals.PupilLSize ?? vitals.PupilLSize ?? 3,
+      PupilRSize: prevVitals.PupilRSize ?? vitals.PupilRSize ?? 3,
+    },
+    treatedInjuries: new Set()
   };
+  return c;
 }
 
-function instantiateHazard(t, anchor) {
-  const pos = near(anchor.x, anchor.y, 140);
-  if (t.type === 'Fuel Spill') {
-    const rx = rand(t.minR, t.maxR);
-    const ry = rand(t.minR * 0.4, t.maxR * 0.7);
-    return { type: t.type, x: pos.x, y: pos.y, rx, ry, rotation: rand(0, Math.PI) };
-  }
-  if (t.type === 'Fire' || t.type === 'Battery Fire') {
-    const r = rand(t.minR, t.maxR);
-    return { type: t.type, x: pos.x, y: pos.y, r };
-  }
-  if (t.type === 'Wall') {
-    const w = t.width_m * 16;
-    const h = t.height_m * 16;
-    return { type: t.type, x: rand(80, CANVAS_W - w - 80), y: rand(60, 120), w, h };
-  }
-  if (t.type === 'Lamppost') {
-    return { type: t.type, x: rand(70, CANVAS_W - 70), y: rand(140, CANVAS_H - 140) };
-  }
-  return null;
-}
+// Default scenario generator
+export function generateScenario() {
+  const casualties = [
+    makeCasualty(0, 35, [
+      { name: 'Tension Pneumothorax', key: 'tensionpneumo' }
+    ], { HR: 120, RR: 36, SBP: 90, SpO2: 82, GCS: 14 }),
+    makeCasualty(1, 42, [
+      { name: 'Open Fracture Tib/Fib', key: 'fracture' }
+    ], { HR: 105, RR: 24, SBP: 110, SpO2: 96, GCS: 15 }),
+  ];
 
-function spawnHazards(vehicles, probability, forced = [], includeBatteryFire = false) {
-  const anchor = vehicles[0]
-    ? { x: vehicles[0].x, y: vehicles[0].y }
-    : { x: CANVAS_W * 0.5, y: CANVAS_H * 0.5 };
-
-  const isEVPresent = vehicles.some(v => v.isEV);
-
-  const pool = frameworkData.hazardTemplates.filter(t => {
-    if (t.type === 'Battery Fire' && !(isEVPresent && includeBatteryFire)) return false;
-    return true;
-  });
-
-  const chosen = pool
-    .map(t => {
-      if (forced.includes(t.type)) return instantiateHazard(t, anchor);
-      if (t.type === 'Battery Fire') return null;
-      if (Math.random() >= probability) return null;
-      return instantiateHazard(t, anchor);
-    })
-    .filter(Boolean);
-
-  const unique = [];
-  const seen = new Set();
-  for (const h of chosen) {
-    const k = `${h.type}-${Math.round(h.x)}-${Math.round(h.y)}`;
-    if (!seen.has(k)) { unique.push(h); seen.add(k); }
-  }
-  return unique;
-}
-
-function spawnVehicles(numVehicles, layout) {
-  const vehicleKeys = pickKeys(frameworkData.vehicles);
-  const colors = ['#93c5fd', '#fde047', '#a7f3d0', '#fda4af'];
-
-  const vehicles = [];
-  if (layout === 't-junction') {
-    for (let i = 0; i < numVehicles; i++) {
-      const proto = frameworkData.vehicles[choice(vehicleKeys)];
-      const baseX = i === 0 ? CANVAS_W * 0.42 : CANVAS_W * 0.53;
-      const baseY = i === 0 ? CANVAS_H * 0.40 : CANVAS_H * 0.56;
-      const rotation = i === 0 ? rand(-12, 12) : rand(78, 100);
-      vehicles.push({
-        id: i,
-        type: proto.type,
-        capacity: proto.capacity,
-        hasUHSS: proto.hasUHSS,
-        isEV: proto.isEV,
-        length_m: proto.length_m,
-        color: colors[i % colors.length],
-        position: { name: 'Upright on all fours', rotation },
-        x: baseX + rand(-20, 20),
-        y: baseY + rand(-15, 15),
-        impactType: i === 0 ? 'frontal' : 'side',
-        impactSide: i === 0 ? null : Math.random() < 0.5 ? 'nearside' : 'offside',
-        damage: i === 0 ? 'Frontal intrusion from T-bone' : 'Severe side intrusion from T-bone',
-        casualties: []
-      });
-    }
-  } else {
-    for (let i = 0; i < numVehicles; i++) {
-      const proto = frameworkData.vehicles[choice(vehicleKeys)];
-      vehicles.push({
-        id: i,
-        type: proto.type,
-        capacity: proto.capacity,
-        hasUHSS: proto.hasUHSS,
-        isEV: proto.isEV,
-        length_m: proto.length_m,
-        color: colors[i % colors.length],
-        position: { name: 'Upright on all fours', rotation: rand(-15, 15) },
-        x: CANVAS_W * (0.35 + i * 0.18) + rand(-10, 10),
-        y: CANVAS_H * (0.44 + i * 0.1) + rand(-12, 12),
-        impactType: 'frontal',
-        damage: 'Frontal intrusion from offset collision',
-        casualties: []
-      });
-    }
-  }
-  return vehicles;
-}
-
-/**
- * Options:
- *  - hazardProbability?: number (0..1)
- *  - forceHazards?: string[] (e.g., ['Fuel Spill','Wall'])
- *  - includeEVBatteryHazard?: boolean
- */
-export function generateRtcScenario(numVehicles = 2, numPatients = 2, options = {}) {
-  const { hazardProbability = 0.55, forceHazards = [], includeEVBatteryHazard = false } = options;
-
-  const layout = randomLayoutType();
-  const vehicles = spawnVehicles(numVehicles, layout);
-
-  const totalCapacity = vehicles.reduce((a, v) => a + v.capacity, 0);
-  if (numPatients > totalCapacity) numPatients = totalCapacity;
-
-  const casualties = [];
-  for (let i = 0; i < numPatients; i++) casualties.push(makeCasualty(i));
-  casualties.forEach((cas, idx) => {
-    const v = vehicles[idx % vehicles.length];
-    v.casualties.push({ ...cas });
-  });
-
-  const hazards = spawnHazards(vehicles, hazardProbability, forceHazards, includeEVBatteryHazard);
-
-  return {
-    type: 'RTC',
-    title: 'RTC Challenge',
+  const scenario = {
+    id: 1,
+    title: 'RTC – Two Casualties',
+    description: 'Two patients involved in a road traffic collision. Use the live simulation below to manage both casualties dynamically.',
+    hazards: 'Fuel leak, unstable vehicle',
     timeLimit: 20,
-    location: layout === 't-junction' ? 'Urban T-Junction' : 'Urban A-Road',
-    hazards: hazards.map(h => h.type).join(', ') || 'None obvious',
-    vehicles,
-    casualties,
-    environmentalObjects: hazards,
-    layoutType: layout,
-    canvas: { width: CANVAS_W, height: CANVAS_H }
+    casualties
   };
-}
 
-export function generateTraumaScenario(numPatients = 2, options = {}) {
-  const { hazardProbability = 0.42, forceHazards = [], includeEVBatteryHazard = false } = options;
-
-  const casualties = [];
-  for (let i = 0; i < numPatients; i++) casualties.push(makeCasualty(i));
-
-  const vehicles = [{
-    id: 0,
-    type: 'Support Van',
-    capacity: 2,
-    hasUHSS: false,
-    isEV: false,
-    length_m: 4.8,
-    color: '#94a3b8',
-    position: { name: 'Upright', rotation: rand(-8, 8) },
-    x: CANVAS_W * 0.5,
-    y: CANVAS_H * 0.48,
-    impactType: 'none',
-    damage: 'N/A',
-    casualties: []
-  }];
-
-  const hazards = spawnHazards(vehicles, hazardProbability, forceHazards, includeEVBatteryHazard);
-
-  return {
-    type: 'Trauma',
-    title: 'Trauma Challenge',
-    timeLimit: 12,
-    location: 'Industrial unit',
-    hazards: hazards.map(h => h.type).join(', ') || 'None obvious',
-    vehicles,
-    casualties,
-    environmentalObjects: hazards,
-    layoutType: 't-junction',
-    canvas: { width: CANVAS_W, height: CANVAS_H }
-  };
+  addLog(`Scenario loaded: ${scenario.title}`, 'command');
+  renderSetupScreen(scenario);
 }
