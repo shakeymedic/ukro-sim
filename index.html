@@ -25,6 +25,7 @@
     .chip { display:inline-block; padding:0.1rem 0.5rem; border-radius:9999px; font-size:0.75rem; }
     .chip-ev { background:#064e3b; color:#bbf7d0; }
     .chip-uhss { background:#1f2937; color:#e5e7eb; }
+    button:disabled { cursor: not-allowed; }
     @media print {
       body { background-color: white; color: black; }
       #main-menu, #controls, #startSimBtn, #live-sim, header, footer { display: none !important; }
@@ -1008,11 +1009,58 @@ function renderLiveSimInline(scenario) {
     });
     if (!ints) ints = '<span class="text-gray-400 text-sm">No specific interventions</span>';
     
+    const casualtyActions = [
+      'Hands on Patient',
+      'Primary Survey Started',
+      'C-ABCDE Complete',
+      'Airway Managed',
+      'Oxygen Applied',
+      'Haemorrhage Control',
+      'Spinal Immobilisation',
+      'Packaging Complete',
+      'Extrication Started',
+      'Extrication Complete',
+      'Reassessment Done',
+      'ATMIST Handover'
+    ];
+    
+    let casualtyActionBtns = '';
+    casualtyActions.forEach(function(action) {
+      casualtyActionBtns += '<button class="casualty-action-btn bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1 px-2 rounded" ' +
+        'data-casualty-id="' + c.id + '" data-action="' + action + '">' +
+        action + '</button> ';
+    });
+    
     casCards += '<div class="bg-gray-900 p-3 rounded">' +
       '<h4 class="font-bold">Casualty ' + (c.id + 1) + '</h4>' +
       '<div id="vitals-' + c.id + '" class="font-mono text-center my-2 p-2 bg-black rounded">' + 
       renderVitalLineWithTrends(c) + '</div>' +
-      '<div class="flex flex-wrap gap-2 justify-center">' + ints + '</div></div>';
+      '<div class="mb-2"><p class="text-xs text-gray-400 mb-1">Medical Actions:</p>' +
+      '<div class="flex flex-wrap gap-1">' + casualtyActionBtns + '</div></div>' +
+      '<div><p class="text-xs text-gray-400 mb-1">Interventions:</p>' +
+      '<div class="flex flex-wrap gap-2 justify-center">' + ints + '</div></div></div>';
+  });
+
+  const scenarioActions = [
+    'Scene Size-Up Complete',
+    '360 Survey Complete',
+    'Hazards Identified',
+    'Vehicle Stab Started',
+    'Vehicle Stab Complete',
+    'Glass Management',
+    'Rapid Plan Viable',
+    'Tactical Plan Announced',
+    'Access Created',
+    'Extrication Path Clear',
+    'EV/UHSS Managed',
+    'Emergency Services Notified'
+  ];
+  
+  let scenarioActionBtns = '';
+  scenarioActions.forEach(function(action) {
+    scenarioActionBtns += '<button class="scenario-action-btn bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-1 px-2 rounded" ' +
+      'data-action="' + action + '">' +
+      action + '</button> ';
   });
 
   const liveSimHtml = '<div id="live-sim" class="bg-gray-700 p-6 rounded-lg shadow-2xl space-y-6 mt-8 border-t-4 border-blue-500">' +
@@ -1020,6 +1068,9 @@ function renderLiveSimInline(scenario) {
     '<div class="flex justify-between items-center">' +
     '<div id="timer" class="text-2xl font-mono font-bold text-red-400 bg-gray-900 px-3 py-1 rounded-md">00:00</div>' +
     '<button id="timerControlBtn" class="btn btn-tertiary w-28">Start Sim</button></div>' +
+    '<div class="bg-gray-800 p-4 rounded-lg mb-4">' +
+    '<h3 class="text-lg font-bold mb-2 text-amber-400">Command & Technical Actions</h3>' +
+    '<div class="flex flex-wrap gap-2">' + scenarioActionBtns + '</div></div>' +
     '<div class="grid grid-cols-1 md:grid-cols-3 gap-4">' + casCards + '</div>' +
     '<div><h3 class="text-xl font-bold">Incident Log</h3>' +
     '<div id="scenario-log" class="h-40 bg-gray-900 rounded-lg p-2 mt-2 overflow-y-auto text-sm font-mono"></div>' +
@@ -1077,6 +1128,29 @@ function renderLiveSimInline(scenario) {
   });
 
   bindInterventions(allCasualties);
+  
+  // Bind casualty action buttons
+  document.querySelectorAll('.casualty-action-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      const casualtyId = e.currentTarget.dataset.casualtyId;
+      const action = e.currentTarget.dataset.action;
+      addLog('Casualty ' + (parseInt(casualtyId) + 1) + ': ' + action, 'command');
+      e.currentTarget.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+      e.currentTarget.classList.add('bg-gray-600', 'opacity-50');
+      e.currentTarget.disabled = true;
+    });
+  });
+  
+  // Bind scenario action buttons
+  document.querySelectorAll('.scenario-action-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      const action = e.currentTarget.dataset.action;
+      addLog('Scenario: ' + action, 'command');
+      e.currentTarget.classList.remove('bg-amber-600', 'hover:bg-amber-700');
+      e.currentTarget.classList.add('bg-gray-600', 'opacity-50');
+      e.currentTarget.disabled = true;
+    });
+  });
 }
 
 function renderDebrief(scenario) {
