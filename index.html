@@ -25,18 +25,26 @@
     .chip { display:inline-block; padding:0.1rem 0.5rem; border-radius:9999px; font-size:0.75rem; }
     .chip-ev { background:#064e3b; color:#bbf7d0; }
     .chip-uhss { background:#1f2937; color:#e5e7eb; }
-    /* Flash red animation when a casualty deteriorates */
+    /* Flash red animation when a casualty deteriorates
+       Increase visibility by adding a soft red background and stronger shadow.
+       The effect lasts longer to draw attention to the change. */
     .flash-red {
-      animation: flash-red 1s ease-in-out;
+      /* enhanced flash effect: apply a red border and glow with a subtle background to highlight deterioration */
+      animation: flash-red 1.5s ease-in-out;
+      border: 2px solid rgba(239, 68, 68, 1);
+      box-shadow: 0 0 8px 4px rgba(239, 68, 68, 0.6);
+      background-color: rgba(239, 68, 68, 0.12);
     }
     @keyframes flash-red {
       0%, 100% {
         box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
         border-color: rgba(239, 68, 68, 0.8);
+        background-color: transparent;
       }
       50% {
-        box-shadow: 0 0 10px 4px rgba(239, 68, 68, 0.8);
-        border-color: rgba(239, 68, 68, 0.8);
+        box-shadow: 0 0 20px 6px rgba(239, 68, 68, 0.9);
+        border-color: rgba(239, 68, 68, 1);
+        background-color: rgba(239, 68, 68, 0.15);
       }
     }
     @media print {
@@ -349,7 +357,7 @@ function makeCasualty(id) {
   const vitals = { ...injury.vitals };
   const prevVitals = { ...injury.vitals };
 
-  return {
+    return {
     id,
     age,
     injuries: [{ ...injury, key: injuryKey }],
@@ -363,7 +371,9 @@ function makeCasualty(id) {
       P: choice(frameworkData.ampleHistory.pastHistory),
       L: choice(frameworkData.ampleHistory.lastMeal),
       E: choice(frameworkData.ampleHistory.events)
-    }
+    },
+    // capture initial vitals at scenario start for later summary
+    initialVitals: { ...vitals }
   };
 }
 
@@ -750,8 +760,20 @@ function rotateY(x, y, deg) {
 let incidentLog = [];
 
 function addLog(message, type = 'info', timeText = null) {
+  // Use simulation timer for timestamps if no custom time provided. This
+  // helps correlate log entries with scenario time rather than real clock time.
+  let stamp;
+  if (timeText !== null) {
+    stamp = timeText;
+  } else {
+    // If the global state exists, derive minutes and seconds from state.seconds
+    const secs = (typeof state !== 'undefined' && state && typeof state.seconds === 'number') ? state.seconds : 0;
+    const mins = String(Math.floor(secs / 60)).padStart(2, '0');
+    const s = String(secs % 60).padStart(2, '0');
+    stamp = `${mins}:${s}`;
+  }
   const entry = {
-    time: timeText ?? new Date().toLocaleTimeString(),
+    time: stamp,
     message,
     type
   };
@@ -771,13 +793,17 @@ function clearLog() { incidentLog = []; }
 function vitalTrendLine(c) {
   const v = c.vitals;
   const p = c.prevVitals || v;
-  const arrow = (curr, prev) => curr > prev ? '▲' : curr < prev ? '▼' : '▬';
-
-  return `GCS:${v.GCS} ${arrow(v.GCS, p.GCS)} | ` +
-         `HR:${v.HR} ${arrow(v.HR, p.HR)} | ` +
-         `RR:${v.RR} ${arrow(v.RR, p.RR)} | ` +
-         `SBP:${v.SBP} ${arrow(v.SBP, p.SBP)} | ` +
-         `SpO2:${v.SpO2}% ${arrow(v.SpO2, p.SpO2)}`;
+  // Generate a coloured arrow span based on the direction of change.
+  const arrowSpan = (curr, prev) => {
+    if (curr > prev) return '<span class="text-green-400">▲</span>';
+    if (curr < prev) return '<span class="text-red-400">▼</span>';
+    return '<span class="text-yellow-400">▬</span>';
+  };
+  return `GCS:${v.GCS} ${arrowSpan(v.GCS, p.GCS)} | ` +
+         `HR:${v.HR} ${arrowSpan(v.HR, p.HR)} | ` +
+         `RR:${v.RR} ${arrowSpan(v.RR, p.RR)} | ` +
+         `SBP:${v.SBP} ${arrowSpan(v.SBP, p.SBP)} | ` +
+         `SpO2:${v.SpO2}% ${arrowSpan(v.SpO2, p.SpO2)}`;
 }
 
 function simulationTick(allCasualties) {
@@ -1005,6 +1031,8 @@ function renderSetupScreen(scenario) {
       <div class="text-center">
         <button id="startSimBtn" class="btn btn-primary w-full md:w-1/2 mt-2">Proceed to Live Simulation</button>
       </div>
+      <!-- Placeholder for the live simulation. Hidden by default until the user proceeds. -->
+      <div id="live-sim-wrapper" class="mt-6 hidden"></div>
     </div>
   `;
 
@@ -1013,7 +1041,20 @@ function renderSetupScreen(scenario) {
 
   document.getElementById('printBtn').addEventListener('click', () => window.print());
   document.getElementById('backBtn').addEventListener('click', showMenu);
-  document.getElementById('startSimBtn').addEventListener('click', () => renderLiveSim(scenario));
+  // When the user clicks proceed, hide the start button, reveal the live sim wrapper
+  // and render the live simulation below the briefing instead of replacing the entire page.
+  document.getElementById('startSimBtn').addEventListener('click', () => {
+    const btn = document.getElementById('startSimBtn');
+    if (btn) btn.style.display = 'none';
+    const wrapper = document.getElementById('live-sim-wrapper');
+    if (wrapper) {
+      wrapper.classList.remove('hidden');
+      renderLiveSim(scenario, 'live-sim-wrapper');
+    } else {
+      // Fallback: if wrapper is missing, render normally to the app container
+      renderLiveSim(scenario);
+    }
+  });
 }
 
 function renderVitalLineWithTrends(c) {
@@ -1027,13 +1068,17 @@ function bindInterventions(allCasualties) {
       const cas = allCasualties.find(c => c.id == casualtyId);
       applyIntervention(cas, injuryKey, interventionKey, e.currentTarget);
       const vitalsEl = document.getElementById(`vitals-${cas.id}`);
-      if (vitalsEl) vitalsEl.textContent = renderVitalLineWithTrends(cas);
+      if (vitalsEl) vitalsEl.innerHTML = renderVitalLineWithTrends(cas);
     });
   });
 }
 
-function renderLiveSim(scenario) {
-  const app = document.getElementById('app');
+// Render the live simulation. If a targetId is provided, inject the content into
+// that element instead of replacing the entire app. This allows the live
+// simulation to appear below the briefing on the same page when proceeding
+// from the Instructor Briefing.
+function renderLiveSim(scenario, targetId) {
+  const container = targetId ? document.getElementById(targetId) : document.getElementById('app');
   const allCasualties = scenario.casualties;
 
   // Define casualty actions and scenario actions arrays for dynamic button generation
@@ -1067,25 +1112,52 @@ function renderLiveSim(scenario) {
   ];
 
   // Build casualty cards with medical action buttons and interventions
+  // Group casualty actions into logical categories for clarity
+  const casualtyActionGroups = [
+    { title: 'Initial Assessment', actions: ['Hands on Patient','Primary Survey Started','C-ABCDE Complete','Reassessment Done'] },
+    { title: 'Airway & Circulation', actions: ['Airway Managed','Oxygen Applied','Haemorrhage Control','Spinal Immobilisation'] },
+    { title: 'Packaging & Extrication', actions: ['Packaging Complete','Extrication Started','Extrication Complete'] },
+    { title: 'Handover', actions: ['ATMIST Handover'] }
+  ];
+
+  // Group scenario actions into logical categories for improved organisation.
+  // These categories reflect the typical sequence of tasks during an RTC rescue
+  // and make it easier for instructors to find and record key events.  Each
+  // category will be displayed with a small heading and its associated
+  // buttons in the live simulation view.
+  const scenarioActionGroups = [
+    { title: 'Scene Assessment', actions: ['Scene Size-Up Complete','360 Survey Complete','Hazards Identified'] },
+    { title: 'Stabilisation & Glass', actions: ['Vehicle Stab Started','Vehicle Stab Complete','Glass Management'] },
+    { title: 'Plan & Communication', actions: ['Rapid Plan Viable','Tactical Plan Announced','EV/UHSS Managed','Emergency Services Notified'] },
+    { title: 'Extrication', actions: ['Access Created','Extrication Path Clear'] }
+  ];
   const casCards = allCasualties.map(c => {
     // Build intervention buttons
     const ints = (c.injuries || []).flatMap(inj => {
       const intList = inj.interventions ? Object.values(inj.interventions) : [];
       return intList.map(iv => `<button class="intervention-btn bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1 px-2 rounded"
-        data-casualty-id="${c.id}" data-injury-key="${inj.key}" data-intervention-key="${iv.key}">${iv.key}</button>`);
+        data-casualty-id="${c.id}" data-injury-key="${inj.key}" data-intervention-key="${iv.key}" title="${iv.key}">${iv.key}</button>`);
     }).join(' ');
-    // Build casualty action buttons
-    const casualtyActionBtns = casualtyActions.map(action =>
-      `<button class="casualty-action-btn bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1 px-2 rounded"
-        data-casualty-id="${c.id}" data-action="${action}">${action}</button>`
-    ).join(' ');
+    // Build casualty actions grouped by category
+    const casualtyActionBtns = casualtyActionGroups.map(group => {
+      const btns = group.actions.map(action =>
+        `<button class="casualty-action-btn bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1 px-2 rounded"
+          data-casualty-id="${c.id}" data-action="${action}" title="${action}">${action}</button>`
+      ).join(' ');
+      return `
+        <div class="mb-1">
+          <p class="text-xs text-gray-400">${group.title}:</p>
+          <div class="flex flex-wrap gap-1 mb-1">${btns}</div>
+        </div>
+      `;
+    }).join('');
     return `
       <div class="bg-gray-900 p-3 rounded">
         <h4 class="font-bold">Casualty ${c.id + 1}</h4>
         <div id="vitals-${c.id}" class="font-mono text-center my-2 p-2 bg-black rounded">${renderVitalLineWithTrends(c)}</div>
         <div class="mb-2">
           <p class="text-xs text-gray-400 mb-1">Medical Actions:</p>
-          <div class="flex flex-wrap gap-1">${casualtyActionBtns}</div>
+          ${casualtyActionBtns}
         </div>
         <div>
           <p class="text-xs text-gray-400 mb-1">Interventions:</p>
@@ -1095,13 +1167,24 @@ function renderLiveSim(scenario) {
     `;
   }).join('');
 
-  // Build scenario action buttons
-  const scenarioActionBtns = scenarioActions.map(action =>
-    `<button class="scenario-action-btn bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-1 px-2 rounded"
-      data-action="${action}">${action}</button>`
-  ).join(' ');
+  // Build scenario action buttons grouped by category.  Each group
+  // generates a heading and its own set of buttons, similar to how
+  // casualty actions are grouped.  Grouping these improves clarity
+  // when many actions are available.
+  const scenarioActionBtns = scenarioActionGroups.map(group => {
+    const btns = group.actions.map(action =>
+      `<button class="scenario-action-btn bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-1 px-2 rounded"
+        data-action="${action}" title="${action}">${action}</button>`
+    ).join(' ');
+    return `
+      <div class="mb-1">
+        <p class="text-xs text-gray-400">${group.title}:</p>
+        <div class="flex flex-wrap gap-1 mb-1">${btns}</div>
+      </div>
+    `;
+  }).join('');
 
-  app.innerHTML = `
+  container.innerHTML = `
     <div id="live-sim" class="bg-gray-800 p-6 rounded-lg shadow-2xl space-y-6">
       <div class="flex justify-between items-center">
         <button id="backBtn" class="btn btn-secondary">Back</button>
@@ -1113,7 +1196,8 @@ function renderLiveSim(scenario) {
       </div>
       <div class="bg-gray-900 p-4 rounded-lg mb-4">
         <h3 class="text-lg font-bold mb-2 text-amber-400">Command & Technical Actions</h3>
-        <div class="flex flex-wrap gap-2">${scenarioActionBtns}</div>
+        <!-- Use a vertical layout for grouped scenario actions to improve readability -->
+        <div class="space-y-1">${scenarioActionBtns}</div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">${casCards}</div>
       <div>
@@ -1130,7 +1214,22 @@ function renderLiveSim(scenario) {
     </div>
   `;
 
-  document.getElementById('backBtn').addEventListener('click', () => renderSetupScreen(scenario));
+  // Attach event listeners to buttons within the rendered live simulation.
+  document.getElementById('backBtn').addEventListener('click', () => {
+    // When placed inside a wrapper, back should return to the briefing by
+    // hiding the live simulation and showing the start button again.
+    const wrapper = document.getElementById('live-sim-wrapper');
+    const startBtn = document.getElementById('startSimBtn');
+    if (wrapper && startBtn) {
+      wrapper.classList.add('hidden');
+      // Remove the rendered simulation content
+      wrapper.innerHTML = '';
+      startBtn.style.display = '';
+    } else {
+      // Fallback to full reload of briefing
+      renderSetupScreen(scenario);
+    }
+  });
 
   document.getElementById('timerControlBtn').addEventListener('click', () => {
     state.paused = !state.paused;
@@ -1151,7 +1250,7 @@ function renderLiveSim(scenario) {
           simulationTick(allCasualties);
           allCasualties.forEach(c => {
             const el = document.getElementById(`vitals-${c.id}`);
-            if (el) el.textContent = renderVitalLineWithTrends(c);
+            if (el) el.innerHTML = renderVitalLineWithTrends(c);
           });
         }, 45000); // run deterioration tick every 45 seconds (slower)
       }
@@ -1221,6 +1320,27 @@ function renderDebrief(scenario) {
     `<p><span class="text-gray-500">[${e.time}]</span> ${e.message.replace(/<[^>]*>/g, '')}</p>`
   ).join('');
 
+  // Build a summary of vital signs showing how each casualty's key vitals
+  // changed from the start of the scenario to the end.  This helps
+  // instructors quickly identify overall trends in patient condition during
+  // debrief.  Differences are expressed with arrows and the numerical
+  // change (e.g., "HR: 80→90 (+10)").
+  const allCasualties = scenario.casualties || (scenario.vehicles ? scenario.vehicles.flatMap(v => v.casualties) : []);
+  const vitalsSummaryHtml = (allCasualties || []).map((c, idx) => {
+    const init = c.initialVitals || {};
+    const final = c.vitals || {};
+    const parts = [];
+    ['GCS','HR','RR','SBP','SpO2'].forEach(key => {
+      if (init[key] !== undefined && final[key] !== undefined) {
+        const diff = final[key] - init[key];
+        const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
+        const sign = diff > 0 ? '+' : (diff < 0 ? '' : '');
+        parts.push(`${key}: ${init[key]}→${final[key]} (${sign}${diff})`);
+      }
+    });
+    return `<p><strong>Casualty ${idx + 1}:</strong> ${parts.join('; ')}</p>`;
+  }).join('');
+
   const checklists = domains.map(domain => `
     <div class="bg-gray-900 p-4 rounded-lg mb-4">
       <h3 class="text-xl font-bold capitalize text-amber-500">${domain}</h3>
@@ -1249,6 +1369,12 @@ function renderDebrief(scenario) {
       <div class="bg-gray-900 p-4 rounded-lg">
         <h3 class="text-xl font-bold text-amber-500">Incident Timeline</h3>
         <div id="debrief-timeline" class="mt-2 space-y-1 font-mono text-sm max-h-64 overflow-y-auto">${timelineHtml}</div>
+      </div>
+
+      <!-- Summary of changes in vitals for each casualty -->
+      <div class="bg-gray-900 p-4 rounded-lg">
+        <h3 class="text-xl font-bold text-amber-500">Vital Signs Summary</h3>
+        <div class="mt-2 space-y-1 text-sm">${vitalsSummaryHtml || '<p>No casualties.</p>'}</div>
       </div>
 
       ${checklists}
