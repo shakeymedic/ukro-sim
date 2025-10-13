@@ -1036,20 +1036,70 @@ function renderLiveSim(scenario) {
   const app = document.getElementById('app');
   const allCasualties = scenario.casualties;
 
+  // Define casualty actions and scenario actions arrays for dynamic button generation
+  const casualtyActions = [
+    'Hands on Patient',
+    'Primary Survey Started',
+    'C-ABCDE Complete',
+    'Airway Managed',
+    'Oxygen Applied',
+    'Haemorrhage Control',
+    'Spinal Immobilisation',
+    'Packaging Complete',
+    'Extrication Started',
+    'Extrication Complete',
+    'Reassessment Done',
+    'ATMIST Handover'
+  ];
+  const scenarioActions = [
+    'Scene Size-Up Complete',
+    '360 Survey Complete',
+    'Hazards Identified',
+    'Vehicle Stab Started',
+    'Vehicle Stab Complete',
+    'Glass Management',
+    'Rapid Plan Viable',
+    'Tactical Plan Announced',
+    'Access Created',
+    'Extrication Path Clear',
+    'EV/UHSS Managed',
+    'Emergency Services Notified'
+  ];
+
+  // Build casualty cards with medical action buttons and interventions
   const casCards = allCasualties.map(c => {
+    // Build intervention buttons
     const ints = (c.injuries || []).flatMap(inj => {
-      const ints = inj.interventions ? Object.values(inj.interventions) : [];
-      return ints.map(iv => `<button class="intervention-btn bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1 px-2 rounded"
+      const intList = inj.interventions ? Object.values(inj.interventions) : [];
+      return intList.map(iv => `<button class="intervention-btn bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1 px-2 rounded"
         data-casualty-id="${c.id}" data-injury-key="${inj.key}" data-intervention-key="${iv.key}">${iv.key}</button>`);
     }).join(' ');
+    // Build casualty action buttons
+    const casualtyActionBtns = casualtyActions.map(action =>
+      `<button class="casualty-action-btn bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1 px-2 rounded"
+        data-casualty-id="${c.id}" data-action="${action}">${action}</button>`
+    ).join(' ');
     return `
       <div class="bg-gray-900 p-3 rounded">
         <h4 class="font-bold">Casualty ${c.id + 1}</h4>
         <div id="vitals-${c.id}" class="font-mono text-center my-2 p-2 bg-black rounded">${renderVitalLineWithTrends(c)}</div>
-        <div class="flex flex-wrap gap-2 justify-center">${ints || '<span class="text-gray-400 text-sm">No specific interventions</span>'}</div>
+        <div class="mb-2">
+          <p class="text-xs text-gray-400 mb-1">Medical Actions:</p>
+          <div class="flex flex-wrap gap-1">${casualtyActionBtns}</div>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 mb-1">Interventions:</p>
+          <div class="flex flex-wrap gap-2 justify-center">${ints || '<span class="text-gray-400 text-sm">No specific interventions</span>'}</div>
+        </div>
       </div>
     `;
   }).join('');
+
+  // Build scenario action buttons
+  const scenarioActionBtns = scenarioActions.map(action =>
+    `<button class="scenario-action-btn bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-1 px-2 rounded"
+      data-action="${action}">${action}</button>`
+  ).join(' ');
 
   app.innerHTML = `
     <div id="live-sim" class="bg-gray-800 p-6 rounded-lg shadow-2xl space-y-6">
@@ -1057,13 +1107,15 @@ function renderLiveSim(scenario) {
         <button id="backBtn" class="btn btn-secondary">Back</button>
         <div class="flex items-center gap-2">
           <div id="timer" class="text-2xl font-mono font-bold text-red-400 bg-gray-900 px-3 py-1 rounded-md">00:00</div>
-        <button id="timerControlBtn" class="btn btn-tertiary w-28">Start Sim</button>
-        <button id="deteriorationControlBtn" class="btn btn-tertiary w-40">Pause Deterioration</button>
+          <button id="timerControlBtn" class="btn btn-tertiary w-28">Start Sim</button>
+          <button id="deteriorationControlBtn" class="btn btn-tertiary w-40">Pause Deterioration</button>
         </div>
       </div>
-
+      <div class="bg-gray-900 p-4 rounded-lg mb-4">
+        <h3 class="text-lg font-bold mb-2 text-amber-400">Command & Technical Actions</h3>
+        <div class="flex flex-wrap gap-2">${scenarioActionBtns}</div>
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">${casCards}</div>
-
       <div>
         <h3 class="text-xl font-bold">Incident Log</h3>
         <div id="scenario-log" class="h-40 bg-gray-900 rounded-lg p-2 mt-2 overflow-y-auto text-sm font-mono"></div>
@@ -1072,7 +1124,6 @@ function renderLiveSim(scenario) {
           <button id="addLogBtn" class="btn btn-primary">Add Log</button>
         </div>
       </div>
-
       <div class="text-center">
         <button id="finishBtn" class="btn btn-primary w-full md:w-1/2 mt-2">Finish & Debrief</button>
       </div>
@@ -1130,6 +1181,32 @@ function renderLiveSim(scenario) {
   document.getElementById('finishBtn').addEventListener('click', () => renderDebrief(scenario));
 
   bindInterventions(allCasualties);
+
+  // Attach click handlers for casualty- and scenario-level action buttons.  These
+  // buttons allow the instructor to record when key tasks have been performed
+  // during the simulation without removing other functionality.  When clicked
+  // they log the action and disable themselves so each action can only be
+  // recorded once.
+  document.querySelectorAll('.casualty-action-btn').forEach(btn => {
+    btn.addEventListener('click', (event) => {
+      const { casualtyId, action } = event.currentTarget.dataset;
+      // Log the casualty action with a prefix indicating the casualty number
+      addLog(`Casualty ${parseInt(casualtyId, 10) + 1}: ${action}`, 'command');
+      // Disable the button and give it a faded appearance to show it has been used
+      event.currentTarget.disabled = true;
+      event.currentTarget.classList.add('opacity-50');
+    });
+  });
+  document.querySelectorAll('.scenario-action-btn').forEach(btn => {
+    btn.addEventListener('click', (event) => {
+      const { action } = event.currentTarget.dataset;
+      // Log the scenario-level action
+      addLog(action, 'command');
+      // Disable the button and fade it out
+      event.currentTarget.disabled = true;
+      event.currentTarget.classList.add('opacity-50');
+    });
+  });
 }
 
 function renderDebrief(scenario) {
