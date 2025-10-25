@@ -4,32 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>UKRO High-Fidelity Scenario Simulator (Instructor)</title>
+
+  <!-- Tailwind & Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <!-- PDF export libs -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <!-- UKRO/WMEBEM palette + enhancements -->
   <style>
+    :root{
+      --ukro-blue:#0033A0;
+      --ukro-red:#C8102E;
+      --ukro-navy:#001B44;
+      --muted:#6B7280;
+      --border:#374151;
+      --focus:#01216922;
+    }
     body { font-family: 'Inter', sans-serif; background-color: #111827; }
+    /* Header */
+    .ukro-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 16px;border-bottom:1px solid #1f2937;
+      background:linear-gradient(90deg,var(--ukro-blue),var(--ukro-navy));color:#fff
+    }
+    .ukro-brand{display:flex;gap:12px;align-items:center}
+    .ukro-logo{height:40px;width:auto;border-radius:6px;background:#fff}
+    .ukro-logo--clear{background:transparent}
+    .ukro-brand-title{font-weight:700}
+    .ukro-brand-sub{font-size:12px;opacity:.9}
+    .ukro-actions{display:flex;gap:10px;align-items:center}
+    /* Buttons recoloured to UKRO palette */
     .btn { border-bottom-width: 4px; transition: all 0.1s ease-in-out; }
     .btn:hover { transform: translateY(-2px); }
     .btn:active { transform: translateY(1px); }
-    .btn-primary { background-color: #0057b7; border-color: #003d82; color:#fff; }
-    .btn-primary:hover { background-color: #0069d9; }
-    .btn-secondary { background-color: #d90429; border-color: #a3001d; color:#fff; }
-    .btn-secondary:hover { background-color: #e63946; }
+    .btn-primary { background-color: var(--ukro-blue); border-color: #00246f; color:#fff; }
+    .btn-primary:hover { background-color: #0a45c0; }
+    .btn-secondary { background-color: var(--ukro-red); border-color: #8f0d22; color:#fff; }
+    .btn-secondary:hover { background-color: #e01f3b; }
     .btn-tertiary { background-color: #f59e0b; border-color: #b45309; color:#111; }
     .btn-tertiary:hover { background-color: #fbbf24; }
+    .btn-ghost { background:#fff;color:var(--ukro-blue);border:1px solid #e5e7eb;border-bottom-width:4px }
+    .btn-ghost:focus{outline:2px solid var(--focus);outline-offset:2px}
     .chip { display:inline-block; padding:0.1rem 0.5rem; border-radius:9999px; font-size:0.75rem; }
     .chip-ev { background:#064e3b; color:#bbf7d0; }
     .chip-uhss { background:#1f2937; color:#e5e7eb; }
-    /* Flash red animation when a casualty deteriorates
-       Increase visibility by adding a soft red background and stronger shadow.
-       The effect lasts longer to draw attention to the change. */
+
+    /* Flash red animation when a casualty deteriorates */
     .flash-red {
-      /* enhanced flash effect: apply a red border and glow with a subtle background to highlight deterioration */
       animation: flash-red 1.5s ease-in-out;
       border: 2px solid rgba(239, 68, 68, 1);
       box-shadow: 0 0 8px 4px rgba(239, 68, 68, 0.6);
@@ -47,9 +73,10 @@
         background-color: rgba(239, 68, 68, 0.15);
       }
     }
+
     @media print {
       body { background-color: white; color: black; }
-      #main-menu, #controls, #startSimBtn, header, footer { display: none !important; }
+      #main-menu, #controls, #startSimBtn, header.ukro-header, footer { display: none !important; }
       #setup-screen { display: block !important; box-shadow: none; border: none; padding: 0; }
       .bg-gray-800, .bg-gray-900 { background-color: #f3f4f6; border: 1px solid #d1d5db; }
       .text-white { color: black !important; }
@@ -57,8 +84,24 @@
     }
   </style>
 </head>
-<body class="text-gray-200 p-4">
-  <div class="w-full max-w-7xl mx-auto">
+
+<body class="text-gray-200">
+  <!-- New UKRO/WMEBEM header with logos and U-STEP-OUT button -->
+  <header class="ukro-header" role="banner" aria-label="Branding">
+    <div class="ukro-brand">
+      <img src="images/wmebem-logo.png" alt="WMEBEM logo" class="ukro-logo" />
+      <div>
+        <div class="ukro-brand-title">UKRO Simulation</div>
+        <div class="ukro-brand-sub">West Midlands Evidence-Based Emergency Medicine</div>
+      </div>
+    </div>
+    <div class="ukro-actions">
+      <button class="btn btn-ghost" onclick="showUStepOut()">U-STEP-OUT</button>
+      <img src="images/UKRO logo.png" alt="UKRO logo" class="ukro-logo ukro-logo--clear" />
+    </div>
+  </header>
+
+  <div class="w-full max-w-7xl mx-auto p-4">
     <header class="text-center mb-6">
       <h1 class="text-3xl md:text-4xl font-bold text-white">UKRO High-Fidelity Scenario Simulator</h1>
       <p class="text-lg text-gray-400 mt-2">Instructor Control Panel</p>
@@ -73,9 +116,44 @@
     </footer>
   </div>
 
+  <!-- U-STEP-OUT reference (modal) – add official wording per step -->
+  <dialog id="ustepout-modal" style="border:none;border-radius:14px;padding:0">
+    <form method="dialog" style="min-width:min(800px,95vw);border:1px solid #e5e7eb;border-radius:14px;background:#fff">
+      <header style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #e5e7eb">
+        <h3 style="margin:0">U-STEP-OUT — EXIT Project</h3>
+        <button value="close" style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:8px 12px;cursor:pointer">Close</button>
+      </header>
+      <div style="padding:12px 14px">
+        <details open><summary><strong>U —</strong> [Insert official step title]</summary><p class="text-gray-600">Add the endorsed text here.</p></details>
+        <details><summary><strong>S —</strong> …</summary><p class="text-gray-600">…</p></details>
+        <details><summary><strong>T —</strong> …</summary><p class="text-gray-600">…</p></details>
+        <details><summary><strong>E —</strong> …</summary><p class="text-gray-600">…</p></details>
+        <details><summary><strong>P —</strong> …</summary><p class="text-gray-600">…</p></details>
+        <details><summary><strong>O —</strong> …</summary><p class="text-gray-600">…</p></details>
+        <details><summary><strong>U —</strong> …</summary><p class="text-gray-600">…</p></details>
+        <details><summary><strong>T —</strong> …</summary><p class="text-gray-600">…</p></details>
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:10px 0" />
+        <p class="text-gray-600" style="font-size:12px"><strong>Disclaimer:</strong> UI integration only — paste the official UKRO/EXIT wording and diagrams you’re authorised to use.</p>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    // Open the U-STEP-OUT modal
+    function showUStepOut(){
+      const dlg = document.getElementById('ustepout-modal');
+      if (dlg && typeof dlg.showModal === 'function') dlg.showModal();
+      else alert('U-STEP-OUT reference (your browser does not support <dialog>).');
+    }
+  </script>
+
   <script type="module">
-// Inline script combining all modules (data, scenario, drawing, log, sim, ui, main) for Netlify.
-// data.js
+/* ===========================
+   Inline script combining all modules (data, scenario, drawing, log, sim, ui, main)
+   with branding + injury selector + U-STEP-OUT integration.
+   =========================== */
+
+/* ---------------- data.js ---------------- */
 const frameworkData = {
   scoresheets: {
     command: [
@@ -319,8 +397,9 @@ const frameworkData = {
     'Rear Offside': { x: 25, y: 40 },
     'Rear Nearside': { x: -25, y: 40 }
   }
-};// scenario.js
+};
 
+/* ---------------- scenario.js ---------------- */
 const rand = (min, max) => Math.random() * (max - min) + min;
 const randInt = (min, max) => Math.floor(rand(min, max + 1));
 const choice = arr => arr[Math.floor(Math.random() * arr.length)];
@@ -341,9 +420,11 @@ function randomLayoutType() {
   return Math.random() < 0.6 ? 't-junction' : 'offset-headon';
 }
 
-function makeCasualty(id) {
-  const injuryKey = choice(pickKeys(frameworkData.injuries));
+/* Allow optional preset injury by key */
+function makeCasualty(id, injuryKeyOverride = null) {
+  const injuryKey = injuryKeyOverride || choice(pickKeys(frameworkData.injuries));
   const injury = frameworkData.injuries[injuryKey];
+
   const ageBuckets = [
     () => randInt(6, 12),
     () => randInt(16, 30),
@@ -357,7 +438,7 @@ function makeCasualty(id) {
   const vitals = { ...injury.vitals };
   const prevVitals = { ...injury.vitals };
 
-    return {
+  return {
     id,
     age,
     injuries: [{ ...injury, key: injuryKey }],
@@ -372,7 +453,6 @@ function makeCasualty(id) {
       L: choice(frameworkData.ampleHistory.lastMeal),
       E: choice(frameworkData.ampleHistory.events)
     },
-    // capture initial vitals at scenario start for later summary
     initialVitals: { ...vitals }
   };
 }
@@ -481,7 +561,7 @@ function spawnVehicles(numVehicles, layout) {
 }
 
 function generateRtcScenario(numVehicles = 2, numPatients = 2, options = {}) {
-  const { hazardProbability = 0.55, forceHazards = [], includeEVBatteryHazard = false } = options;
+  const { hazardProbability = 0.55, forceHazards = [], includeEVBatteryHazard = false, presetInjuries = [] } = options;
 
   const layout = randomLayoutType();
   const vehicles = spawnVehicles(numVehicles, layout);
@@ -490,7 +570,10 @@ function generateRtcScenario(numVehicles = 2, numPatients = 2, options = {}) {
   if (numPatients > totalCapacity) numPatients = totalCapacity;
 
   const casualties = [];
-  for (let i = 0; i < numPatients; i++) casualties.push(makeCasualty(i));
+  for (let i = 0; i < numPatients; i++) {
+    const injKey = presetInjuries[i] || null;
+    casualties.push(makeCasualty(i, injKey));
+  }
   casualties.forEach((cas, idx) => {
     const v = vehicles[idx % vehicles.length];
     v.casualties.push({ ...cas });
@@ -513,10 +596,13 @@ function generateRtcScenario(numVehicles = 2, numPatients = 2, options = {}) {
 }
 
 function generateTraumaScenario(numPatients = 2, options = {}) {
-  const { hazardProbability = 0.42, forceHazards = [], includeEVBatteryHazard = false } = options;
+  const { hazardProbability = 0.42, forceHazards = [], includeEVBatteryHazard = false, presetInjuries = [] } = options;
 
   const casualties = [];
-  for (let i = 0; i < numPatients; i++) casualties.push(makeCasualty(i));
+  for (let i = 0; i < numPatients; i++) {
+    const injKey = presetInjuries[i] || null;
+    casualties.push(makeCasualty(i, injKey));
+  }
 
   const vehicles = [{
     id: 0,
@@ -548,10 +634,9 @@ function generateTraumaScenario(numPatients = 2, options = {}) {
     layoutType: 't-junction',
     canvas: { width: CANVAS_W, height: CANVAS_H }
   };
-}// drawing.js
+}
 
-// Draws road layout, vehicles, casualties, and hazards (incl. EV Battery Fire).
-
+/* ---------------- drawing.js ---------------- */
 function drawSetupScene(canvas, scenario) {
   if (!canvas || !scenario) return;
   const ctx = canvas.getContext('2d');
@@ -753,30 +838,20 @@ function rotateX(x, y, deg) {
 function rotateY(x, y, deg) {
   const r = (deg * Math.PI) / 180; return x * Math.sin(r) + y * Math.cos(r);
 }
-// Duplicate rand function removed to avoid redeclaration error. The global `rand` defined earlier will be used instead.
-// function rand(min, max) { return Math.random() * (max - min) + min; }
-// log.js
 
+/* ---------------- log.js ---------------- */
 let incidentLog = [];
-
 function addLog(message, type = 'info', timeText = null) {
-  // Use simulation timer for timestamps if no custom time provided. This
-  // helps correlate log entries with scenario time rather than real clock time.
   let stamp;
   if (timeText !== null) {
     stamp = timeText;
   } else {
-    // If the global state exists, derive minutes and seconds from state.seconds
     const secs = (typeof state !== 'undefined' && state && typeof state.seconds === 'number') ? state.seconds : 0;
     const mins = String(Math.floor(secs / 60)).padStart(2, '0');
     const s = String(secs % 60).padStart(2, '0');
     stamp = `${mins}:${s}`;
   }
-  const entry = {
-    time: stamp,
-    message,
-    type
-  };
+  const entry = { time: stamp, message, type };
   incidentLog.push(entry);
   const logEl = document.getElementById('scenario-log');
   if (logEl) {
@@ -788,12 +863,11 @@ function addLog(message, type = 'info', timeText = null) {
   }
 }
 function clearLog() { incidentLog = []; }
-// sim.js
 
+/* ---------------- sim.js ---------------- */
 function vitalTrendLine(c) {
   const v = c.vitals;
   const p = c.prevVitals || v;
-  // Generate a coloured arrow span based on the direction of change.
   const arrowSpan = (curr, prev) => {
     if (curr > prev) return '<span class="text-green-400">▲</span>';
     if (curr < prev) return '<span class="text-red-400">▼</span>';
@@ -807,17 +881,14 @@ function vitalTrendLine(c) {
 }
 
 function simulationTick(allCasualties) {
-  // When deterioration is paused, apply only random noise and return early
   if (state.deteriorationPaused) {
     (allCasualties || []).forEach(cas => {
       cas.prevVitals = { ...cas.vitals };
-      // Apply gentle random noise to keep vitals dynamic
       cas.vitals.HR += Math.random() < 0.25 ? (Math.random() < 0.5 ? 1 : -1) : 0;
       cas.vitals.RR += Math.random() < 0.2 ? (Math.random() < 0.5 ? 1 : -1) : 0;
     });
     return;
   }
-  // Deterioration factor slows down physiological decline (reduced further for slower decline)
   const deteriorationFactor = 0.25;
   (allCasualties || []).forEach(cas => {
     cas.prevVitals = { ...cas.vitals };
@@ -827,7 +898,6 @@ function simulationTick(allCasualties) {
       if (inj.deterioration) {
         Object.entries(inj.deterioration).forEach(([k, delta]) => {
           const before = cas.vitals[k];
-          // Apply scaled deterioration
           const adjustment = delta * deteriorationFactor;
           if (k === 'GCS') cas.vitals[k] = Math.max(3, Math.round(before + adjustment));
           else cas.vitals[k] = Math.round(before + adjustment);
@@ -835,18 +905,14 @@ function simulationTick(allCasualties) {
         });
       }
     });
-    // Apply gentle random noise
     cas.vitals.HR += Math.random() < 0.25 ? (Math.random() < 0.5 ? 1 : -1) : 0;
     cas.vitals.RR += Math.random() < 0.2 ? (Math.random() < 0.5 ? 1 : -1) : 0;
     if (changed) {
       addLog(`Casualty ${cas.id + 1} showing deterioration.`, 'bad');
-      // Flash red around the vitals when a casualty deteriorates
       const vitalsEl = document.getElementById(`vitals-${cas.id}`);
       if (vitalsEl) {
         vitalsEl.classList.add('flash-red');
-        setTimeout(() => {
-          vitalsEl.classList.remove('flash-red');
-        }, 1000);
+        setTimeout(() => { vitalsEl.classList.remove('flash-red'); }, 1000);
       }
     }
   });
@@ -856,28 +922,24 @@ function applyIntervention(cas, injuryKey, interventionKey, btnEl) {
   const inj = cas?.injuries?.find(i => i.key === injuryKey);
   const intervention = inj?.interventions?.[interventionKey];
   if (!inj || !intervention) return;
-
   cas.prevVitals = { ...cas.vitals };
-
   Object.entries(intervention.effect || {}).forEach(([k, v]) => {
     cas.vitals[k] = Math.max(0, Math.round(cas.vitals[k] + v));
   });
-
   if (intervention.stopsDeterioration) {
     cas.treatedInjuries.add(injuryKey);
     if (btnEl) btnEl.disabled = true;
   }
   addLog(`Intervention on Casualty ${cas.id + 1}: ${intervention.feedback}`, 'good');
 }
-// ui.js
 
+/* ---------------- ui.js ---------------- */
 let state = {
   scenario: null,
   timer: null,
   simTicker: null,
   seconds: 0,
   paused: true,
-  // flag to pause deterioration independently of the overall simulation
   deteriorationPaused: false,
   options: {
     includeEVBatteryHazard: false,
@@ -886,11 +948,26 @@ let state = {
   }
 };
 
+function injuryOptionsHTML() {
+  const keys = Object.keys(frameworkData.injuries);
+  return keys.map(k => `<option value="${k}">${k}</option>`).join('');
+}
+
 function showMenu() {
   const app = document.getElementById('app');
   app.innerHTML = `
     <div id="main-menu" class="bg-gray-800 p-6 rounded-lg shadow-2xl">
       <h2 class="text-2xl font-bold mb-4">Generate Scenario</h2>
+
+      <!-- Global: Optional preset injuries (applied in order to casualties) -->
+      <div class="bg-gray-900 p-4 rounded-lg mb-4">
+        <h3 class="text-lg font-bold text-white mb-2">Preset Injuries (optional)</h3>
+        <p class="text-sm text-gray-300 mb-2">Select one or more injuries to apply in order to casualties. If you select fewer than the number of patients, remaining casualties are randomised.</p>
+        <select id="preset-injuries" class="bg-gray-700 border border-gray-600 rounded-lg w-full p-2" multiple size="8">
+          ${injuryOptionsHTML()}
+        </select>
+        <p class="text-xs text-gray-400 mt-1">Tip: Hold Ctrl/Cmd to select multiple.</p>
+      </div>
 
       <div id="controls" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="bg-gray-900 p-4 rounded-lg">
@@ -1031,7 +1108,6 @@ function renderSetupScreen(scenario) {
       <div class="text-center">
         <button id="startSimBtn" class="btn btn-primary w-full md:w-1/2 mt-2">Proceed to Live Simulation</button>
       </div>
-      <!-- Placeholder for the live simulation. Hidden by default until the user proceeds. -->
       <div id="live-sim-wrapper" class="mt-6 hidden"></div>
     </div>
   `;
@@ -1041,8 +1117,7 @@ function renderSetupScreen(scenario) {
 
   document.getElementById('printBtn').addEventListener('click', () => window.print());
   document.getElementById('backBtn').addEventListener('click', showMenu);
-  // When the user clicks proceed, hide the start button, reveal the live sim wrapper
-  // and render the live simulation below the briefing instead of replacing the entire page.
+
   document.getElementById('startSimBtn').addEventListener('click', () => {
     const btn = document.getElementById('startSimBtn');
     if (btn) btn.style.display = 'none';
@@ -1051,15 +1126,12 @@ function renderSetupScreen(scenario) {
       wrapper.classList.remove('hidden');
       renderLiveSim(scenario, 'live-sim-wrapper');
     } else {
-      // Fallback: if wrapper is missing, render normally to the app container
       renderLiveSim(scenario);
     }
   });
 }
 
-function renderVitalLineWithTrends(c) {
-  return vitalTrendLine(c);
-}
+function renderVitalLineWithTrends(c) { return vitalTrendLine(c); }
 
 function bindInterventions(allCasualties) {
   document.querySelectorAll('.intervention-btn').forEach(btn => {
@@ -1073,72 +1145,40 @@ function bindInterventions(allCasualties) {
   });
 }
 
-// Render the live simulation. If a targetId is provided, inject the content into
-// that element instead of replacing the entire app. This allows the live
-// simulation to appear below the briefing on the same page when proceeding
-// from the Instructor Briefing.
 function renderLiveSim(scenario, targetId) {
   const container = targetId ? document.getElementById(targetId) : document.getElementById('app');
   const allCasualties = scenario.casualties;
 
-  // Define casualty actions and scenario actions arrays for dynamic button generation
   const casualtyActions = [
-    'Hands on Patient',
-    'Primary Survey Started',
-    'C-ABCDE Complete',
-    'Airway Managed',
-    'Oxygen Applied',
-    'Haemorrhage Control',
-    'Spinal Immobilisation',
-    'Packaging Complete',
-    'Extrication Started',
-    'Extrication Complete',
-    'Reassessment Done',
-    'ATMIST Handover'
+    'Hands on Patient','Primary Survey Started','C-ABCDE Complete','Airway Managed',
+    'Oxygen Applied','Haemorrhage Control','Spinal Immobilisation','Packaging Complete',
+    'Extrication Started','Extrication Complete','Reassessment Done','ATMIST Handover'
   ];
   const scenarioActions = [
-    'Scene Size-Up Complete',
-    '360 Survey Complete',
-    'Hazards Identified',
-    'Vehicle Stab Started',
-    'Vehicle Stab Complete',
-    'Glass Management',
-    'Rapid Plan Viable',
-    'Tactical Plan Announced',
-    'Access Created',
-    'Extrication Path Clear',
-    'EV/UHSS Managed',
-    'Emergency Services Notified'
+    'Scene Size-Up Complete','360 Survey Complete','Hazards Identified',
+    'Vehicle Stab Started','Vehicle Stab Complete','Glass Management',
+    'Rapid Plan Viable','Tactical Plan Announced','Access Created',
+    'Extrication Path Clear','EV/UHSS Managed','Emergency Services Notified'
   ];
-
-  // Build casualty cards with medical action buttons and interventions
-  // Group casualty actions into logical categories for clarity
   const casualtyActionGroups = [
     { title: 'Initial Assessment', actions: ['Hands on Patient','Primary Survey Started','C-ABCDE Complete','Reassessment Done'] },
     { title: 'Airway & Circulation', actions: ['Airway Managed','Oxygen Applied','Haemorrhage Control','Spinal Immobilisation'] },
     { title: 'Packaging & Extrication', actions: ['Packaging Complete','Extrication Started','Extrication Complete'] },
     { title: 'Handover', actions: ['ATMIST Handover'] }
   ];
-
-  // Group scenario actions into logical categories for improved organisation.
-  // These categories reflect the typical sequence of tasks during an RTC rescue
-  // and make it easier for instructors to find and record key events.  Each
-  // category will be displayed with a small heading and its associated
-  // buttons in the live simulation view.
   const scenarioActionGroups = [
     { title: 'Scene Assessment', actions: ['Scene Size-Up Complete','360 Survey Complete','Hazards Identified'] },
     { title: 'Stabilisation & Glass', actions: ['Vehicle Stab Started','Vehicle Stab Complete','Glass Management'] },
     { title: 'Plan & Communication', actions: ['Rapid Plan Viable','Tactical Plan Announced','EV/UHSS Managed','Emergency Services Notified'] },
     { title: 'Extrication', actions: ['Access Created','Extrication Path Clear'] }
   ];
+
   const casCards = allCasualties.map(c => {
-    // Build intervention buttons
     const ints = (c.injuries || []).flatMap(inj => {
       const intList = inj.interventions ? Object.values(inj.interventions) : [];
       return intList.map(iv => `<button class="intervention-btn bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1 px-2 rounded"
         data-casualty-id="${c.id}" data-injury-key="${inj.key}" data-intervention-key="${iv.key}" title="${iv.key}">${iv.key}</button>`);
     }).join(' ');
-    // Build casualty actions grouped by category
     const casualtyActionBtns = casualtyActionGroups.map(group => {
       const btns = group.actions.map(action =>
         `<button class="casualty-action-btn bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1 px-2 rounded"
@@ -1167,10 +1207,6 @@ function renderLiveSim(scenario, targetId) {
     `;
   }).join('');
 
-  // Build scenario action buttons grouped by category.  Each group
-  // generates a heading and its own set of buttons, similar to how
-  // casualty actions are grouped.  Grouping these improves clarity
-  // when many actions are available.
   const scenarioActionBtns = scenarioActionGroups.map(group => {
     const btns = group.actions.map(action =>
       `<button class="scenario-action-btn bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-1 px-2 rounded"
@@ -1196,7 +1232,6 @@ function renderLiveSim(scenario, targetId) {
       </div>
       <div class="bg-gray-900 p-4 rounded-lg mb-4">
         <h3 class="text-lg font-bold mb-2 text-amber-400">Command & Technical Actions</h3>
-        <!-- Use a vertical layout for grouped scenario actions to improve readability -->
         <div class="space-y-1">${scenarioActionBtns}</div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">${casCards}</div>
@@ -1214,19 +1249,14 @@ function renderLiveSim(scenario, targetId) {
     </div>
   `;
 
-  // Attach event listeners to buttons within the rendered live simulation.
   document.getElementById('backBtn').addEventListener('click', () => {
-    // When placed inside a wrapper, back should return to the briefing by
-    // hiding the live simulation and showing the start button again.
     const wrapper = document.getElementById('live-sim-wrapper');
     const startBtn = document.getElementById('startSimBtn');
     if (wrapper && startBtn) {
       wrapper.classList.add('hidden');
-      // Remove the rendered simulation content
       wrapper.innerHTML = '';
       startBtn.style.display = '';
     } else {
-      // Fallback to full reload of briefing
       renderSetupScreen(scenario);
     }
   });
@@ -1252,14 +1282,13 @@ function renderLiveSim(scenario, targetId) {
             const el = document.getElementById(`vitals-${c.id}`);
             if (el) el.innerHTML = renderVitalLineWithTrends(c);
           });
-        }, 45000); // run deterioration tick every 45 seconds (slower)
+        }, 45000);
       }
     } else {
       addLog('Simulation Paused.', 'command');
     }
   });
 
-  // Toggle deterioration separately from overall sim
   document.getElementById('deteriorationControlBtn').addEventListener('click', () => {
     state.deteriorationPaused = !state.deteriorationPaused;
     const btnD = document.getElementById('deteriorationControlBtn');
@@ -1281,17 +1310,10 @@ function renderLiveSim(scenario, targetId) {
 
   bindInterventions(allCasualties);
 
-  // Attach click handlers for casualty- and scenario-level action buttons.  These
-  // buttons allow the instructor to record when key tasks have been performed
-  // during the simulation without removing other functionality.  When clicked
-  // they log the action and disable themselves so each action can only be
-  // recorded once.
   document.querySelectorAll('.casualty-action-btn').forEach(btn => {
     btn.addEventListener('click', (event) => {
       const { casualtyId, action } = event.currentTarget.dataset;
-      // Log the casualty action with a prefix indicating the casualty number
       addLog(`Casualty ${parseInt(casualtyId, 10) + 1}: ${action}`, 'command');
-      // Disable the button and give it a faded appearance to show it has been used
       event.currentTarget.disabled = true;
       event.currentTarget.classList.add('opacity-50');
     });
@@ -1299,9 +1321,7 @@ function renderLiveSim(scenario, targetId) {
   document.querySelectorAll('.scenario-action-btn').forEach(btn => {
     btn.addEventListener('click', (event) => {
       const { action } = event.currentTarget.dataset;
-      // Log the scenario-level action
       addLog(action, 'command');
-      // Disable the button and fade it out
       event.currentTarget.disabled = true;
       event.currentTarget.classList.add('opacity-50');
     });
@@ -1320,11 +1340,6 @@ function renderDebrief(scenario) {
     `<p><span class="text-gray-500">[${e.time}]</span> ${e.message.replace(/<[^>]*>/g, '')}</p>`
   ).join('');
 
-  // Build a summary of vital signs showing how each casualty's key vitals
-  // changed from the start of the scenario to the end.  This helps
-  // instructors quickly identify overall trends in patient condition during
-  // debrief.  Differences are expressed with arrows and the numerical
-  // change (e.g., "HR: 80→90 (+10)").
   const allCasualties = scenario.casualties || (scenario.vehicles ? scenario.vehicles.flatMap(v => v.casualties) : []);
   const vitalsSummaryHtml = (allCasualties || []).map((c, idx) => {
     const init = c.initialVitals || {};
@@ -1333,7 +1348,6 @@ function renderDebrief(scenario) {
     ['GCS','HR','RR','SBP','SpO2'].forEach(key => {
       if (init[key] !== undefined && final[key] !== undefined) {
         const diff = final[key] - init[key];
-        const arrow = diff > 0 ? '↑' : diff < 0 ? '↓' : '→';
         const sign = diff > 0 ? '+' : (diff < 0 ? '' : '');
         parts.push(`${key}: ${init[key]}→${final[key]} (${sign}${diff})`);
       }
@@ -1371,7 +1385,6 @@ function renderDebrief(scenario) {
         <div id="debrief-timeline" class="mt-2 space-y-1 font-mono text-sm max-h-64 overflow-y-auto">${timelineHtml}</div>
       </div>
 
-      <!-- Summary of changes in vitals for each casualty -->
       <div class="bg-gray-900 p-4 rounded-lg">
         <h3 class="text-xl font-bold text-amber-500">Vital Signs Summary</h3>
         <div class="mt-2 space-y-1 text-sm">${vitalsSummaryHtml || '<p>No casualties.</p>'}</div>
@@ -1390,6 +1403,53 @@ function renderDebrief(scenario) {
   document.getElementById('exportPdfBtn').addEventListener('click', exportDebriefAsPdf);
 }
 
+/* ---------------- main.js (entry) ---------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  showMenu();
+
+  document.addEventListener('click', e => {
+    if (e.target.id === 'genRtc') {
+      const nVeh = parseInt(document.getElementById('rtc-vehicles').value, 10);
+      const nPat = parseInt(document.getElementById('rtc-patients').value, 10);
+      if (nPat > nVeh * 5) { alert('Patient count exceeds vehicle capacity.'); return; }
+
+      const includeEVBatteryHazard = document.getElementById('opt-evhaz').checked;
+      const hazardProbability = Number(document.getElementById('opt-hp').value) / 100;
+      const forceHazards = [...document.querySelectorAll('.force-hazard:checked')].map(cb => cb.value);
+
+      const preset = Array.from(document.getElementById('preset-injuries').selectedOptions).map(o => o.value);
+
+      const scenario = generateRtcScenario(nVeh, nPat, {
+        includeEVBatteryHazard,
+        hazardProbability,
+        forceHazards,
+        presetInjuries: preset
+      });
+      scenario.scoresheets = frameworkData.scoresheets;
+      renderSetupScreen(scenario);
+    }
+
+    if (e.target.id === 'genTrauma') {
+      const nPat = parseInt(document.getElementById('trauma-patients').value, 10);
+      const includeEVBatteryHazard = document.getElementById('opt-evhaz-trauma').checked;
+      const hazardProbability = Number(document.getElementById('opt-hp-trauma').value) / 100;
+      const forceHazards = [...document.querySelectorAll('.force-hazard-trauma:checked')].map(cb => cb.value);
+
+      const preset = Array.from(document.getElementById('preset-injuries').selectedOptions).map(o => o.value);
+
+      const scenario = generateTraumaScenario(nPat, {
+        includeEVBatteryHazard,
+        hazardProbability,
+        forceHazards,
+        presetInjuries: preset
+      });
+      scenario.scoresheets = frameworkData.scoresheets;
+      renderSetupScreen(scenario);
+    }
+  });
+});
+
+/* -------- utilities for debrief export -------- */
 async function exportDebriefAsPdf() {
   const el = document.getElementById('debrief-screen');
   const { jsPDF } = window.jspdf;
@@ -1404,8 +1464,7 @@ async function exportDebriefAsPdf() {
   const ratio = canvas.height / canvas.width;
   const imgHeight = imgWidth * ratio;
 
-  let y = 20;
-  let x = 20;
+  let y = 20, x = 20;
 
   if (imgHeight < pageHeight - 40) {
     pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
@@ -1429,66 +1488,7 @@ async function exportDebriefAsPdf() {
     }
   }
   pdf.save('UKRO_Debrief.pdf');
-}// main.js
-// Entry point for the UKRO scenario simulator.
-// This script hooks up the UI buttons to the scenario generation functions
-// and passes user-selected options (like hazard probability and EV hazards)
-// to the scenario generator. It also attaches score sheets from the
-// framework data to each scenario for debriefing.
-
-
-// Initialise the application once the DOM is ready.
-document.addEventListener('DOMContentLoaded', () => {
-  // Render the main menu with scenario generation options.
-  showMenu();
-
-  // Centralised click handler for buttons on the page. This avoids
-  // attaching individual listeners to each button and ensures we
-  // correctly capture events even if elements are re-rendered.
-  document.addEventListener('click', e => {
-    // Generate RTC scenario button clicked
-    if (e.target.id === 'genRtc') {
-      const nVeh = parseInt(document.getElementById('rtc-vehicles').value, 10);
-      const nPat = parseInt(document.getElementById('rtc-patients').value, 10);
-      // Validate patient count against vehicle capacity (max 5 per vehicle)
-      if (nPat > nVeh * 5) {
-        alert('Patient count exceeds vehicle capacity.');
-        return;
-      }
-      // Read hazard options from UI controls
-      const includeEVBatteryHazard = document.getElementById('opt-evhaz').checked;
-      const hazardProbability = Number(document.getElementById('opt-hp').value) / 100;
-      const forceHazards = [...document.querySelectorAll('.force-hazard:checked')].map(cb => cb.value);
-
-      // Generate a new RTC scenario using the selected options
-      const scenario = generateRtcScenario(nVeh, nPat, {
-        includeEVBatteryHazard,
-        hazardProbability,
-        forceHazards
-      });
-      // Attach scoring categories so the debrief can build its checklist
-      scenario.scoresheets = frameworkData.scoresheets;
-      // Display the setup/briefing screen for the generated scenario
-      renderSetupScreen(scenario);
-    }
-    // Generate Trauma scenario button clicked
-    if (e.target.id === 'genTrauma') {
-      const nPat = parseInt(document.getElementById('trauma-patients').value, 10);
-      const includeEVBatteryHazard = document.getElementById('opt-evhaz-trauma').checked;
-      const hazardProbability = Number(document.getElementById('opt-hp-trauma').value) / 100;
-      const forceHazards = [...document.querySelectorAll('.force-hazard-trauma:checked')].map(cb => cb.value);
-
-      // Generate a trauma scenario with the chosen options
-      const scenario = generateTraumaScenario(nPat, {
-        includeEVBatteryHazard,
-        hazardProbability,
-        forceHazards
-      });
-      scenario.scoresheets = frameworkData.scoresheets;
-      renderSetupScreen(scenario);
-    }
-  });
-});
+}
   </script>
 </body>
 </html>
