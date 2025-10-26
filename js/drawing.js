@@ -1,8 +1,9 @@
-// drawing.js
-/**
- * Draws road layout, vehicles, casualties, and hazards (incl. EV Battery Fire).
- */
+// js/drawing.js
+import { CANVAS_W, CANVAS_H } from './config.js';
 
+/**
+ * Draws road layout, vehicles, casualties, and hazards.
+ */
 export function drawSetupScene(canvas, scenario) {
   if (!canvas || !scenario) return;
   const ctx = canvas.getContext('2d');
@@ -65,9 +66,9 @@ function drawVehicle(ctx, x, y, rotationDeg, color, label, type, isEV, hasUHSS) 
 
   // Body
   ctx.fillStyle = color || '#90caf9';
-  roundRect(ctx, -52, -24, 104, 48, 6, true, true);
   ctx.strokeStyle = '#424242';
   ctx.lineWidth = 1;
+  roundRect(ctx, -52, -24, 104, 48, 6, true, true);
 
   // Windscreen
   ctx.fillStyle = '#e3f2fd';
@@ -81,8 +82,6 @@ function drawVehicle(ctx, x, y, rotationDeg, color, label, type, isEV, hasUHSS) 
   ctx.font = 'bold 16px Inter';
   ctx.textAlign = 'center';
   ctx.fillText(label, 0, 5);
-  ctx.font = '10px Inter';
-  // No need to draw type again as it's outside the vehicle body in the UI
 
   // Chips for EV/UHSS
     if (isEV) {
@@ -99,8 +98,6 @@ function drawVehicle(ctx, x, y, rotationDeg, color, label, type, isEV, hasUHSS) 
         ctx.font = '10px Inter';
         ctx.fillText('UHSS', 34, -36);
     }
-
-
   ctx.restore();
 }
 
@@ -182,35 +179,15 @@ function drawHazard(ctx, h) {
 }
 
 /* ---------- helpers ---------- */
-function line(ctx, x1, y1, x2, y2) {
-  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-}
+function line(ctx, x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
 function roundRect(ctx, x, y, w, h, r, fill, stroke) {
   if (typeof r === 'number') r = { tl: r, tr: r, br: r, bl: r };
-  ctx.beginPath();
-  ctx.moveTo(x + r.tl, y);
-  ctx.lineTo(x + w - r.tr, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + r.tr);
-  ctx.lineTo(x + w, y + h - r.br);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
-  ctx.lineTo(x + r.bl, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - r.bl);
-  ctx.lineTo(x, y + r.tl);
-  ctx.quadraticCurveTo(x, y, x + r.tl, y);
-  ctx.closePath();
-  if (fill) ctx.fill();
-  if (stroke) ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x + r.tl, y); ctx.lineTo(x + w - r.tr, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+  ctx.lineTo(x + w, y + h - r.br); ctx.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h); ctx.lineTo(x + r.bl, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r.bl); ctx.lineTo(x, y + r.tl); ctx.quadraticCurveTo(x, y, x + r.tl, y); ctx.closePath();
+  if (fill) ctx.fill(); if (stroke) ctx.stroke();
 }
-function ellipse(ctx, x, y, rx, ry, fill, stroke) {
-  ctx.beginPath();
-  ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
-  if (fill) ctx.fill();
-  if (stroke) ctx.stroke();
-}
-function rotateX(x, y, deg) {
-  const r = (deg * Math.PI) / 180; return x * Math.cos(r) - y * Math.sin(r);
-}
-function rotateY(x, y, deg) {
-  const r = (deg * Math.PI) / 180; return x * Math.sin(r) + y * Math.cos(r);
-}
+function ellipse(ctx, x, y, rx, ry, fill, stroke) { ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); if (fill) ctx.fill(); if (stroke) ctx.stroke(); }
+function rotateX(x, y, deg) { const r = (deg * Math.PI) / 180; return x * Math.cos(r) - y * Math.sin(r); }
+function rotateY(x, y, deg) { const r = (deg * Math.PI) / 180; return x * Math.sin(r) + y * Math.cos(r); }
 function rand(min, max) { return Math.random() * (max - min) + min; }
