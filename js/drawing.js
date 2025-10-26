@@ -34,11 +34,11 @@ export function drawSetupScene(canvas, scenario) {
 
 function drawRoadLayout(ctx, W, H, type) {
   // Grass
-  ctx.fillStyle = '#14532d';
+  ctx.fillStyle = '#c8e6c9'; // Light green for grass
   ctx.fillRect(0, 0, W, H);
 
   // Road
-  ctx.fillStyle = '#4b5563';
+  ctx.fillStyle = '#bdbdbd'; // Light grey for road
   if (type === 't-junction') {
     ctx.fillRect(0, H * 0.32, W, H * 0.36);
     ctx.fillRect(W * 0.35, 0, W * 0.3, H);
@@ -49,7 +49,7 @@ function drawRoadLayout(ctx, W, H, type) {
     ctx.setLineDash([]);
   } else {
     ctx.fillRect(0, H * 0.36, W, H * 0.28);
-    ctx.fillStyle = '#374151';
+    ctx.fillStyle = '#9e9e9e'; // Darker grey for other road part
     ctx.fillRect(W * 0.72, H * 0.2, W * 0.18, H * 0.2);
     ctx.strokeStyle = 'white';
     ctx.setLineDash([14, 22]);
@@ -64,50 +64,56 @@ function drawVehicle(ctx, x, y, rotationDeg, color, label, type, isEV, hasUHSS) 
   ctx.rotate((rotationDeg * Math.PI) / 180);
 
   // Body
-  ctx.fillStyle = color || '#93c5fd';
-  roundRect(ctx, -52, -24, 104, 48, 6, true, false);
+  ctx.fillStyle = color || '#90caf9';
+  roundRect(ctx, -52, -24, 104, 48, 6, true, true);
+  ctx.strokeStyle = '#424242';
+  ctx.lineWidth = 1;
 
   // Windscreen
-  ctx.fillStyle = '#bfdbfe';
+  ctx.fillStyle = '#e3f2fd';
   roundRect(ctx, -36, -18, 72, 16, 4, true, false);
 
-  ctx.rotate(0);
-  ctx.fillStyle = 'white';
+  ctx.restore(); // Restore before drawing text
+
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.fillStyle = '#212121'; // Dark text for visibility
   ctx.font = 'bold 16px Inter';
   ctx.textAlign = 'center';
-  ctx.fillText(label, 0, -34);
+  ctx.fillText(label, 0, 5);
   ctx.font = '10px Inter';
-  ctx.fillText(type, 0, 38);
+  // No need to draw type again as it's outside the vehicle body in the UI
 
   // Chips for EV/UHSS
-  if (isEV) {
-    ctx.fillStyle = '#064e3b';
-    roundRect(ctx, -50, -46, 36, 14, 7, true, false);
-    ctx.fillStyle = '#bbf7d0';
-    ctx.font = '10px Inter';
-    ctx.fillText('EV', -32, -36);
-  }
-  if (hasUHSS) {
-    ctx.fillStyle = '#1f2937';
-    roundRect(ctx, 14, -46, 40, 14, 7, true, false);
-    ctx.fillStyle = '#e5e7eb';
-    ctx.font = '10px Inter';
-    ctx.fillText('UHSS', 34, -36);
-  }
+    if (isEV) {
+        ctx.fillStyle = '#d1e7dd';
+        roundRect(ctx, -50, -46, 36, 14, 7, true, false);
+        ctx.fillStyle = '#0f5132';
+        ctx.font = '10px Inter';
+        ctx.fillText('EV', -32, -36);
+    }
+    if (hasUHSS) {
+        ctx.fillStyle = '#e2e3e5';
+        roundRect(ctx, 14, -46, 40, 14, 7, true, false);
+        ctx.fillStyle = '#41464b';
+        ctx.font = '10px Inter';
+        ctx.fillText('UHSS', 34, -36);
+    }
+
 
   ctx.restore();
 }
 
 function drawCasualty(ctx, x, y, label) {
   ctx.save();
-  ctx.fillStyle = '#ef4444';
+  ctx.fillStyle = '#d32f2f';
   ctx.beginPath();
   ctx.arc(x, y, 8, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = 'white';
-  ctx.font = '12px Inter';
+  ctx.font = 'bold 10px Inter';
   ctx.textAlign = 'center';
-  ctx.fillText(label, x, y - 12);
+  ctx.fillText(label, x, y + 4);
   ctx.restore();
 }
 
@@ -139,16 +145,16 @@ function drawHazard(ctx, h) {
     ctx.rotate(h.rotation || 0);
     ctx.fillStyle = 'rgba(59,130,246,0.35)';
     ellipse(ctx, 0, 0, h.rx || 50, h.ry || 25, true, false);
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = '#212121';
     ctx.font = '11px Inter';
     ctx.textAlign = 'center';
-    ctx.fillText('Fuel Spill', 0, 0);
+    ctx.fillText('Fuel Spill', 0, 4);
   } else if (h.type === 'Fire') {
     ctx.fillStyle = '#fb923c';
     ctx.beginPath();
     ctx.arc(h.x, h.y, h.r || 20, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#ef4444';
+    ctx.fillStyle = '#d32f2f';
     ctx.font = '14px Inter';
     ctx.textAlign = 'center';
     ctx.fillText('🔥 Fire', h.x, h.y + 4);
@@ -157,27 +163,20 @@ function drawHazard(ctx, h) {
     ctx.beginPath();
     ctx.arc(h.x, h.y, h.r || 20, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#ef4444';
+    ctx.fillStyle = '#d32f2f';
     ctx.font = '14px Inter';
     ctx.textAlign = 'center';
     ctx.fillText('🔋🔥', h.x, h.y + 4);
   } else if (h.type === 'Wall') {
-    ctx.fillStyle = '#8b5cf6';
+    ctx.fillStyle = '#7e57c2';
     roundRect(ctx, h.x, h.y, h.w || 80, h.h || 12, 4, true, false);
-    ctx.fillStyle = 'white';
-    ctx.font = '11px Inter';
-    ctx.fillText('Wall', h.x + (h.w || 80) / 2, (h.y || 0) - 6);
   } else if (h.type === 'Lamppost') {
-    ctx.fillStyle = '#d1d5db';
+    ctx.fillStyle = '#9e9e9e';
     ctx.fillRect(h.x - 5, h.y - 40, 10, 60);
-    ctx.fillStyle = '#facc15';
+    ctx.fillStyle = '#ffeb3b';
     ctx.beginPath();
     ctx.arc(h.x, h.y - 44, 12, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = 'white';
-    ctx.font = '11px Inter';
-    ctx.textAlign = 'center';
-    ctx.fillText('Lamp', h.x, h.y - 60);
   }
   ctx.restore();
 }
@@ -198,6 +197,7 @@ function roundRect(ctx, x, y, w, h, r, fill, stroke) {
   ctx.quadraticCurveTo(x, y + h, x, y + h - r.bl);
   ctx.lineTo(x, y + r.tl);
   ctx.quadraticCurveTo(x, y, x + r.tl, y);
+  ctx.closePath();
   if (fill) ctx.fill();
   if (stroke) ctx.stroke();
 }
