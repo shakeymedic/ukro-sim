@@ -295,19 +295,20 @@
     }
 
     function makeCasualty(id, context, injuryKeyOverrides = []) {
-      const patientInjuries = injuryKeyOverrides[id] || [];
-      const validInjuryKeys = patientInjuries.filter(k => k && k !== 'None');
+      const patientInjurySelections = injuryKeyOverrides || [];
+      let finalInjuryKeys = patientInjurySelections.filter(k => k && k !== 'None' && k !== 'Random');
 
-      let finalInjuryKeys = [];
+      if (patientInjurySelections.includes('Uninjured')) {
+          finalInjuryKeys = ['Uninjured'];
+      } else if (patientInjurySelections.includes('Random')) {
+          finalInjuryKeys.push(choice(Object.keys(frameworkData.injuries).filter(k => k !== 'Uninjured' && frameworkData.injuries[k].context.includes(context))));
+      }
 
-      if (validInjuryKeys.length === 0 || validInjuryKeys.includes('Random')) {
-        finalInjuryKeys.push(choice(Object.keys(frameworkData.injuries).filter(k => k !== 'Uninjured' && frameworkData.injuries[k].context.includes(context))));
-      } else if (validInjuryKeys.includes('Uninjured')) {
-        finalInjuryKeys = ['Uninjured'];
+      if (finalInjuryKeys.length === 0) {
+          finalInjuryKeys.push('Uninjured');
       }
-      else {
-        finalInjuryKeys = validInjuryKeys;
-      }
+      finalInjuryKeys = [...new Set(finalInjuryKeys)];
+
 
       const injuries = finalInjuryKeys.map(key => ({ ...frameworkData.injuries[key], key }));
       const combinedVitals = { ACVPU: 'A', HR: 80, RR: 16, SBP: 120, SpO2: 99, CRT: 2 }; // Start with normal
@@ -407,7 +408,7 @@
       const layout = randomLayoutType();
       const vehicles = spawnVehicles(numVehicles, layout);
       numPatients = Math.min(numPatients, vehicles.reduce((a, v) => a + v.capacity, 0));
-      const casualties = Array.from({ length: numPatients }, (_, i) => makeCasualty(i, 'rtc', presetInjuries[i] || []));
+      const casualties = Array.from({ length: numPatients }, (_, i) => makeCasualty(i, 'rtc', presetInjuries || []));
       casualties.forEach((cas, idx) => vehicles[idx % vehicles.length].casualties.push(cas));
       let hazardPool = frameworkData.rtcHazards;
       if(!vehicles.some(v => v.isEV) || !includeEVBatteryHazard) {
@@ -426,7 +427,7 @@
 
     function generateTraumaScenario(numPatients = 2, options = {}) {
       const { hazardProbability = 0.42, forceHazards = [], presetInjuries = [] } = options;
-      const casualties = Array.from({ length: numPatients }, (_, i) => makeCasualty(i, 'trauma', presetInjuries[i] || []));
+      const casualties = Array.from({ length: numPatients }, (_, i) => makeCasualty(i, 'trauma', presetInjuries || []));
       const hazards = spawnHazards([], frameworkData.traumaHazards, hazardProbability, forceHazards);
       return {
         type: 'Trauma', title: 'Trauma Challenge', timeLimit: 12,
