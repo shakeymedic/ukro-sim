@@ -252,7 +252,7 @@
         { type: 'Battery Fire', minR: 18, maxR: 28 }
       ],
       traumaHazards: [
-         { type: 'Fuel Spill', minR: 35, maxR: 70 }, { type: 'Fire', minR: 15, maxR: 28 },
+         { type: 'Fuel Spill', minR: 20, maxR: 50 }, { type: 'Fire', minR: 15, maxR: 28 },
          { type: 'Chemical Spill', minR: 20, maxR: 50}, { type: 'Live Electricity' }
       ]
     };
@@ -295,15 +295,21 @@
     }
 
     function makeCasualty(id, context, injuryKeyOverrides = []) {
-      const validInjuryKeys = injuryKeyOverrides.filter(k => k && k !== 'None' && k !== 'Random');
-      
-      if (injuryKeyOverrides.includes('Uninjured') || (validInjuryKeys.length === 0 && injuryKeyOverrides.includes(null))) {
-        validInjuryKeys.push('Uninjured');
-      } else if (validInjuryKeys.length === 0) {
-        validInjuryKeys.push(choice(Object.keys(frameworkData.injuries).filter(k => k !== 'Uninjured' && frameworkData.injuries[k].context.includes(context))));
+      const patientInjuries = injuryKeyOverrides[id] || [];
+      const validInjuryKeys = patientInjuries.filter(k => k && k !== 'None');
+
+      let finalInjuryKeys = [];
+
+      if (validInjuryKeys.length === 0 || validInjuryKeys.includes('Random')) {
+        finalInjuryKeys.push(choice(Object.keys(frameworkData.injuries).filter(k => k !== 'Uninjured' && frameworkData.injuries[k].context.includes(context))));
+      } else if (validInjuryKeys.includes('Uninjured')) {
+        finalInjuryKeys = ['Uninjured'];
+      }
+      else {
+        finalInjuryKeys = validInjuryKeys;
       }
 
-      const injuries = validInjuryKeys.map(key => ({ ...frameworkData.injuries[key], key }));
+      const injuries = finalInjuryKeys.map(key => ({ ...frameworkData.injuries[key], key }));
       const combinedVitals = { ACVPU: 'A', HR: 80, RR: 16, SBP: 120, SpO2: 99, CRT: 2 }; // Start with normal
       const combinedDeterioration = {};
 
@@ -729,7 +735,7 @@
 
     function injuryOptionsHTML(context) {
       const injuries = Object.keys(frameworkData.injuries).filter(k => frameworkData.injuries[k].context.includes(context));
-      return `<option value="">None</option>` + injuries.map(k => `<option value="${k}">${k}</option>`).join('');
+      return `<option value="">None</option><option value="Random">Random</option>` + injuries.map(k => `<option value="${k}">${k}</option>`).join('');
     }
 
     function renderPatientInjurySelectors(count, context) {
@@ -737,16 +743,20 @@
         if (!container) return;
         let html = '';
         for (let i = 0; i < count; i++) {
-            html += `<div class="p-2 border rounded mb-2 bg-white">
+            html += `<div class="p-2 border rounded mb-2 bg-white" data-patient-index="${i}">
                 <label class="font-bold text-sm text-gray-800">Patient ${i+1}:</label>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
-                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm" data-patient-index="${i}">${injuryOptionsHTML(context)}</select>
-                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm" data-patient-index="${i}">${injuryOptionsHTML(context)}</select>
-                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm" data-patient-index="${i}">${injuryOptionsHTML(context)}</select>
+                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm">${injuryOptionsHTML(context)}</select>
+                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm">${injuryOptionsHTML(context)}</select>
+                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm">${injuryOptionsHTML(context)}</select>
                 </div>
             </div>`;
         }
         container.innerHTML = html;
+        document.querySelectorAll('[data-patient-index]').forEach(container => {
+            const selects = container.querySelectorAll('select');
+            if (selects.length > 0) selects[0].value = 'Random';
+        });
     }
     
     function showScenarioGenerator(type) {
@@ -1033,12 +1043,17 @@
           const patientCount = parseInt(document.getElementById('patient-count').value, 10);
           
           let presetInjuries = Array.from({length: patientCount}, () => []);
-            document.querySelectorAll('.patient-injury-select').forEach(sel => {
-                const patientIndex = parseInt(sel.dataset.patientIndex, 10);
-                if (patientIndex < patientCount && sel.value) {
-                    presetInjuries[patientIndex].push(sel.value);
+            document.querySelectorAll('[data-patient-index]').forEach(container => {
+                const patientIndex = parseInt(container.dataset.patientIndex, 10);
+                if(patientIndex < patientCount) {
+                    container.querySelectorAll('.patient-injury-select').forEach(sel => {
+                        if (sel.value) {
+                            presetInjuries[patientIndex].push(sel.value);
+                        }
+                    });
                 }
             });
+
 
           const options = {
             hazardProbability: Number(document.getElementById('opt-hp')?.value) / 100,
