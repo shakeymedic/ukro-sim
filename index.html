@@ -198,180 +198,38 @@
         trauma: ['Scene safety & approach', '<C>ABCDE assessment', 'Identify/manage life-threats', 'Teamwork & communication', 'Ongoing reassessment', 'ATMIST handover']
       },
       injuries: {
-        'Uninjured': {
-          name: 'Uninjured', type: 'none', canSelfExtricate: true, bodyPart: 'none', marker: 'U',
-          moulage: 'No visible injuries.', briefing: 'Alert and talking, anxious.',
-          vitals: { ACVPU: 'A', HR: 80, RR: 16, SBP: 120, SpO2: 99, CRT: 2 },
-          deterioration: {}, interventions: {}
-        },
-        'Minor Head Injury': {
-          name: 'Minor Head Injury', type: 'minor', canSelfExtricate: true, bodyPart: 'head', marker: 'HI',
-          moulage: 'Small scalp laceration, appears dazed.', briefing: 'Slightly confused, repeats questions.',
-          vitals: { ACVPU: 'C', HR: 90, RR: 18, SBP: 130, SpO2: 98, CRT: 2 },
-          deterioration: { ACVPU: -0.5 },
-          interventions: { 'Immobilise': { key: 'Immobilise', effect: {}, stopsDeterioration: true, feedback: 'Patient immobilised as precaution.' } }
-        },
-        'C-Spine Injury': {
-            name: 'C-Spine Injury', type: 'major', canSelfExtricate: false, bodyPart: 'spine', marker: 'CSP',
-            moulage: 'Patient holding head, pain in neck.', briefing: 'Reports neck pain, tingling in arms.',
-            vitals: { ACVPU: 'A', HR: 70, RR: 18, SBP: 110, SpO2: 99, CRT: 2 },
-            deterioration: {},
-            interventions: { 'Full Spinal Immobilisation': { key: 'Full Spinal Immobilisation', effect: {}, stopsDeterioration: true, feedback: 'Patient fully immobilised.' } }
-        },
-        'Thoracic Spinal Injury': {
-            name: 'Thoracic Spinal Injury', type: 'major', canSelfExtricate: false, bodyPart: 'spine', marker: 'TSP',
-            moulage: 'Patient unable to move legs.', briefing: 'Reports no sensation below the waist.',
-            vitals: { ACVPU: 'A', HR: 60, RR: 16, SBP: 90, SpO2: 98, CRT: 3 },
-            deterioration: { SBP: -2 },
-            interventions: { 'Full Spinal Immobilisation': { key: 'Full Spinal Immobilisation', effect: {}, stopsDeterioration: true, feedback: 'Patient fully immobilised.' } }
-        },
-        'Simple Pneumothorax (Left)': {
-            name: 'Simple Pneumothorax (Left)', type: 'moderate', canSelfExtricate: true, bodyPart: 'chest_left', marker: 'PTX-L',
-            moulage: 'Reduced breath sounds on the left.', briefing: 'Sharp left-sided chest pain, short of breath.',
-            vitals: { ACVPU: 'A', HR: 110, RR: 28, SBP: 115, SpO2: 93, CRT: 2 },
-            deterioration: { SpO2: -2, RR: 2 },
-            interventions: {}
-        },
-        'Simple Pneumothorax (Right)': {
-            name: 'Simple Pneumothorax (Right)', type: 'moderate', canSelfExtricate: true, bodyPart: 'chest_right', marker: 'PTX-R',
-            moulage: 'Reduced breath sounds on the right.', briefing: 'Sharp right-sided chest pain, short of breath.',
-            vitals: { ACVPU: 'A', HR: 110, RR: 28, SBP: 115, SpO2: 93, CRT: 2 },
-            deterioration: { SpO2: -2, RR: 2 },
-            interventions: {}
-        },
-        'Haemothorax (Left)': {
-            name: 'Haemothorax (Left)', type: 'major', canSelfExtricate: false, bodyPart: 'chest_left', marker: 'HTX-L',
-            moulage: 'Dull percussion on left chest.', briefing: 'Short of breath, becoming pale.',
-            vitals: { ACVPU: 'V', HR: 125, RR: 30, SBP: 90, SpO2: 90, CRT: 3 },
-            deterioration: { SBP: -5, HR: 5, SpO2: -2 },
-            interventions: {}
-        },
-         'Haemothorax (Right)': {
-            name: 'Haemothorax (Right)', type: 'major', canSelfExtricate: false, bodyPart: 'chest_right', marker: 'HTX-R',
-            moulage: 'Dull percussion on right chest.', briefing: 'Short of breath, becoming pale.',
-            vitals: { ACVPU: 'V', HR: 125, RR: 30, SBP: 90, SpO2: 90, CRT: 3 },
-            deterioration: { SBP: -5, HR: 5, SpO2: -2 },
-            interventions: {}
-        },
-        'Rib Fractures (Left)': {
-            name: 'Rib Fractures (Left)', type: 'minor', canSelfExtricate: true, bodyPart: 'chest_left', marker: 'RIB-L',
-            moulage: 'Tenderness over left ribs.', briefing: 'Sharp pain on breathing.',
-            vitals: { ACVPU: 'A', HR: 95, RR: 22, SBP: 130, SpO2: 97, CRT: 2 },
-            deterioration: { RR: 1 },
-            interventions: { 'Pain Relief': { key: 'Pain Relief', effect: { HR: -5 }, stopsDeterioration: true, feedback: 'Analgesia provided.' } }
-        },
-        'Rib Fractures (Right)': {
-            name: 'Rib Fractures (Right)', type: 'minor', canSelfExtricate: true, bodyPart: 'chest_right', marker: 'RIB-R',
-            moulage: 'Tenderness over right ribs.', briefing: 'Sharp pain on breathing.',
-            vitals: { ACVPU: 'A', HR: 95, RR: 22, SBP: 130, SpO2: 97, CRT: 2 },
-            deterioration: { RR: 1 },
-            interventions: { 'Pain Relief': { key: 'Pain Relief', effect: { HR: -5 }, stopsDeterioration: true, feedback: 'Analgesia provided.' } }
-        },
-        'Sucking Chest Wound (Left)': {
-            name: 'Sucking Chest Wound (Left)', type: 'major', canSelfExtricate: false, bodyPart: 'chest_left', marker: 'SCW-L',
-            moulage: 'Bubbling wound on left chest.', briefing: 'Gasping for breath.',
-            vitals: { ACVPU: 'V', HR: 130, RR: 35, SBP: 90, SpO2: 88, CRT: 3 },
-            deterioration: { SpO2: -5, SBP: -5 },
-            interventions: { 'Apply Chest Seal': { key: 'Apply Chest Seal', effect: { SpO2: 6, RR: -5 }, stopsDeterioration: true, feedback: 'Chest seal applied.' } }
-        },
-        'Sucking Chest Wound (Right)': {
-            name: 'Sucking Chest Wound (Right)', type: 'major', canSelfExtricate: false, bodyPart: 'chest_right', marker: 'SCW-R',
-            moulage: 'Bubbling wound on right chest.', briefing: 'Gasping for breath.',
-            vitals: { ACVPU: 'V', HR: 130, RR: 35, SBP: 90, SpO2: 88, CRT: 3 },
-            deterioration: { SpO2: -5, SBP: -5 },
-            interventions: { 'Apply Chest Seal': { key: 'Apply Chest Seal', effect: { SpO2: 6, RR: -5 }, stopsDeterioration: true, feedback: 'Chest seal applied.' } }
-        },
-        'Open Fracture Humerus (Left)': {
-            name: 'Open Fracture Humerus (Left)', type: 'moderate', canSelfExtricate: true, bodyPart: 'arm_left', marker: 'OFH-L',
-            moulage: 'Bone end visible on upper arm.', briefing: 'Severe arm pain, visible bleeding.',
-            vitals: { ACVPU: 'A', HR: 110, RR: 22, SBP: 110, SpO2: 98, CRT: 2 },
-            deterioration: { HR: 3, SBP: -2 },
-            interventions: { 'Splint & Dress': { key: 'Splint & Dress', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted and wound dressed.' } }
-        },
-        'Open Fracture Humerus (Right)': {
-            name: 'Open Fracture Humerus (Right)', type: 'moderate', canSelfExtricate: true, bodyPart: 'arm_right', marker: 'OFH-R',
-            moulage: 'Bone end visible on upper arm.', briefing: 'Severe arm pain, visible bleeding.',
-            vitals: { ACVPU: 'A', HR: 110, RR: 22, SBP: 110, SpO2: 98, CRT: 2 },
-            deterioration: { HR: 3, SBP: -2 },
-            interventions: { 'Splint & Dress': { key: 'Splint & Dress', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted and wound dressed.' } }
-        },
-        'Closed Fracture Humerus (Left)': {
-            name: 'Closed Fracture Humerus (Left)', type: 'minor', canSelfExtricate: true, bodyPart: 'arm_left', marker: 'CFH-L',
-            moulage: 'Deformity and swelling of upper arm.', briefing: 'Severe arm pain.',
-            vitals: { ACVPU: 'A', HR: 100, RR: 20, SBP: 120, SpO2: 99, CRT: 2 },
-            deterioration: { HR: 2 },
-            interventions: { 'Splint Arm': { key: 'Splint Arm', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted.' } }
-        },
-        'Closed Fracture Humerus (Right)': {
-            name: 'Closed Fracture Humerus (Right)', type: 'minor', canSelfExtricate: true, bodyPart: 'arm_right', marker: 'CFH-R',
-            moulage: 'Deformity and swelling of upper arm.', briefing: 'Severe arm pain.',
-            vitals: { ACVPU: 'A', HR: 100, RR: 20, SBP: 120, SpO2: 99, CRT: 2 },
-            deterioration: { HR: 2 },
-            interventions: { 'Splint Arm': { key: 'Splint Arm', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted.' } }
-        },
-        'Open Fracture Tibia/Fibula (Left)': {
-            name: 'Open Fracture Tibia/Fibula (Left)', type: 'moderate', canSelfExtricate: false, bodyPart: 'leg_left', marker: 'OFT-L',
-            moulage: 'Deformed lower leg with bone protruding.', briefing: 'Severe leg pain, unable to move.',
-            vitals: { ACVPU: 'A', HR: 115, RR: 24, SBP: 105, SpO2: 97, CRT: 2 },
-            deterioration: { HR: 4, SBP: -3 },
-            interventions: { 'Splint & Dress Leg': { key: 'Splint & Dress Leg', effect: { HR: -15 }, stopsDeterioration: true, feedback: 'Leg splinted and wound dressed.' } }
-        },
-        'Open Fracture Tibia/Fibula (Right)': {
-            name: 'Open Fracture Tibia/Fibula (Right)', type: 'moderate', canSelfExtricate: false, bodyPart: 'leg_right', marker: 'OFT-R',
-            moulage: 'Deformed lower leg with bone protruding.', briefing: 'Severe leg pain, unable to move.',
-            vitals: { ACVPU: 'A', HR: 115, RR: 24, SBP: 105, SpO2: 97, CRT: 2 },
-            deterioration: { HR: 4, SBP: -3 },
-            interventions: { 'Splint & Dress Leg': { key: 'Splint & Dress Leg', effect: { HR: -15 }, stopsDeterioration: true, feedback: 'Leg splinted and wound dressed.' } }
-        },
-        'Closed Fracture Tibia/Fibula (Left)': {
-            name: 'Closed Fracture Tibia/Fibula (Left)', type: 'minor', canSelfExtricate: false, bodyPart: 'leg_left', marker: 'CFT-L',
-            moulage: 'Grossly swollen and deformed lower leg.', briefing: 'Agonising leg pain.',
-            vitals: { ACVPU: 'A', HR: 105, RR: 22, SBP: 115, SpO2: 98, CRT: 2 },
-            deterioration: { HR: 2 },
-            interventions: { 'Splint Leg': { key: 'Splint Leg', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Leg splinted.' } }
-        },
-        'Closed Fracture Tibia/Fibula (Right)': {
-            name: 'Closed Fracture Tibia/Fibula (Right)', type: 'minor', canSelfExtricate: false, bodyPart: 'leg_right', marker: 'CFT-R',
-            moulage: 'Grossly swollen and deformed lower leg.', briefing: 'Agonising leg pain.',
-            vitals: { ACVPU: 'A', HR: 105, RR: 22, SBP: 115, SpO2: 98, CRT: 2 },
-            deterioration: { HR: 2 },
-            interventions: { 'Splint Leg': { key: 'Splint Leg', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Leg splinted.' } }
-        },
-        'Bilateral Femur Fractures': {
-            name: 'Bilateral Femur Fractures', type: 'major', canSelfExtricate: false, bodyPart: 'pelvis', marker: 'BFF',
-            moulage: 'Both thighs are swollen and deformed.', briefing: 'Extreme pain, pale and distressed.',
-            vitals: { ACVPU: 'V', HR: 140, RR: 30, SBP: 80, SpO2: 92, CRT: 4 },
-            deterioration: { SBP: -10, HR: 8 },
-            interventions: { 'Apply Traction Splints': { key: 'Apply Traction Splints', effect: { SBP: 15, HR: -20 }, stopsDeterioration: true, feedback: 'Bilateral traction splints applied.' } }
-        },
-        'Abdominal Evisceration': {
-            name: 'Abdominal Evisceration', type: 'major', canSelfExtricate: false, bodyPart: 'abdomen', marker: 'AE',
-            moulage: 'Intestines visible through abdominal wound.', briefing: 'Distressed, trying to hold abdomen.',
-            vitals: { ACVPU: 'V', HR: 130, RR: 28, SBP: 95, SpO2: 94, CRT: 3 },
-            deterioration: { SBP: -5, HR: 4 },
-            interventions: { 'Cover with Clingfilm': { key: 'Cover with Clingfilm', effect: { HR: -5 }, stopsDeterioration: true, feedback: 'Wound covered with clingfilm.' } }
-        },
-        'Burns (10%)': {
-            name: 'Burns (10%)', type: 'moderate', canSelfExtricate: true, bodyPart: 'chest_centre', marker: 'B10',
-            moulage: 'Reddened, blistering skin on chest and arms.', briefing: 'Severe pain from burns.',
-            vitals: { ACVPU: 'A', HR: 115, RR: 24, SBP: 110, SpO2: 98, CRT: 2 },
-            deterioration: { HR: 3 },
-            interventions: { 'Cool & Cover Burns': { key: 'Cool & Cover Burns', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Burns cooled and covered.' } }
-        },
-        'Burns (20%)': {
-            name: 'Burns (20%)', type: 'major', canSelfExtricate: false, bodyPart: 'chest_centre', marker: 'B20',
-            moulage: 'Extensive blistering and charring on torso.', briefing: 'In severe pain, starting to shiver.',
-            vitals: { ACVPU: 'V', HR: 130, RR: 28, SBP: 100, SpO2: 95, CRT: 3 },
-            deterioration: { SBP: -5, HR: 5 },
-            interventions: { 'Cool & Cover Burns': { key: 'Cool & Cover Burns', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Burns cooled and covered.' } }
-        },
-        'Crush Injury': {
-            name: 'Crush Injury', type: 'major', canSelfExtricate: false, bodyPart: 'pelvis', marker: 'CR',
-            moulage: 'Pelvis pinned under heavy object.', briefing: 'Trapped for over 15 minutes, pain in crushed area.',
-            vitals: { ACVPU: 'A', HR: 100, RR: 22, SBP: 110, SpO2: 98, CRT: 2 },
-            deterioration: {}, // Deterioration occurs on release
-            interventions: { 'Release Crush': { key: 'Release Crush', effect: { SBP: -30, HR: 20 }, stopsDeterioration: false, feedback: 'Crush released, monitor for reperfusion injury!' } }
-        },
+        'Uninjured': { name: 'Uninjured', type: 'none', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 80, RR: 16, SBP: 120, SpO2: 99, CRT: 2 }, deterioration: {}, interventions: {} },
+        'Minor Head Injury': { name: 'Minor Head Injury', type: 'minor', context:['rtc', 'trauma'], vitals: { ACVPU: 'C', HR: 90, RR: 18, SBP: 130, SpO2: 98, CRT: 2 }, deterioration: { ACVPU: -0.5 }, interventions: { 'Immobilise': { key: 'Immobilise', effect: {}, stopsDeterioration: true, feedback: 'Patient immobilised as precaution.' } } },
+        'Severe Head Injury': { name: 'Severe Head Injury', type: 'major', context:['rtc', 'trauma'], vitals: { ACVPU: 'P', HR: 55, RR: 26, SBP: 180, SpO2: 95, CRT: 2 }, deterioration: { ACVPU: -1, RR: -2 }, interventions: { 'Airway Management': { key: 'Airway Management', effect: { RR: 2, SpO2: 2 }, stopsDeterioration: true, feedback: 'Airway manoeuvre performed.' } } },
+        'C-Spine Injury': { name: 'C-Spine Injury', type: 'major', context:['rtc'], vitals: { ACVPU: 'A', HR: 70, RR: 18, SBP: 110, SpO2: 99, CRT: 2 }, deterioration: {}, interventions: { 'Full Spinal Immobilisation': { key: 'Full Spinal Immobilisation', effect: {}, stopsDeterioration: true, feedback: 'Patient fully immobilised.' } } },
+        'Thoracic Spinal Injury': { name: 'Thoracic Spinal Injury', type: 'major', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 60, RR: 16, SBP: 90, SpO2: 98, CRT: 3 }, deterioration: { SBP: -2 }, interventions: { 'Full Spinal Immobilisation': { key: 'Full Spinal Immobilisation', effect: {}, stopsDeterioration: true, feedback: 'Patient fully immobilised.' } } },
+        'Simple Pneumothorax (Left)': { name: 'Simple Pneumothorax (Left)', type: 'moderate', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 110, RR: 28, SBP: 115, SpO2: 93, CRT: 2 }, deterioration: { SpO2: -2, RR: 2 }, interventions: {} },
+        'Simple Pneumothorax (Right)': { name: 'Simple Pneumothorax (Right)', type: 'moderate', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 110, RR: 28, SBP: 115, SpO2: 93, CRT: 2 }, deterioration: { SpO2: -2, RR: 2 }, interventions: {} },
+        'Tension Pneumothorax (Left)': { name: 'Tension Pneumothorax (Left)', type: 'major', context:['rtc', 'trauma'], vitals: { ACVPU: 'C', HR: 135, RR: 38, SBP: 85, SpO2: 82, CRT: 4 }, deterioration: { SpO2: -4, SBP: -5, HR: 5, CRT: 1 }, interventions: { 'Needle Decompression': { key: 'Needle Decompression', effect: { SpO2: 10, SBP: 10, RR: -8 }, stopsDeterioration: true, feedback: 'Needle decompression performed.' } } },
+        'Tension Pneumothorax (Right)': { name: 'Tension Pneumothorax (Right)', type: 'major', context:['rtc', 'trauma'], vitals: { ACVPU: 'C', HR: 135, RR: 38, SBP: 85, SpO2: 82, CRT: 4 }, deterioration: { SpO2: -4, SBP: -5, HR: 5, CRT: 1 }, interventions: { 'Needle Decompression': { key: 'Needle Decompression', effect: { SpO2: 10, SBP: 10, RR: -8 }, stopsDeterioration: true, feedback: 'Needle decompression performed.' } } },
+        'Haemothorax (Left)': { name: 'Haemothorax (Left)', type: 'major', context:['rtc', 'trauma'], vitals: { ACVPU: 'V', HR: 125, RR: 30, SBP: 90, SpO2: 90, CRT: 3 }, deterioration: { SBP: -5, HR: 5, SpO2: -2 }, interventions: {} },
+        'Haemothorax (Right)': { name: 'Haemothorax (Right)', type: 'major', context:['rtc', 'trauma'], vitals: { ACVPU: 'V', HR: 125, RR: 30, SBP: 90, SpO2: 90, CRT: 3 }, deterioration: { SBP: -5, HR: 5, SpO2: -2 }, interventions: {} },
+        'Rib Fractures (Left)': { name: 'Rib Fractures (Left)', type: 'minor', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 95, RR: 22, SBP: 130, SpO2: 97, CRT: 2 }, deterioration: { RR: 1 }, interventions: { 'Pain Relief': { key: 'Pain Relief', effect: { HR: -5 }, stopsDeterioration: true, feedback: 'Analgesia provided.' } } },
+        'Rib Fractures (Right)': { name: 'Rib Fractures (Right)', type: 'minor', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 95, RR: 22, SBP: 130, SpO2: 97, CRT: 2 }, deterioration: { RR: 1 }, interventions: { 'Pain Relief': { key: 'Pain Relief', effect: { HR: -5 }, stopsDeterioration: true, feedback: 'Analgesia provided.' } } },
+        'Sucking Chest Wound (Left)': { name: 'Sucking Chest Wound (Left)', type: 'major', context:['trauma'], vitals: { ACVPU: 'V', HR: 130, RR: 35, SBP: 90, SpO2: 88, CRT: 3 }, deterioration: { SpO2: -5, SBP: -5 }, interventions: { 'Apply Chest Seal': { key: 'Apply Chest Seal', effect: { SpO2: 6, RR: -5 }, stopsDeterioration: true, feedback: 'Chest seal applied.' } } },
+        'Sucking Chest Wound (Right)': { name: 'Sucking Chest Wound (Right)', type: 'major', context:['trauma'], vitals: { ACVPU: 'V', HR: 130, RR: 35, SBP: 90, SpO2: 88, CRT: 3 }, deterioration: { SpO2: -5, SBP: -5 }, interventions: { 'Apply Chest Seal': { key: 'Apply Chest Seal', effect: { SpO2: 6, RR: -5 }, stopsDeterioration: true, feedback: 'Chest seal applied.' } } },
+        'Catastrophic Haemorrhage (Thigh)': { name: 'Catastrophic Haemorrhage (Thigh)', type: 'major', context:['rtc', 'trauma'], vitals: { ACVPU: 'V', HR: 140, RR: 30, SBP: 80, SpO2: 92, CRT: 4 }, deterioration: { SBP: -8, HR: 6, ACVPU: -1, CRT: 1 }, interventions: { 'Apply Tourniquet': { key: 'Apply Tourniquet', effect: { SBP: 15, HR: -20 }, stopsDeterioration: true, feedback: 'Tourniquet applied.' } } },
+        'Open Fracture Humerus (Left)': { name: 'Open Fracture Humerus (Left)', type: 'moderate', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 110, RR: 22, SBP: 110, SpO2: 98, CRT: 2 }, deterioration: { HR: 3, SBP: -2 }, interventions: { 'Splint & Dress': { key: 'Splint & Dress', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted and wound dressed.' } } },
+        'Open Fracture Humerus (Right)': { name: 'Open Fracture Humerus (Right)', type: 'moderate', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 110, RR: 22, SBP: 110, SpO2: 98, CRT: 2 }, deterioration: { HR: 3, SBP: -2 }, interventions: { 'Splint & Dress': { key: 'Splint & Dress', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted and wound dressed.' } } },
+        'Closed Fracture Humerus (Left)': { name: 'Closed Fracture Humerus (Left)', type: 'minor', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 100, RR: 20, SBP: 120, SpO2: 99, CRT: 2 }, deterioration: { HR: 2 }, interventions: { 'Splint Arm': { key: 'Splint Arm', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted.' } } },
+        'Closed Fracture Humerus (Right)': { name: 'Closed Fracture Humerus (Right)', type: 'minor', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 100, RR: 20, SBP: 120, SpO2: 99, CRT: 2 }, deterioration: { HR: 2 }, interventions: { 'Splint Arm': { key: 'Splint Arm', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted.' } } },
+        'Open Fracture Tibia/Fibula (Left)': { name: 'Open Fracture Tibia/Fibula (Left)', type: 'moderate', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 115, RR: 24, SBP: 105, SpO2: 97, CRT: 2 }, deterioration: { HR: 4, SBP: -3 }, interventions: { 'Splint & Dress Leg': { key: 'Splint & Dress Leg', effect: { HR: -15 }, stopsDeterioration: true, feedback: 'Leg splinted and wound dressed.' } } },
+        'Open Fracture Tibia/Fibula (Right)': { name: 'Open Fracture Tibia/Fibula (Right)', type: 'moderate', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 115, RR: 24, SBP: 105, SpO2: 97, CRT: 2 }, deterioration: { HR: 4, SBP: -3 }, interventions: { 'Splint & Dress Leg': { key: 'Splint & Dress Leg', effect: { HR: -15 }, stopsDeterioration: true, feedback: 'Leg splinted and wound dressed.' } } },
+        'Closed Fracture Tibia/Fibula (Left)': { name: 'Closed Fracture Tibia/Fibula (Left)', type: 'minor', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 105, RR: 22, SBP: 115, SpO2: 98, CRT: 2 }, deterioration: { HR: 2 }, interventions: { 'Splint Leg': { key: 'Splint Leg', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Leg splinted.' } } },
+        'Closed Fracture Tibia/Fibula (Right)': { name: 'Closed Fracture Tibia/Fibula (Right)', type: 'minor', context:['rtc', 'trauma'], vitals: { ACVPU: 'A', HR: 105, RR: 22, SBP: 115, SpO2: 98, CRT: 2 }, deterioration: { HR: 2 }, interventions: { 'Splint Leg': { key: 'Splint Leg', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Leg splinted.' } } },
+        'Bilateral Femur Fractures': { name: 'Bilateral Femur Fractures', type: 'major', context:['rtc'], vitals: { ACVPU: 'V', HR: 140, RR: 30, SBP: 80, SpO2: 92, CRT: 4 }, deterioration: { SBP: -10, HR: 8 }, interventions: { 'Apply Traction Splints': { key: 'Apply Traction Splints', effect: { SBP: 15, HR: -20 }, stopsDeterioration: true, feedback: 'Bilateral traction splints applied.' } } },
+        'Stab Wound (Chest)': { name: 'Stab Wound (Chest)', type: 'major', context:['trauma'], vitals: { ACVPU: 'V', HR: 130, RR: 32, SBP: 85, SpO2: 90, CRT: 3 }, deterioration: { SBP: -8, HR: 5 }, interventions: { 'Apply Chest Seal': { key: 'Apply Chest Seal', effect: { SpO2: 4 }, stopsDeterioration: true, feedback: 'Chest seal applied to wound.' } } },
+        'Stab Wound (Abdomen)': { name: 'Stab Wound (Abdomen)', type: 'major', context:['trauma'], vitals: { ACVPU: 'C', HR: 120, RR: 26, SBP: 90, SpO2: 94, CRT: 3 }, deterioration: { SBP: -6, HR: 4 }, interventions: { 'Dress Wound': { key: 'Dress Wound', effect: { }, stopsDeterioration: true, feedback: 'Abdominal wound dressed.' } } },
+        'Traumatic Amputation (Arm)': { name: 'Traumatic Amputation (Arm)', type: 'major', context:['trauma'], vitals: { ACVPU: 'V', HR: 150, RR: 35, SBP: 75, SpO2: 90, CRT: 4 }, deterioration: { SBP: -10, HR: 8, ACVPU: -1 }, interventions: { 'Apply Tourniquet': { key: 'Apply Tourniquet', effect: { SBP: 20, HR: -30 }, stopsDeterioration: true, feedback: 'Tourniquet applied to arm stump.' } } },
+        'Traumatic Amputation (Leg)': { name: 'Traumatic Amputation (Leg)', type: 'major', context:['trauma'], vitals: { ACVPU: 'P', HR: 160, RR: 38, SBP: 70, SpO2: 88, CRT: 4 }, deterioration: { SBP: -12, HR: 10, ACVPU: -1 }, interventions: { 'Apply Tourniquet': { key: 'Apply Tourniquet', effect: { SBP: 25, HR: -40 }, stopsDeterioration: true, feedback: 'Tourniquet applied to leg stump.' } } },
+        'Impalement': { name: 'Impalement', type: 'major', context:['trauma'], vitals: { ACVPU: 'A', HR: 125, RR: 28, SBP: 100, SpO2: 96, CRT: 2 }, deterioration: { HR: 5, SBP: -4 }, interventions: { 'Stabilse Object': { key: 'Stabilse Object', effect: {}, stopsDeterioration: true, feedback: 'Impalement object stabilised in situ.' } } },
+        'Electrocution': { name: 'Electrocution', type: 'major', context:['trauma'], vitals: { ACVPU: 'U', HR: 40, RR: 8, SBP: 70, SpO2: 90, CRT: 3 }, deterioration: { HR: -5, RR: -1 }, interventions: { 'CPR & Defibrillation': { key: 'CPR & Defibrillation', effect: {}, stopsDeterioration: true, feedback: 'Post-electrocution cardiac arrest protocol initiated.' } } },
+        'Crush Injury': { name: 'Crush Injury', type: 'major', context:['trauma'], vitals: { ACVPU: 'A', HR: 100, RR: 22, SBP: 110, SpO2: 98, CRT: 2 }, deterioration: {}, interventions: { 'Release Crush': { key: 'Release Crush', effect: { SBP: -30, HR: 20 }, stopsDeterioration: false, feedback: 'Crush released, monitor for reperfusion!' } } },
       },
       ampleHistory: {
         allergies: ['NKDA', 'Penicillin', 'Latex', 'Nuts'],
@@ -379,31 +237,24 @@
         pastHistory: ['Asthma', 'Diabetes', 'Hypertension', 'IHD', 'COPD', 'Epilepsy'],
         lastMeal: ['Breakfast', 'Sandwich at lunch', 'Tea', 'Snack', 'Skipped meal'],
         events: [
-          { text: 'Driving home from work', context: ['rtc'] },
-          { text: 'Passenger in a vehicle', context: ['rtc'] },
-          { text: 'Cycling when hit by a car', context: ['rtc'] },
-          { text: 'Fell from a ladder', context: ['trauma'] },
-          { text: 'Caught in machinery', context: ['trauma'] },
-          { text: 'Using power tools at home', context: ['trauma'] }
+          { text: 'Driving home from work', context: ['rtc'] }, { text: 'Passenger in a vehicle', context: ['rtc'] },
+          { text: 'Cycling when hit by a car', context: ['rtc'] }, { text: 'Fell from a ladder', context: ['trauma'] },
+          { text: 'Caught in machinery', context: ['trauma'] }, { text: 'Using power tools at home', context: ['trauma'] }
         ]
       },
       vehicles: {
         'Saloon Car': { type: 'Saloon Car', capacity: 5, hasUHSS: false, isEV: false, length_m: 4.6 },
         'Tesla Model 3': { type: 'Tesla Model 3', capacity: 5, hasUHSS: true, isEV: true, length_m: 4.7 }
       },
-      vehiclePositions: [
-        { name: 'Upright on all fours', rotation: 0 }, { name: 'On roof', rotation: 180 },
-        { name: 'Driver’s side', rotation: 90 }, { name: 'Passenger’s side', rotation: -90 }
-      ],
-      hazardTemplates: [
+       rtcHazards: [
         { type: 'Fuel Spill', minR: 35, maxR: 70 }, { type: 'Fire', minR: 15, maxR: 28 },
         { type: 'Wall', width_m: 4, height_m: 0.5 }, { type: 'Lamppost' },
         { type: 'Battery Fire', minR: 18, maxR: 28 }
       ],
-      casualtyPositions: {
-        'Driver': { x: 25, y: -40 }, 'Front Passenger': { x: -25, y: -40 },
-        'Rear Offside': { x: 25, y: 40 }, 'Rear Nearside': { x: -25, y: 40 }
-      }
+      traumaHazards: [
+         { type: 'Fuel Spill', minR: 35, maxR: 70 }, { type: 'Fire', minR: 15, maxR: 28 },
+         { type: 'Chemical Spill', minR: 20, maxR: 50}, { type: 'Live Electricity' }
+      ]
     };
 
 
@@ -449,7 +300,7 @@
       if (injuryKeyOverrides.includes('Uninjured') || (validInjuryKeys.length === 0 && injuryKeyOverrides.includes(null))) {
         validInjuryKeys.push('Uninjured');
       } else if (validInjuryKeys.length === 0) {
-        validInjuryKeys.push(choice(pickKeys(frameworkData.injuries).filter(k => k !== 'Uninjured')));
+        validInjuryKeys.push(choice(Object.keys(frameworkData.injuries).filter(k => k !== 'Uninjured' && frameworkData.injuries[k].context.includes(context))));
       }
 
       const injuries = validInjuryKeys.map(key => ({ ...frameworkData.injuries[key], key }));
@@ -519,16 +370,14 @@
       return null;
     }
 
-    function spawnHazards(vehicles, probability, forced = [], includeBatteryFire = false) {
+    function spawnHazards(vehicles, hazardPool, probability, forced = []) {
       const anchor = vehicles[0] ? { x: vehicles[0].x, y: vehicles[0].y } : { x: CANVAS_W * 0.5, y: CANVAS_H * 0.5 };
-      const isEVPresent = vehicles.some(v => v.isEV);
-      const pool = frameworkData.hazardTemplates.filter(t => !(t.type === 'Battery Fire' && !(isEVPresent && includeBatteryFire)));
-      const chosen = pool.map(t => (forced.includes(t.type) || (t.type !== 'Battery Fire' && Math.random() < probability)) ? instantiateHazard(t, anchor) : null).filter(Boolean);
+      const chosen = hazardPool.map(t => (forced.includes(t.type) || (t.type !== 'Battery Fire' && Math.random() < probability)) ? instantiateHazard(t, anchor) : null).filter(Boolean);
       return [...new Map(chosen.map(item => [item.type, item])).values()];
     }
 
     function spawnVehicles(numVehicles, layout) {
-      const vehicleKeys = pickKeys(frameworkData.vehicles);
+      const vehicleKeys = Object.keys(frameworkData.vehicles);
       const colors = ['#60a5fa', '#facc15', '#4ade80', '#fb7185'];
       return Array.from({ length: numVehicles }, (_, i) => {
         const proto = frameworkData.vehicles[choice(vehicleKeys)];
@@ -554,7 +403,11 @@
       numPatients = Math.min(numPatients, vehicles.reduce((a, v) => a + v.capacity, 0));
       const casualties = Array.from({ length: numPatients }, (_, i) => makeCasualty(i, 'rtc', presetInjuries[i] || []));
       casualties.forEach((cas, idx) => vehicles[idx % vehicles.length].casualties.push(cas));
-      const hazards = spawnHazards(vehicles, hazardProbability, forceHazards, includeEVBatteryHazard);
+      let hazardPool = frameworkData.rtcHazards;
+      if(!vehicles.some(v => v.isEV) || !includeEVBatteryHazard) {
+          hazardPool = hazardPool.filter(h => h.type !== 'Battery Fire');
+      }
+      const hazards = spawnHazards(vehicles, hazardPool, hazardProbability, forceHazards);
       return {
         type: 'RTC', title: 'RTC Challenge', timeLimit: 20,
         location: layout === 't-junction' ? 'Urban T-Junction' : 'Urban A-Road',
@@ -568,7 +421,7 @@
     function generateTraumaScenario(numPatients = 2, options = {}) {
       const { hazardProbability = 0.42, forceHazards = [], presetInjuries = [] } = options;
       const casualties = Array.from({ length: numPatients }, (_, i) => makeCasualty(i, 'trauma', presetInjuries[i] || []));
-      const hazards = spawnHazards([], hazardProbability, forceHazards, false);
+      const hazards = spawnHazards([], frameworkData.traumaHazards, hazardProbability, forceHazards);
       return {
         type: 'Trauma', title: 'Trauma Challenge', timeLimit: 12,
         location: 'Industrial unit',
@@ -874,12 +727,12 @@
         }
     }
 
-    function injuryOptionsHTML() {
-      const injuries = Object.keys(frameworkData.injuries);
+    function injuryOptionsHTML(context) {
+      const injuries = Object.keys(frameworkData.injuries).filter(k => frameworkData.injuries[k].context.includes(context));
       return `<option value="">None</option>` + injuries.map(k => `<option value="${k}">${k}</option>`).join('');
     }
 
-    function renderPatientInjurySelectors(count) {
+    function renderPatientInjurySelectors(count, context) {
         const container = document.getElementById('patient-injury-selectors');
         if (!container) return;
         let html = '';
@@ -887,61 +740,72 @@
             html += `<div class="p-2 border rounded mb-2 bg-white">
                 <label class="font-bold text-sm text-gray-800">Patient ${i+1}:</label>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
-                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm" data-patient-index="${i}">${injuryOptionsHTML()}</select>
-                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm" data-patient-index="${i}">${injuryOptionsHTML()}</select>
-                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm" data-patient-index="${i}">${injuryOptionsHTML()}</select>
+                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm" data-patient-index="${i}">${injuryOptionsHTML(context)}</select>
+                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm" data-patient-index="${i}">${injuryOptionsHTML(context)}</select>
+                    <select class="patient-injury-select flex-grow bg-white border border-gray-300 rounded-lg p-1 text-sm" data-patient-index="${i}">${injuryOptionsHTML(context)}</select>
                 </div>
             </div>`;
         }
         container.innerHTML = html;
     }
-
-    function showMenu() {
-      const app = document.getElementById('app');
-      app.innerHTML = `
+    
+    function showScenarioGenerator(type) {
+        const app = document.getElementById('app');
+        const isRtc = type === 'rtc';
+        const hazardPool = isRtc ? frameworkData.rtcHazards : frameworkData.traumaHazards;
+        app.innerHTML = `
         <div id="main-menu" class="bg-white p-6 rounded-lg shadow-lg border">
-          <h2 class="text-2xl font-bold mb-4">Generate Scenario</h2>
+          <div class="flex justify-between items-center mb-4">
+             <h2 class="text-2xl font-bold">Generate ${isRtc ? 'RTC' : 'Trauma'} Scenario</h2>
+             <button id="back-to-main" class="btn btn-secondary">Back</button>
+          </div>
           <div class="bg-gray-50 p-4 rounded-lg mb-4 border">
             <h3 class="text-lg font-bold mb-2">Preset Injuries (optional)</h3>
-            <p class="text-sm text-gray-700 mb-2">Select up to three injuries per patient. Leave as 'None' or select 'Uninjured'.</p>
+            <p class="text-sm text-gray-700 mb-2">Select up to three injuries per patient.</p>
             <div id="patient-injury-selectors"></div>
           </div>
-          <div id="controls" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-gray-50 p-4 rounded-lg border">
-              <h3 class="text-lg font-bold mb-2">RTC Scenario</h3>
-              <label class="block text-sm text-gray-700 mb-1">Vehicles</label>
-              <select id="rtc-vehicles" class="bg-white border border-gray-300 rounded-lg w-full p-2 mb-2"><option>1</option><option selected>2</option><option>3</option></select>
-              <label class="block text-sm text-gray-700 mb-1">Patients</label>
-              <select id="rtc-patients" class="bg-white border border-gray-300 rounded-lg w-full p-2 mb-2"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option></select>
-              <div class="mt-3 space-y-2">
-                <label class="flex items-center gap-2"><input id="opt-evhaz" type="checkbox" class="h-4 w-4"><span class="text-sm">Include EV battery hazard if EV present</span></label>
-                <label class="block text-sm text-gray-700">Force hazards:</label>
-                <div class="grid grid-cols-2 gap-1 text-sm">${['Fuel Spill','Fire','Battery Fire','Wall','Lamppost'].map(h => `<label class="flex items-center gap-2"><input type="checkbox" class="force-hazard" value="${h}"/><span>${h}</span></label>`).join('')}</div>
-                <label class="block text-sm text-gray-700 mt-2">Hazard probability (<span id="hpLabel">55</span>%):</label>
-                <input id="opt-hp" type="range" min="0" max="100" value="55" class="w-full" oninput="document.getElementById('hpLabel').textContent = this.value">
-              </div>
-              <button id="genRtc" class="btn btn-primary w-full mt-3">Generate RTC</button>
-            </div>
-            <div class="bg-gray-50 p-4 rounded-lg border">
-              <h3 class="text-lg font-bold mb-2">Trauma Scenario</h3>
-              <label class="block text-sm text-gray-700 mb-1">Patients</label>
-              <select id="trauma-patients" class="bg-white border border-gray-300 rounded-lg w-full p-2 mb-2"><option>1</option><option selected>2</option><option>3</option><option>4</option></select>
-              <div class="mt-3 space-y-2">
-                <label class="block text-sm text-gray-700">Force hazards:</label>
-                <div class="grid grid-cols-2 gap-1 text-sm">${['Fuel Spill','Fire','Battery Fire','Wall','Lamppost'].map(h => `<label class="flex items-center gap-2"><input type="checkbox" class="force-hazard-trauma" value="${h}"/><span>${h}</span></label>`).join('')}</div>
-                <label class="block text-sm text-gray-700 mt-2">Hazard probability (<span id="hpLabelT">42</span>%):</label>
-                <input id="opt-hp-trauma" type="range" min="0" max="100" value="42" class="w-full" oninput="document.getElementById('hpLabelT').textContent = this.value">
-              </div>
-              <button id="genTrauma" class="btn btn-secondary w-full mt-3">Generate Trauma</button>
-            </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div class="bg-gray-50 p-4 rounded-lg border">
+                  <h3 class="text-lg font-bold mb-2">Parameters</h3>
+                  ${isRtc ? `
+                  <label class="block text-sm text-gray-700 mb-1">Vehicles</label>
+                  <select id="rtc-vehicles" class="bg-white border border-gray-300 rounded-lg w-full p-2 mb-2"><option>1</option><option selected>2</option><option>3</option></select>
+                  ` : ''}
+                  <label class="block text-sm text-gray-700 mb-1">Patients</label>
+                  <select id="patient-count" class="bg-white border border-gray-300 rounded-lg w-full p-2 mb-2">
+                    <option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option>
+                  </select>
+             </div>
+             <div class="bg-gray-50 p-4 rounded-lg border">
+                  <h3 class="text-lg font-bold mb-2">Hazards</h3>
+                   <div class="mt-3 space-y-2">
+                     ${isRtc ? `<label class="flex items-center gap-2"><input id="opt-evhaz" type="checkbox" class="h-4 w-4"><span class="text-sm">Include EV battery hazard if EV present</span></label>` : ''}
+                    <label class="block text-sm text-gray-700">Force hazards:</label>
+                    <div class="grid grid-cols-2 gap-1 text-sm">${hazardPool.map(h => `<label class="flex items-center gap-2"><input type="checkbox" class="force-hazard" value="${h.type}"/><span>${h.type}</span></label>`).join('')}</div>
+                    <label class="block text-sm text-gray-700 mt-2">Hazard probability (<span id="hpLabel">${isRtc ? 55: 42}</span>%):</label>
+                    <input id="opt-hp" type="range" min="0" max="100" value="${isRtc ? 55: 42}" class="w-full" oninput="document.getElementById('hpLabel').textContent = this.value">
+                  </div>
+             </div>
+          </div>
+          <div class="text-center mt-4">
+            <button id="generate-btn" class="btn btn-primary w-full md:w-1/2">Generate Scenario</button>
           </div>
         </div>`;
-        const rtcPatientCount = document.getElementById('rtc-patients');
-        const traumaPatientCount = document.getElementById('trauma-patients');
-        const updateSelectors = () => renderPatientInjurySelectors(parseInt(document.getElementById('rtc-patients').value, 10)); // Always base on RTC for now
-        rtcPatientCount.addEventListener('change', updateSelectors);
-        traumaPatientCount.addEventListener('change', () => renderPatientInjurySelectors(parseInt(traumaPatientCount.value, 10)));
-        renderPatientInjurySelectors(parseInt(rtcPatientCount.value, 10)); // Initial render
+
+        document.getElementById('patient-count').addEventListener('change', (e) => renderPatientInjurySelectors(parseInt(e.target.value, 10), type));
+        renderPatientInjurySelectors(2, type); // Initial render for 2 patients
+    }
+
+    function showMainMenu() {
+        const app = document.getElementById('app');
+        app.innerHTML = `
+        <div id="main-menu" class="bg-white p-6 rounded-lg shadow-lg border text-center">
+            <h2 class="text-2xl font-bold mb-4">Select Scenario Type</h2>
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                 <button id="show-rtc" class="btn btn-primary p-6 text-xl">RTC Scenario</button>
+                 <button id="show-trauma" class="btn btn-secondary p-6 text-xl">Trauma Scenario</button>
+            </div>
+        </div>`;
     }
 
     function renderSetupScreen(scenario) {
@@ -949,7 +813,7 @@
       const app = document.getElementById('app');
       app.innerHTML = `
         <div id="setup-screen" class="bg-white p-6 rounded-lg shadow-lg space-y-6 border">
-          <div class="flex justify-between items-center"><h2 class="text-2xl font-bold">Instructor Briefing</h2><div class="flex gap-2"><button id="backBtn" class="btn btn-secondary">Back to Menu</button><button id="printBtn" class="btn btn-tertiary">Print Briefing</button></div></div>
+          <div class="flex justify-between items-center"><h2 class="text-2xl font-bold">Instructor Briefing</h2><div class="flex gap-2"><button id="back-to-main" class="btn btn-secondary">Back to Menu</button><button id="printBtn" class="btn btn-tertiary">Print Briefing</button></div></div>
           <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
             <div class="lg:col-span-3 bg-gray-50 p-4 rounded-lg border"><h3 class="text-xl font-bold mb-2">Top-Down View</h3><canvas id="setupCanvas" width="${scenario.canvas.width}" height="${scenario.canvas.height}" class="w-full h-auto bg-gray-200 rounded"></canvas></div>
             <div class="lg:col-span-2 bg-gray-50 p-4 rounded-lg border"><h3 class="text-xl font-bold mb-2">Incident Details</h3><div class="text-sm space-y-2"><p><strong>Location:</strong> ${scenario.location}</p><p><strong>Time Limit:</strong> <span class="font-bold text-red-600">${scenario.timeLimit} mins</span></p><p><strong>Hazards:</strong> <span class="text-yellow-600">${scenario.hazards}</span></p>${(scenario.vehicles||[]).map((v,i)=>`<div class="bg-white p-2 rounded border mt-2"><h4 class="font-bold">Vehicle ${String.fromCharCode(65+i)} — ${v.type}</h4><p class="text-xs">Pos: ${v.position.name} | Dmg: ${v.damage}</p><p class="text-xs">UHSS: ${v.hasUHSS?'Yes':'No'} | EV: ${v.isEV?'Yes':'No'}</p></div>`).join('')}</div></div>
@@ -1155,40 +1019,44 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      showMenu();
+      showMainMenu();
       document.getElementById('app').addEventListener('click', e => {
         const target = e.target;
-        if (target.id === 'genRtc' || target.id === 'genTrauma') {
-          const isRtc = target.id === 'genRtc';
-          const prefix = isRtc ? 'rtc' : 'trauma';
-          const patientCount = parseInt(document.getElementById(`${prefix}-patients`).value, 10);
+        
+        if (target.id === 'show-rtc') { showScenarioGenerator('rtc'); return; }
+        if (target.id === 'show-trauma') { showScenarioGenerator('trauma'); return; }
+        if (target.id === 'back-to-main') { showMainMenu(); return; }
+
+        if (target.id === 'generate-btn') {
+          const type = document.querySelector('h2').textContent.includes('RTC') ? 'rtc' : 'trauma';
+          const isRtc = type === 'rtc';
+          const patientCount = parseInt(document.getElementById('patient-count').value, 10);
           
           let presetInjuries = Array.from({length: patientCount}, () => []);
             document.querySelectorAll('.patient-injury-select').forEach(sel => {
                 const patientIndex = parseInt(sel.dataset.patientIndex, 10);
                 if (patientIndex < patientCount && sel.value) {
-                    const existingForPatient = presetInjuries[patientIndex] || [];
-                    existingForPatient.push(sel.value);
-                    presetInjuries[patientIndex] = existingForPatient;
+                    presetInjuries[patientIndex].push(sel.value);
                 }
             });
 
-
           const options = {
-            includeEVBatteryHazard: document.getElementById(`opt-evhaz${isRtc ? '' : ''}`)?.checked,
-            hazardProbability: Number(document.getElementById(`opt-hp${isRtc ? '' : '-trauma'}`)?.value) / 100,
-            forceHazards: [...document.querySelectorAll(`.force-hazard${isRtc ? '' : '-trauma'}:checked`)].map(cb => cb.value),
+            hazardProbability: Number(document.getElementById('opt-hp')?.value) / 100,
+            forceHazards: [...document.querySelectorAll('.force-hazard:checked')].map(cb => cb.value),
             presetInjuries
           };
+          if(isRtc) {
+              options.includeEVBatteryHazard = document.getElementById('opt-evhaz')?.checked;
+          }
+          
           const scenario = isRtc
-            ? generateRtcScenario(parseInt(document.getElementById(`${prefix}-vehicles`)?.value || 1, 10), patientCount, options)
+            ? generateRtcScenario(parseInt(document.getElementById(`rtc-vehicles`)?.value || 0, 10), patientCount, options)
             : generateTraumaScenario(patientCount, options);
           scenario.scoresheets = {}; // Initialise scoresheet object
           renderSetupScreen(scenario);
           return;
         }
 
-        if (target.id === 'backBtn') showMenu();
         if (target.id === 'printBtn') window.print();
         if (target.id === 'startSimBtn') {
             const liveSimElement = renderLiveSim(state.scenario);
@@ -1205,7 +1073,7 @@
             input.value = '';
         }
         if (target.id === 'finishBtn') renderDebrief(state.scenario);
-        if (target.id === 'newScenarioBtn') showMenu();
+        if (target.id === 'newScenarioBtn') showMainMenu();
         if (target.id === 'exportPdfBtn') exportDebriefAsPdf();
       });
     });
