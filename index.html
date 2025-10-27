@@ -204,94 +204,174 @@
           vitals: { ACVPU: 'A', HR: 80, RR: 16, SBP: 120, SpO2: 99, CRT: 2 },
           deterioration: {}, interventions: {}
         },
-        'Tension Pneumothorax': {
-          name: 'Tension Pneumothorax', type: 'major', canSelfExtricate: false, bodyPart: 'chest_left', marker: 'T',
-          moulage: 'Distended neck veins, hyper-resonant chest, tracheal deviation (late).',
-          briefing: 'Extreme shortness of breath, cannot complete sentences.',
-          vitals: { ACVPU: 'C', HR: 135, RR: 38, SBP: 85, SpO2: 82, CRT: 4 },
-          deterioration: { SpO2: -4, SBP: -5, HR: 5, CRT: 1 },
-          interventions: { 'Needle Decompression': { key: 'Needle Decompression', effect: { SpO2: 10, SBP: 10, RR: -8 }, stopsDeterioration: true, feedback: 'Needle decompression performed, releasing pressure.' } }
+        'Minor Head Injury': {
+          name: 'Minor Head Injury', type: 'minor', canSelfExtricate: true, bodyPart: 'head', marker: 'HI',
+          moulage: 'Small scalp laceration, appears dazed.', briefing: 'Slightly confused, repeats questions.',
+          vitals: { ACVPU: 'C', HR: 90, RR: 18, SBP: 130, SpO2: 98, CRT: 2 },
+          deterioration: { ACVPU: -0.5 },
+          interventions: { 'Immobilise': { key: 'Immobilise', effect: {}, stopsDeterioration: true, feedback: 'Patient immobilised as precaution.' } }
         },
-        'Catastrophic Haemorrhage (Thigh)': {
-          name: 'Catastrophic Haemorrhage (Thigh)', type: 'major', canSelfExtricate: false, bodyPart: 'leg_right', marker: 'C',
-          moulage: 'Pulsatile bleed, clothing soaked.',
-          briefing: 'Pale, clammy, very anxious.',
-          vitals: { ACVPU: 'V', HR: 140, RR: 30, SBP: 80, SpO2: 92, CRT: 4 },
-          deterioration: { SBP: -8, HR: 6, ACVPU: -1, CRT: 1 },
-          interventions: { 'Apply Tourniquet': { key: 'Apply Tourniquet', effect: { SBP: 15, HR: -20 }, stopsDeterioration: true, feedback: 'Tourniquet applied. Haemorrhage controlled.' } }
+        'C-Spine Injury': {
+            name: 'C-Spine Injury', type: 'major', canSelfExtricate: false, bodyPart: 'spine', marker: 'CSP',
+            moulage: 'Patient holding head, pain in neck.', briefing: 'Reports neck pain, tingling in arms.',
+            vitals: { ACVPU: 'A', HR: 70, RR: 18, SBP: 110, SpO2: 99, CRT: 2 },
+            deterioration: {},
+            interventions: { 'Full Spinal Immobilisation': { key: 'Full Spinal Immobilisation', effect: {}, stopsDeterioration: true, feedback: 'Patient fully immobilised.' } }
         },
-        'Severe Head Injury': {
-          name: 'Severe Head Injury', type: 'major', canSelfExtricate: false, bodyPart: 'head', marker: 'H',
-          moulage: 'Laceration to forehead, one pupil dilated.',
-          briefing: 'Responds to pain only.',
-          vitals: { ACVPU: 'P', HR: 55, RR: 26, SBP: 180, SpO2: 95, CRT: 2 },
-          deterioration: { ACVPU: -1, RR: -2 },
-          interventions: { 'Airway Management': { key: 'Airway Management', effect: { RR: 2, SpO2: 2 }, stopsDeterioration: true, feedback: 'Airway manoeuvre performed, halting deterioration.' } }
+        'Thoracic Spinal Injury': {
+            name: 'Thoracic Spinal Injury', type: 'major', canSelfExtricate: false, bodyPart: 'spine', marker: 'TSP',
+            moulage: 'Patient unable to move legs.', briefing: 'Reports no sensation below the waist.',
+            vitals: { ACVPU: 'A', HR: 60, RR: 16, SBP: 90, SpO2: 98, CRT: 3 },
+            deterioration: { SBP: -2 },
+            interventions: { 'Full Spinal Immobilisation': { key: 'Full Spinal Immobilisation', effect: {}, stopsDeterioration: true, feedback: 'Patient fully immobilised.' } }
         },
-        'Lateral Flail Chest': {
-          name: 'Lateral Flail Chest', type: 'major', canSelfExtricate: false, bodyPart: 'chest_left', marker: 'F',
-          moulage: 'Bruising over left chest, paradoxical movement.',
-          briefing: 'Shallow, slow breathing; becoming unresponsive.',
-          vitals: { ACVPU: 'P', HR: 130, RR: 6, SBP: 90, SpO2: 86, CRT: 3 },
-          deterioration: { SpO2: -5, RR: -1, ACVPU: -1 },
-          interventions: { 'Positive Pressure Ventilation': { key: 'Positive Pressure Ventilation', effect: { SpO2: 8, RR: 6 }, stopsDeterioration: true, feedback: 'PPV initiated, assisting breathing.' } }
+        'Simple Pneumothorax (Left)': {
+            name: 'Simple Pneumothorax (Left)', type: 'moderate', canSelfExtricate: true, bodyPart: 'chest_left', marker: 'PTX-L',
+            moulage: 'Reduced breath sounds on the left.', briefing: 'Sharp left-sided chest pain, short of breath.',
+            vitals: { ACVPU: 'A', HR: 110, RR: 28, SBP: 115, SpO2: 93, CRT: 2 },
+            deterioration: { SpO2: -2, RR: 2 },
+            interventions: {}
         },
-        'Unstable Pelvic Fracture': {
-          name: 'Unstable Pelvic Fracture', type: 'major', canSelfExtricate: false, bodyPart: 'pelvis', marker: 'P',
-          moulage: 'Bruising over pelvic wings, leg length discrepancy.',
-          briefing: 'Severe pelvic pain, distressed.',
-          vitals: { ACVPU: 'V', HR: 130, RR: 28, SBP: 80, SpO2: 92, CRT: 4 },
-          deterioration: { SBP: -10, HR: 8, CRT: 1 },
-          interventions: { 'Apply Pelvic Binder': { key: 'Apply Pelvic Binder', effect: { SBP: 10 }, stopsDeterioration: true, feedback: 'Pelvic binder applied, providing stability.' } }
+        'Simple Pneumothorax (Right)': {
+            name: 'Simple Pneumothorax (Right)', type: 'moderate', canSelfExtricate: true, bodyPart: 'chest_right', marker: 'PTX-R',
+            moulage: 'Reduced breath sounds on the right.', briefing: 'Sharp right-sided chest pain, short of breath.',
+            vitals: { ACVPU: 'A', HR: 110, RR: 28, SBP: 115, SpO2: 93, CRT: 2 },
+            deterioration: { SpO2: -2, RR: 2 },
+            interventions: {}
         },
-        'Open Femur Fracture': {
-          name: 'Open Femur Fracture', type: 'major', canSelfExtricate: false, bodyPart: 'leg_left', marker: 'OF',
-          moulage: 'Bone visible through wound, heavy bleeding.',
-          briefing: 'Screaming in pain, bleeding heavily.',
-          vitals: { ACVPU: 'A', HR: 120, RR: 28, SBP: 95, SpO2: 96, CRT: 3 },
-          deterioration: { HR: 5, SBP: -5, CRT: 1 },
-          interventions: { 'Apply Traction Splint': { key: 'Apply Traction Splint', effect: { SBP: 10, HR: -15 }, stopsDeterioration: true, feedback: 'Splint applied and haemorrhage controlled.' } }
+        'Haemothorax (Left)': {
+            name: 'Haemothorax (Left)', type: 'major', canSelfExtricate: false, bodyPart: 'chest_left', marker: 'HTX-L',
+            moulage: 'Dull percussion on left chest.', briefing: 'Short of breath, becoming pale.',
+            vitals: { ACVPU: 'V', HR: 125, RR: 30, SBP: 90, SpO2: 90, CRT: 3 },
+            deterioration: { SBP: -5, HR: 5, SpO2: -2 },
+            interventions: {}
         },
-        'Asthmatic Exacerbation': {
-          name: 'Asthmatic Exacerbation', type: 'moderate', canSelfExtricate: true, bodyPart: 'chest_centre', marker: 'A',
-          moulage: 'Wheeze audible, accessory muscle use.',
-          briefing: 'History of asthma, struggling to speak.',
-          vitals: { ACVPU: 'A', HR: 110, RR: 32, SBP: 130, SpO2: 89, CRT: 2 },
-          deterioration: { SpO2: -2, RR: 2 },
-          interventions: {}
+         'Haemothorax (Right)': {
+            name: 'Haemothorax (Right)', type: 'major', canSelfExtricate: false, bodyPart: 'chest_right', marker: 'HTX-R',
+            moulage: 'Dull percussion on right chest.', briefing: 'Short of breath, becoming pale.',
+            vitals: { ACVPU: 'V', HR: 125, RR: 30, SBP: 90, SpO2: 90, CRT: 3 },
+            deterioration: { SBP: -5, HR: 5, SpO2: -2 },
+            interventions: {}
         },
-        'Severe Laceration (Forearm)': {
-          name: 'Severe Laceration (Forearm)', type: 'minor', canSelfExtricate: true, bodyPart: 'arm_left', marker: 'W',
-          moulage: 'Deep laceration to forearm, steady dark red flow.',
-          briefing: 'Alert but in pain, worried about bleeding.',
-          vitals: { ACVPU: 'A', HR: 100, RR: 20, SBP: 115, SpO2: 98, CRT: 2 },
-          deterioration: { HR: 2 },
-          interventions: { 'Apply Wound Dressing': { key: 'Apply Wound Dressing', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Dressing applied. Bleeding controlled.' } }
+        'Rib Fractures (Left)': {
+            name: 'Rib Fractures (Left)', type: 'minor', canSelfExtricate: true, bodyPart: 'chest_left', marker: 'RIB-L',
+            moulage: 'Tenderness over left ribs.', briefing: 'Sharp pain on breathing.',
+            vitals: { ACVPU: 'A', HR: 95, RR: 22, SBP: 130, SpO2: 97, CRT: 2 },
+            deterioration: { RR: 1 },
+            interventions: { 'Pain Relief': { key: 'Pain Relief', effect: { HR: -5 }, stopsDeterioration: true, feedback: 'Analgesia provided.' } }
         },
-        'Wrist Fracture': {
-          name: 'Wrist Fracture', type: 'minor', canSelfExtricate: true, bodyPart: 'arm_right', marker: '#',
-          moulage: 'Visible deformity to wrist ("dinner fork").',
-          briefing: 'Severe wrist pain.',
-          vitals: { ACVPU: 'A', HR: 95, RR: 18, SBP: 125, SpO2: 99, CRT: 2 },
-          deterioration: { HR: 1 },
-          interventions: { 'Apply Splint': { key: 'Apply Splint', effect: { HR: -5 }, stopsDeterioration: true, feedback: 'Wrist splinted, pain reduced.' } }
+        'Rib Fractures (Right)': {
+            name: 'Rib Fractures (Right)', type: 'minor', canSelfExtricate: true, bodyPart: 'chest_right', marker: 'RIB-R',
+            moulage: 'Tenderness over right ribs.', briefing: 'Sharp pain on breathing.',
+            vitals: { ACVPU: 'A', HR: 95, RR: 22, SBP: 130, SpO2: 97, CRT: 2 },
+            deterioration: { RR: 1 },
+            interventions: { 'Pain Relief': { key: 'Pain Relief', effect: { HR: -5 }, stopsDeterioration: true, feedback: 'Analgesia provided.' } }
         },
-        'Elderly Fall + Head Laceration': {
-          name: 'Elderly Fall + Head Laceration', type: 'minor', canSelfExtricate: true, bodyPart: 'head', marker: 'L',
-          moulage: 'Small scalp wound, oozing blood.',
-          briefing: '80-year-old on anticoagulants, now confused.',
-          vitals: { ACVPU: 'C', HR: 80, RR: 18, SBP: 140, SpO2: 97, CRT: 2 },
-          deterioration: { ACVPU: -1 },
-          interventions: { 'Immobilise & Dress Wound': { key: 'Immobilise & Dress Wound', effect: {}, stopsDeterioration: true, feedback: 'Patient immobilised and wound dressed.' } }
+        'Sucking Chest Wound (Left)': {
+            name: 'Sucking Chest Wound (Left)', type: 'major', canSelfExtricate: false, bodyPart: 'chest_left', marker: 'SCW-L',
+            moulage: 'Bubbling wound on left chest.', briefing: 'Gasping for breath.',
+            vitals: { ACVPU: 'V', HR: 130, RR: 35, SBP: 90, SpO2: 88, CRT: 3 },
+            deterioration: { SpO2: -5, SBP: -5 },
+            interventions: { 'Apply Chest Seal': { key: 'Apply Chest Seal', effect: { SpO2: 6, RR: -5 }, stopsDeterioration: true, feedback: 'Chest seal applied.' } }
         },
-        'Chemical Burn (Arm)': {
-          name: 'Chemical Burn (Arm)', type: 'moderate', canSelfExtricate: false, bodyPart: 'arm_right', marker: 'B',
-          moulage: 'Skin blistering and redness, chemical odour.',
-          briefing: 'Severe stinging pain after exposure.',
-          vitals: { ACVPU: 'A', HR: 105, RR: 20, SBP: 125, SpO2: 98, CRT: 2 },
-          deterioration: { HR: 3 },
-          interventions: { 'Irrigate & Dress Burn': { key: 'Irrigate & Dress Burn', effect: { HR: -5 }, stopsDeterioration: true, feedback: 'Burn irrigated and dressed.' } }
-        }
+        'Sucking Chest Wound (Right)': {
+            name: 'Sucking Chest Wound (Right)', type: 'major', canSelfExtricate: false, bodyPart: 'chest_right', marker: 'SCW-R',
+            moulage: 'Bubbling wound on right chest.', briefing: 'Gasping for breath.',
+            vitals: { ACVPU: 'V', HR: 130, RR: 35, SBP: 90, SpO2: 88, CRT: 3 },
+            deterioration: { SpO2: -5, SBP: -5 },
+            interventions: { 'Apply Chest Seal': { key: 'Apply Chest Seal', effect: { SpO2: 6, RR: -5 }, stopsDeterioration: true, feedback: 'Chest seal applied.' } }
+        },
+        'Open Fracture Humerus (Left)': {
+            name: 'Open Fracture Humerus (Left)', type: 'moderate', canSelfExtricate: true, bodyPart: 'arm_left', marker: 'OFH-L',
+            moulage: 'Bone end visible on upper arm.', briefing: 'Severe arm pain, visible bleeding.',
+            vitals: { ACVPU: 'A', HR: 110, RR: 22, SBP: 110, SpO2: 98, CRT: 2 },
+            deterioration: { HR: 3, SBP: -2 },
+            interventions: { 'Splint & Dress': { key: 'Splint & Dress', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted and wound dressed.' } }
+        },
+        'Open Fracture Humerus (Right)': {
+            name: 'Open Fracture Humerus (Right)', type: 'moderate', canSelfExtricate: true, bodyPart: 'arm_right', marker: 'OFH-R',
+            moulage: 'Bone end visible on upper arm.', briefing: 'Severe arm pain, visible bleeding.',
+            vitals: { ACVPU: 'A', HR: 110, RR: 22, SBP: 110, SpO2: 98, CRT: 2 },
+            deterioration: { HR: 3, SBP: -2 },
+            interventions: { 'Splint & Dress': { key: 'Splint & Dress', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted and wound dressed.' } }
+        },
+        'Closed Fracture Humerus (Left)': {
+            name: 'Closed Fracture Humerus (Left)', type: 'minor', canSelfExtricate: true, bodyPart: 'arm_left', marker: 'CFH-L',
+            moulage: 'Deformity and swelling of upper arm.', briefing: 'Severe arm pain.',
+            vitals: { ACVPU: 'A', HR: 100, RR: 20, SBP: 120, SpO2: 99, CRT: 2 },
+            deterioration: { HR: 2 },
+            interventions: { 'Splint Arm': { key: 'Splint Arm', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted.' } }
+        },
+        'Closed Fracture Humerus (Right)': {
+            name: 'Closed Fracture Humerus (Right)', type: 'minor', canSelfExtricate: true, bodyPart: 'arm_right', marker: 'CFH-R',
+            moulage: 'Deformity and swelling of upper arm.', briefing: 'Severe arm pain.',
+            vitals: { ACVPU: 'A', HR: 100, RR: 20, SBP: 120, SpO2: 99, CRT: 2 },
+            deterioration: { HR: 2 },
+            interventions: { 'Splint Arm': { key: 'Splint Arm', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Arm splinted.' } }
+        },
+        'Open Fracture Tibia/Fibula (Left)': {
+            name: 'Open Fracture Tibia/Fibula (Left)', type: 'moderate', canSelfExtricate: false, bodyPart: 'leg_left', marker: 'OFT-L',
+            moulage: 'Deformed lower leg with bone protruding.', briefing: 'Severe leg pain, unable to move.',
+            vitals: { ACVPU: 'A', HR: 115, RR: 24, SBP: 105, SpO2: 97, CRT: 2 },
+            deterioration: { HR: 4, SBP: -3 },
+            interventions: { 'Splint & Dress Leg': { key: 'Splint & Dress Leg', effect: { HR: -15 }, stopsDeterioration: true, feedback: 'Leg splinted and wound dressed.' } }
+        },
+        'Open Fracture Tibia/Fibula (Right)': {
+            name: 'Open Fracture Tibia/Fibula (Right)', type: 'moderate', canSelfExtricate: false, bodyPart: 'leg_right', marker: 'OFT-R',
+            moulage: 'Deformed lower leg with bone protruding.', briefing: 'Severe leg pain, unable to move.',
+            vitals: { ACVPU: 'A', HR: 115, RR: 24, SBP: 105, SpO2: 97, CRT: 2 },
+            deterioration: { HR: 4, SBP: -3 },
+            interventions: { 'Splint & Dress Leg': { key: 'Splint & Dress Leg', effect: { HR: -15 }, stopsDeterioration: true, feedback: 'Leg splinted and wound dressed.' } }
+        },
+        'Closed Fracture Tibia/Fibula (Left)': {
+            name: 'Closed Fracture Tibia/Fibula (Left)', type: 'minor', canSelfExtricate: false, bodyPart: 'leg_left', marker: 'CFT-L',
+            moulage: 'Grossly swollen and deformed lower leg.', briefing: 'Agonising leg pain.',
+            vitals: { ACVPU: 'A', HR: 105, RR: 22, SBP: 115, SpO2: 98, CRT: 2 },
+            deterioration: { HR: 2 },
+            interventions: { 'Splint Leg': { key: 'Splint Leg', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Leg splinted.' } }
+        },
+        'Closed Fracture Tibia/Fibula (Right)': {
+            name: 'Closed Fracture Tibia/Fibula (Right)', type: 'minor', canSelfExtricate: false, bodyPart: 'leg_right', marker: 'CFT-R',
+            moulage: 'Grossly swollen and deformed lower leg.', briefing: 'Agonising leg pain.',
+            vitals: { ACVPU: 'A', HR: 105, RR: 22, SBP: 115, SpO2: 98, CRT: 2 },
+            deterioration: { HR: 2 },
+            interventions: { 'Splint Leg': { key: 'Splint Leg', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Leg splinted.' } }
+        },
+        'Bilateral Femur Fractures': {
+            name: 'Bilateral Femur Fractures', type: 'major', canSelfExtricate: false, bodyPart: 'pelvis', marker: 'BFF',
+            moulage: 'Both thighs are swollen and deformed.', briefing: 'Extreme pain, pale and distressed.',
+            vitals: { ACVPU: 'V', HR: 140, RR: 30, SBP: 80, SpO2: 92, CRT: 4 },
+            deterioration: { SBP: -10, HR: 8 },
+            interventions: { 'Apply Traction Splints': { key: 'Apply Traction Splints', effect: { SBP: 15, HR: -20 }, stopsDeterioration: true, feedback: 'Bilateral traction splints applied.' } }
+        },
+        'Abdominal Evisceration': {
+            name: 'Abdominal Evisceration', type: 'major', canSelfExtricate: false, bodyPart: 'abdomen', marker: 'AE',
+            moulage: 'Intestines visible through abdominal wound.', briefing: 'Distressed, trying to hold abdomen.',
+            vitals: { ACVPU: 'V', HR: 130, RR: 28, SBP: 95, SpO2: 94, CRT: 3 },
+            deterioration: { SBP: -5, HR: 4 },
+            interventions: { 'Cover with Clingfilm': { key: 'Cover with Clingfilm', effect: { HR: -5 }, stopsDeterioration: true, feedback: 'Wound covered with clingfilm.' } }
+        },
+        'Burns (10%)': {
+            name: 'Burns (10%)', type: 'moderate', canSelfExtricate: true, bodyPart: 'chest_centre', marker: 'B10',
+            moulage: 'Reddened, blistering skin on chest and arms.', briefing: 'Severe pain from burns.',
+            vitals: { ACVPU: 'A', HR: 115, RR: 24, SBP: 110, SpO2: 98, CRT: 2 },
+            deterioration: { HR: 3 },
+            interventions: { 'Cool & Cover Burns': { key: 'Cool & Cover Burns', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Burns cooled and covered.' } }
+        },
+        'Burns (20%)': {
+            name: 'Burns (20%)', type: 'major', canSelfExtricate: false, bodyPart: 'chest_centre', marker: 'B20',
+            moulage: 'Extensive blistering and charring on torso.', briefing: 'In severe pain, starting to shiver.',
+            vitals: { ACVPU: 'V', HR: 130, RR: 28, SBP: 100, SpO2: 95, CRT: 3 },
+            deterioration: { SBP: -5, HR: 5 },
+            interventions: { 'Cool & Cover Burns': { key: 'Cool & Cover Burns', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Burns cooled and covered.' } }
+        },
+        'Crush Injury': {
+            name: 'Crush Injury', type: 'major', canSelfExtricate: false, bodyPart: 'pelvis', marker: 'CR',
+            moulage: 'Pelvis pinned under heavy object.', briefing: 'Trapped for over 15 minutes, pain in crushed area.',
+            vitals: { ACVPU: 'A', HR: 100, RR: 22, SBP: 110, SpO2: 98, CRT: 2 },
+            deterioration: {}, // Deterioration occurs on release
+            interventions: { 'Release Crush': { key: 'Release Crush', effect: { SBP: -30, HR: 20 }, stopsDeterioration: false, feedback: 'Crush released, monitor for reperfusion injury!' } }
+        },
       },
       ampleHistory: {
         allergies: ['NKDA', 'Penicillin', 'Latex', 'Nuts'],
