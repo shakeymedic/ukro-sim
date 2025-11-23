@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>UKRO High-Fidelity Scenario Simulator (Pro)</title>
+  <title>UKRO High-Fidelity Scenario Simulator (v2.1)</title>
 
   <!-- External Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -17,7 +17,6 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
 
   <style>
     :root{
@@ -29,19 +28,16 @@
     }
     body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: #1f2937; }
     
-    /* Header & Branding */
     .ukro-header {
       background: linear-gradient(to right, #ffffff, #f0fdf4);
       border-bottom: 4px solid var(--ukro-blue);
     }
     
-    /* Custom Scrollbar for Logs */
     .custom-scroll::-webkit-scrollbar { width: 6px; }
     .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
     .custom-scroll::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
     .custom-scroll::-webkit-scrollbar-thumb:hover { background: #555; }
 
-    /* Button Styles */
     .btn { transition: all 0.2s; border-bottom-width: 3px; position: relative; overflow: hidden; }
     .btn:active { transform: translateY(2px); border-bottom-width: 1px; margin-top: 2px; }
     .btn-primary { background-color: var(--ukro-blue); border-color: #00246f; color: white; }
@@ -49,14 +45,10 @@
     .btn-secondary { background-color: var(--ukro-red); border-color: #8f0d22; color: white; }
     .btn-secondary:hover { filter: brightness(110%); }
     .btn-tertiary { background-color: #f59e0b; border-color: #b45309; color: white; }
-    .btn-tertiary:hover { filter: brightness(110%); }
     .btn-ghost { background: white; color: var(--ukro-navy); border: 1px solid #e5e7eb; border-bottom: 3px solid #d1d5db; }
     .btn-ghost:hover { background: #f9fafb; }
 
-    /* Animations */
-    .flash-red {
-      animation: flash-red-anim 1.5s ease-in-out infinite;
-    }
+    .flash-red { animation: flash-red-anim 1.5s ease-in-out infinite; }
     @keyframes flash-red-anim {
       0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); border-color: #fee2e2; }
       50% { box-shadow: 0 0 20px 0px rgba(220, 38, 38, 0.5); border-color: #dc2626; background-color: #fef2f2; }
@@ -65,21 +57,15 @@
     .fade-in { animation: fadeIn 0.3s ease-in; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Tab Logic */
-    .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.3s; }
-    .tab-btn.active { background-color: var(--ukro-blue); color: white; border-color: var(--ukro-navy); }
-    
-    /* Inner Card Tabs */
-    .inner-tab-btn { @apply text-xs font-bold px-2 py-1 rounded text-gray-500 hover:bg-gray-100; }
-    .inner-tab-btn.active { @apply bg-blue-100 text-blue-700; }
+    .inner-tab-content { display: none; }
+    .inner-tab-content.active { display: block; animation: fadeIn 0.3s; }
+    .inner-tab-btn { @apply text-xs font-bold px-2 py-1 rounded text-gray-500 hover:bg-gray-100; cursor: pointer; }
+    .inner-tab-btn.active { background-color: #dbeafe; color: #1d4ed8; }
 
-    /* Print Overrides */
     @media print {
       body { background: white; }
       .no-print { display: none !important; }
       .print-only { display: block !important; }
-      #setup-screen, #debrief-screen { border: none; box-shadow: none; }
       canvas { border: 1px solid #000; }
     }
   </style>
@@ -87,15 +73,15 @@
 
 <body class="min-h-screen flex flex-col">
 
-  <!-- Navigation / Header -->
+  <!-- Header -->
   <header class="ukro-header p-4 shadow-sm no-print">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-3">
         <!-- WMEBEM Logo -->
-        <img src="images/wmebem-logo.png" alt="WMEBEM Logo" class="h-12 w-auto object-contain">
+        <img src="images/wmebem-logo.png" alt="WMEBEM Logo" class="h-12 w-auto object-contain" onerror="this.style.display='none'">
         <div>
-          <h1 class="text-xl font-bold text-gray-900 leading-tight">UKRO Simulator</h1>
-          <p class="text-xs text-gray-500 font-medium">High-Fidelity Instructor Tool</p>
+            <h1 class="text-xl font-bold text-gray-900 leading-tight">UKRO Simulator <span class="text-blue-600 text-sm align-top">v2.1</span></h1>
+            <p class="text-xs text-gray-500 font-medium">High-Fidelity Instructor Tool</p>
         </div>
       </div>
       <div class="flex gap-3 items-center">
@@ -106,28 +92,19 @@
            <i class="fa-solid fa-circle-question mr-1"></i> Help
          </button>
          <!-- UKRO Logo -->
-         <img src="images/UKRO logo.png" alt="UKRO Logo" class="h-10 w-auto object-contain ml-2 hidden sm:block">
+         <img src="images/UKRO logo.png" alt="UKRO Logo" class="h-10 w-auto object-contain ml-2 hidden sm:block" onerror="this.style.display='none'">
       </div>
     </div>
   </header>
 
-  <!-- Main Content Area -->
+  <!-- Main Content -->
   <main class="flex-grow w-full max-w-7xl mx-auto p-4 md:p-6">
     <div id="app" class="w-full">
-      <!-- Content is injected here by JS -->
       <div class="flex justify-center items-center h-64">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-800"></div>
       </div>
     </div>
   </main>
-
-  <!-- Footer -->
-  <footer class="bg-white border-t border-gray-200 mt-auto py-6 no-print">
-    <div class="max-w-7xl mx-auto text-center text-gray-400 text-sm">
-      <p>West Midlands Evidence Based Emergency Medicine &copy; 2024</p>
-      <p class="text-xs mt-1">Licensed under CC BY-NC-SA 4.0</p>
-    </div>
-  </footer>
 
   <!-- Help Modal -->
   <dialog id="help-modal" class="p-0 rounded-xl shadow-2xl backdrop:bg-gray-900/50">
@@ -137,9 +114,7 @@
         <button onclick="document.getElementById('help-modal').close()" class="text-white hover:text-gray-200"><i class="fa-solid fa-xmark fa-lg"></i></button>
       </div>
       <div class="p-6 text-center">
-         <!-- U-STEP OUT Image -->
-         <img src="images/ustepout.png" alt="U-STEP OUT Guide" class="max-w-full h-auto mx-auto rounded border border-gray-200 shadow-sm">
-         
+         <img src="images/ustepout.png" alt="U-STEP OUT Guide" class="max-w-full h-auto mx-auto rounded border border-gray-200 shadow-sm" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<p class=text-red-500>Image missing: images/ustepout.png</p>')">
          <div class="mt-6 flex justify-end">
           <button onclick="document.getElementById('help-modal').close()" class="btn btn-primary px-4 py-2 rounded">Close</button>
         </div>
@@ -147,99 +122,56 @@
     </div>
   </dialog>
 
-  <!-- Application Logic -->
   <script>
-    /**
-     * UKRO Simulator - Single File Application
-     * Refactored for modularity within a single scope.
-     * v3.4 - Expanded Action Buttons & Casualty Tabs
-     */
-
     /* ================= CONSTANTS & CONFIG ================= */
     const CONFIG = {
         CANVAS_W: 900,
         CANVAS_H: 520,
-        COLORS: {
-            blue: '#0033A0',
-            red: '#C8102E',
-            green: '#10b981',
-            amber: '#f59e0b',
-            slate: '#64748b'
-        }
     };
-
     const ACVPU_SCALE = ['U', 'P', 'V', 'C', 'A'];
 
     /* ================= DATA STORE ================= */
     const FrameworkData = {
         scoresheets: {
-            command: [
-                'Arrival Message & Windscreen Report', 
-                'Initial Scene Assessment', 
-                '360 Degree Survey Completed',
-                'Hazards Identified & Managed',
-                'Tactical Plan Formulated',
-                'Inner/Outer Cordons Established',
-                'Dynamic Risk Assessment (DRA)',
-                'Effective Communication with Team',
-                'Liaison with other Agencies'
-            ],
-            technical: [
-                'Vehicle Stabilisation (Initial)',
-                'Vehicle Stabilisation (Secondary)',
-                'Glass Management (Peel & Reveal)',
-                'Tool Staging & Safety Area',
-                'Space Creation Plan Agreed',
-                'Hydraulic Tool Operations Safe',
-                'Extrication Pathway Created',
-                'Sharps Management / Protection'
-            ],
-            trauma: [
-                'Scene Safety & PPE', 
-                'Casualty Contact & Reassurance', 
-                'C-Spine Manual Stabilisation', 
-                '<C>ABCDE Primary Survey', 
-                'Airway Management',
-                'Oxygen Therapy Initiated',
-                'Hemorrhage Control',
-                'Fracture Immobilisation',
-                'Casualty Protection (Blankets/Shields)',
-                'ATMIST Handover'
-            ]
+            command: ['Scene assessment', 'Tactical Plan', 'Communication', 'Risk Assessment', 'Inner/Outer Cordons', 'Team Briefing'],
+            technical: ['Stabilisation (Pri)', 'Glass Management', 'Tool Staging', 'Space Creation', 'Extrication Path', 'Sharps Protection'],
+            trauma: ['Scene Safety', 'C-Spine Control', '<C>ABCDE Survey', 'Oxygen Therapy', 'Haemorrhage Control', 'Splintage', 'ATMIST Handover']
         },
         actions: {
-            Airway: ['Open Airway', 'Suction', 'OPA Inserted', 'NPA Inserted', 'i-gel / LMA', 'ET Tube (Medic)'],
-            Breathing: ['High Flow O2 (15L)', 'Titrated O2', 'BVM Ventilation', 'Needle Decompression', 'Chest Seal Applied', 'Reassess RR'],
-            Circulation: ['Check Pulse', 'Cap Refill', 'Direct Pressure', 'Tourniquet', 'Wound Packing', 'Pelvic Binder', 'IV Access', 'TXA Administered', 'Fluids Started'],
-            Disability: ['Check ACVPU', 'Check Pupils', 'Check Blood Glucose', 'C-Spine Collar', 'Blocks & Tape'],
-            Exposure: ['Cut Clothing', 'Check Back', 'Applying Blanket', 'Active Warming'],
-            Drugs: ['Paracetamol', 'Ibuprofen', 'Entonox', 'Morphine (Medic)', 'Ondansetron']
+            Airway: ['Open Airway', 'Suction', 'OPA', 'NPA', 'i-gel', 'ET Tube'],
+            Breathing: ['15L O2', 'Titrated O2', 'BVM', 'Needle Decomp', 'Chest Seal', 'Reassess RR'],
+            Circulation: ['Check Pulse', 'Cap Refill', 'Direct Pressure', 'Tourniquet', 'Wound Packing', 'Pelvic Binder', 'IV Access', 'TXA', 'Fluids'],
+            Disability: ['Check ACVPU', 'Pupils', 'Blood Glucose', 'Temp', 'Collar & Blocks'],
+            Exposure: ['Cut Clothing', 'Check Back', 'Blanket', 'Active Warming'],
+            Drugs: ['Paracetamol', 'Ibuprofen', 'Entonox', 'Morphine', 'Ondansetron']
         },
         injuries: {
-            'Uninjured': { name: 'Uninjured', type: 'none', context:['rtc', 'trauma'], visual: 'Alert and orientated. No visible injuries.', vitals: { ACVPU: 'A', HR: 80, RR: 16, SBP: 120, SpO2: 99, CRT: 2 }, deterioration: {}, interventions: {} },
-            'Minor Head Injury': { name: 'Minor Head Injury', type: 'minor', context:['rtc', 'trauma'], visual: 'Small cut to forehead. Dazed but talking.', vitals: { ACVPU: 'C', HR: 95, RR: 18, SBP: 130, SpO2: 98, CRT: 2 }, deterioration: { ACVPU: -0.5 }, interventions: { 'Immobilise': { key: 'Immobilise', effect: {}, stopsDeterioration: true, feedback: 'C-Spine immobilised.' } } },
-            'Severe Head Injury': { name: 'Severe Head Injury', type: 'major', context:['rtc', 'trauma'], visual: 'Deep laceration to scalp. Incoherent speech. One pupil dilated.', vitals: { ACVPU: 'P', HR: 55, RR: 10, SBP: 180, SpO2: 92, CRT: 2 }, deterioration: { ACVPU: -1, RR: -1, SpO2: -2 }, interventions: { 'Airway Adjunct': { key: 'Airway Adjunct', effect: { RR: 4, SpO2: 4 }, stopsDeterioration: true, feedback: 'Airway secured.' } } },
-            'Tension Pneumothorax': { name: 'Tension Pneumothorax', type: 'major', context:['rtc', 'trauma'], visual: 'Cyanosed lips. Veins distended. Struggling for breath.', vitals: { ACVPU: 'C', HR: 140, RR: 35, SBP: 80, SpO2: 85, CRT: 4 }, deterioration: { SpO2: -4, SBP: -5, HR: 5, CRT: 1 }, interventions: { 'Needle Decompression': { key: 'Needle Decompression', effect: { SpO2: 12, SBP: 15, RR: -10 }, stopsDeterioration: true, feedback: 'Decompression successful. Hiss heard.' } } },
-            'Catastrophic Haemorrhage': { name: 'Catastrophic Haemorrhage', type: 'major', context:['rtc', 'trauma'], visual: 'Arterial bleed from limb. Pool of blood forming rapidly.', vitals: { ACVPU: 'V', HR: 150, RR: 30, SBP: 75, SpO2: 90, CRT: 5 }, deterioration: { SBP: -10, HR: 5, ACVPU: -1, CRT: 1 }, interventions: { 'Apply Tourniquet': { key: 'Apply Tourniquet', effect: { SBP: 20, HR: -20 }, stopsDeterioration: true, feedback: 'Tourniquet tight. Bleeding controlled.' } } },
-            'Femur Fracture': { name: 'Femur Fracture', type: 'major', context:['rtc', 'trauma'], visual: 'Thigh swollen and deformed. Screaming in pain.', vitals: { ACVPU: 'A', HR: 120, RR: 24, SBP: 100, SpO2: 97, CRT: 3 }, deterioration: { SBP: -4, HR: 3 }, interventions: { 'Traction Splint': { key: 'Traction Splint', effect: { HR: -10, SBP: 5 }, stopsDeterioration: true, feedback: 'Traction applied. Pain reduced.' } } },
-            'Flail Chest': { name: 'Flail Chest', type: 'major', context:['rtc', 'trauma'], visual: 'Paradoxical chest movement on left side. Shallow breathing.', vitals: { ACVPU: 'A', HR: 125, RR: 30, SBP: 110, SpO2: 88, CRT: 2 }, deterioration: { SpO2: -3, RR: 1 }, interventions: { 'Assist Ventilation': { key: 'Assist Ventilation', effect: { SpO2: 8, RR: -5 }, stopsDeterioration: true, feedback: 'BVM Ventilation initiated.' } } },
-            'Spinal Injury (C-Spine)': { name: 'Spinal Injury (C-Spine)', type: 'major', context:['rtc'], visual: 'Complaining of severe neck pain. Pins and needles in fingers.', vitals: { ACVPU: 'A', HR: 70, RR: 16, SBP: 110, SpO2: 98, CRT: 2 }, deterioration: {}, interventions: { 'Collar & Blocks': { key: 'Collar & Blocks', effect: {}, stopsDeterioration: true, feedback: 'Full immobilisation applied.' } } },
-            'Burn (Chemical)': { name: 'Chemical Burn', type: 'moderate', context:['trauma'], visual: 'Redness and blistering on arm. Strong chemical smell.', vitals: { ACVPU: 'A', HR: 110, RR: 22, SBP: 120, SpO2: 98, CRT: 2 }, deterioration: { HR: 2 }, interventions: { 'Irrigation': { key: 'Irrigation', effect: { HR: -10 }, stopsDeterioration: true, feedback: 'Wound irrigated copiously.' } } },
-            'Cardiac Arrest (Electrocution)': { name: 'Cardiac Arrest', type: 'critical', context:['trauma'], visual: 'Unresponsive. Not breathing. Electrical burns visible.', vitals: { ACVPU: 'U', HR: 0, RR: 0, SBP: 0, SpO2: 0, CRT: 0 }, deterioration: {}, interventions: { 'CPR & Defib': { key: 'CPR & Defib', effect: { HR: 80, SBP: 100, SpO2: 90, ACVPU: 'U' }, stopsDeterioration: true, feedback: 'ROSC Achieved.' } } }
+            'Uninjured': { name: 'Uninjured', type: 'none', context:['rtc', 'trauma'], visual: 'Alert. No visible injuries.', vitals: { ACVPU: 'A', HR: 80, RR: 16, SBP: 120, SpO2: 99, CRT: 2 }, deterioration: {}, interventions: {} },
+            'Minor Head Injury': { name: 'Minor Head Injury', type: 'minor', context:['rtc', 'trauma'], visual: 'Cut to forehead. Dazed.', vitals: { ACVPU: 'C', HR: 95, RR: 18, SBP: 130, SpO2: 98, CRT: 2 }, deterioration: { ACVPU: -0.2 }, interventions: { 'Immobilise': { key: 'Immobilise', effect: {}, stopsDeterioration: true, feedback: 'C-Spine immobilised.' } } },
+            'Severe Head Injury': { name: 'Severe Head Injury', type: 'major', context:['rtc', 'trauma'], visual: 'Deep scalp lac. Incoherent.', vitals: { ACVPU: 'P', HR: 55, RR: 10, SBP: 180, SpO2: 92, CRT: 2 }, deterioration: { ACVPU: -0.5, RR: -0.5, SpO2: -1 }, interventions: { 'Airway Adjunct': { key: 'Airway Adjunct', effect: { RR: 4, SpO2: 4 }, stopsDeterioration: true, feedback: 'Airway secured.' } } },
+            'Tension Pneumothorax': { name: 'Tension Pneumothorax', type: 'major', context:['rtc', 'trauma'], visual: 'Cyanosed. Veins distended. Struggling.', vitals: { ACVPU: 'C', HR: 140, RR: 35, SBP: 80, SpO2: 85, CRT: 4 }, deterioration: { SpO2: -2, SBP: -3, HR: 3, CRT: 0.5 }, interventions: { 'Needle Decompression': { key: 'Needle Decompression', effect: { SpO2: 12, SBP: 15, RR: -10 }, stopsDeterioration: true, feedback: 'Hiss heard. Stats improving.' } } },
+            'Simple Pneumothorax': { name: 'Simple Pneumothorax', type: 'moderate', context:['rtc', 'trauma'], visual: 'Short of breath. Pain on inspiration.', vitals: { ACVPU: 'A', HR: 110, RR: 28, SBP: 115, SpO2: 93, CRT: 2 }, deterioration: { SpO2: -1, RR: 1 }, interventions: {} },
+            'Catastrophic Haemorrhage': { name: 'Catastrophic Haemorrhage', type: 'major', context:['rtc', 'trauma'], visual: 'Arterial bleed. Pool of blood.', vitals: { ACVPU: 'V', HR: 150, RR: 30, SBP: 75, SpO2: 90, CRT: 5 }, deterioration: { SBP: -4, HR: 3, ACVPU: -0.5 }, interventions: { 'Apply Tourniquet': { key: 'Apply Tourniquet', effect: { SBP: 20, HR: -20 }, stopsDeterioration: true, feedback: 'Bleeding controlled.' } } },
+            'Femur Fracture': { name: 'Femur Fracture', type: 'major', context:['rtc', 'trauma'], visual: 'Thigh deformed. Screaming.', vitals: { ACVPU: 'A', HR: 120, RR: 24, SBP: 100, SpO2: 97, CRT: 3 }, deterioration: { SBP: -2, HR: 2 }, interventions: { 'Traction Splint': { key: 'Traction Splint', effect: { HR: -10, SBP: 5 }, stopsDeterioration: true, feedback: 'Traction applied.' } } },
+            'Flail Chest': { name: 'Flail Chest', type: 'major', context:['rtc', 'trauma'], visual: 'Paradoxical chest movement.', vitals: { ACVPU: 'A', HR: 125, RR: 30, SBP: 110, SpO2: 88, CRT: 2 }, deterioration: { SpO2: -2, RR: 0.5 }, interventions: { 'Assist Ventilation': { key: 'Assist Ventilation', effect: { SpO2: 8, RR: -5 }, stopsDeterioration: true, feedback: 'BVM initiated.' } } },
+            'Cardiac Arrest': { name: 'Cardiac Arrest', type: 'critical', context:['trauma'], visual: 'Unresponsive. Not breathing.', vitals: { ACVPU: 'U', HR: 0, RR: 0, SBP: 0, SpO2: 0, CRT: 0 }, deterioration: {}, interventions: { 'CPR & Defib': { key: 'CPR & Defib', effect: { HR: 80, SBP: 100, SpO2: 90, ACVPU: 'U' }, stopsDeterioration: true, feedback: 'ROSC Achieved.' } } },
+            'Spinal Injury (Thoracic)': { name: 'Spinal Injury (Thoracic)', type: 'major', context:['rtc'], visual: 'No movement in legs. Back pain.', vitals: { ACVPU: 'A', HR: 60, RR: 16, SBP: 85, SpO2: 98, CRT: 3 }, deterioration: { SBP: -1 }, interventions: {} },
+            'Open Tib/Fib Fracture': { name: 'Open Tib/Fib Fracture', type: 'major', context:['rtc', 'trauma'], visual: 'Bone protruding from lower leg.', vitals: { ACVPU: 'A', HR: 110, RR: 20, SBP: 110, SpO2: 98, CRT: 2 }, deterioration: { HR: 2, SBP: -1 }, interventions: { 'Splinting': { key: 'Splinting', effect: { HR: -5 }, stopsDeterioration: true, feedback: 'Leg splinted.' } } },
+            'Pelvic Fracture': { name: 'Pelvic Fracture', type: 'major', context:['rtc', 'trauma'], visual: 'Pelvic instability. Pain.', vitals: { ACVPU: 'A', HR: 130, RR: 26, SBP: 90, SpO2: 95, CRT: 3 }, deterioration: { SBP: -3, HR: 3 }, interventions: { 'Pelvic Binder': { key: 'Pelvic Binder', effect: { SBP: 10, HR: -10 }, stopsDeterioration: true, feedback: 'Binder applied.' } } }
         },
         ample: {
-            allergies: ['NKDA', 'Penicillin', 'Latex', 'Nuts', 'Morphine'],
-            medications: ['None', 'Warfarin', 'Apixaban', 'Insulin', 'Salbutamol', 'Bisoprolol'],
-            pastHistory: ['Asthma', 'T2 Diabetes', 'Hypertension', 'Ischemic Heart Disease', 'Epilepsy', 'None'],
-            lastMeal: ['Breakfast 2hrs ago', 'Sandwich at lunch', 'Tea', 'Fasted'],
-            events: ['Driving home', 'Passenger', 'Cyclist', 'Working at height', 'Industrial accident']
+            allergies: ['NKDA', 'Penicillin', 'Latex', 'Nuts', 'Morphine', 'Codeine'],
+            medications: ['None', 'Warfarin', 'Apixaban', 'Insulin', 'Salbutamol', 'Bisoprolol', 'Ramipril', 'Metformin'],
+            pastHistory: ['Asthma', 'T2 Diabetes', 'Hypertension', 'Ischemic Heart Disease', 'Epilepsy', 'None', 'COPD', 'Previous MI'],
+            lastMeal: ['Breakfast 2hrs ago', 'Sandwich at lunch', 'Tea', 'Fasted', 'Snack 1hr ago'],
+            events: ['Driving home from work', 'Passenger in vehicle', 'Cyclist struck by car', 'Working at height', 'Industrial machinery accident', 'Fell down stairs']
         },
         vehicles: {
             'Saloon': { type: 'Saloon Car', capacity: 5, isEV: false, hasUHSS: false },
             'SUV': { type: 'SUV', capacity: 7, isEV: false, hasUHSS: true },
-            'Hatchback': { type: 'Hatchback', capacity: 5, isEV: false, hasUHSS: false },
             'Tesla Model 3': { type: 'Tesla Model 3', capacity: 5, isEV: true, hasUHSS: true },
-            'Van': { type: 'Commercial Van', capacity: 3, isEV: false, hasUHSS: false }
+            'Van': { type: 'Commercial Van', capacity: 3, isEV: false, hasUHSS: false },
+            'Hatchback': { type: 'Hatchback', capacity: 5, isEV: false, hasUHSS: false }
         },
         hazards: [
             { type: 'Fuel Spill', minR: 35, maxR: 70 },
@@ -257,29 +189,15 @@
         randInt: (min, max) => Math.floor(Math.random() * (max - min + 1) + min),
         choice: (arr) => arr[Math.floor(Math.random() * arr.length)],
         clamp: (v, lo, hi) => Math.max(lo, Math.min(hi, v)),
-        
-        rotateX: (x, y, deg) => {
-             const r = (deg * Math.PI) / 180;
-             return x * Math.cos(r) - y * Math.sin(r);
-        },
-        rotateY: (x, y, deg) => {
-             const r = (deg * Math.PI) / 180;
-             return x * Math.sin(r) + y * Math.cos(r);
-        },
-        
-        generateId: () => Math.random().toString(36).substr(2, 9)
+        rotateX: (x, y, deg) => { const r = (deg * Math.PI) / 180; return x * Math.cos(r) - y * Math.sin(r); },
+        rotateY: (x, y, deg) => { const r = (deg * Math.PI) / 180; return x * Math.sin(r) + y * Math.cos(r); }
     };
 
-    /* ================= CLASSES ================= */
+    /* ================= LOGIC CLASSES ================= */
 
-    /**
-     * Handles the logic for creating random scenarios
-     */
     class ScenarioGenerator {
         static createCasualty(id, context, forcedInjuries = []) {
             const injuryKeys = Object.keys(FrameworkData.injuries).filter(k => FrameworkData.injuries[k].context.includes(context));
-            
-            // Determine injuries based on forced input or random choice
             let selectedInjuries = [];
             const forced = forcedInjuries[id] || [];
             
@@ -289,48 +207,46 @@
                     else if (val && val !== 'None') selectedInjuries.push(val);
                 });
             } else {
-                // Completely random default
                 selectedInjuries.push(Math.random() > 0.3 ? Utils.choice(injuryKeys) : 'Uninjured');
             }
 
-            // Deduplicate
             selectedInjuries = [...new Set(selectedInjuries)];
             if (selectedInjuries.length === 0) selectedInjuries.push('Uninjured');
 
-            // Combine vitals logic
             const injuriesData = selectedInjuries.map(k => ({...FrameworkData.injuries[k], key: k}));
             
-            // Base vitals
             let combinedVitals = { ACVPU: 'A', HR: 80, RR: 16, SBP: 120, SpO2: 99, CRT: 2 };
             let combinedDeterioration = {};
             let interventions = {};
             let visualDescriptions = [];
+            let entrapmentStatus = 'None';
 
             injuriesData.forEach(inj => {
-                // Visuals
                 if(inj.visual) visualDescriptions.push(inj.visual);
-
-                // Vitals: take the "worst" of each category
                 if (ACVPU_SCALE.indexOf(inj.vitals.ACVPU) < ACVPU_SCALE.indexOf(combinedVitals.ACVPU)) combinedVitals.ACVPU = inj.vitals.ACVPU;
                 if (inj.vitals.SBP < combinedVitals.SBP) combinedVitals.SBP = inj.vitals.SBP;
                 if (inj.vitals.SpO2 < combinedVitals.SpO2) combinedVitals.SpO2 = inj.vitals.SpO2;
                 if (inj.vitals.CRT > combinedVitals.CRT) combinedVitals.CRT = inj.vitals.CRT;
-                // HR/RR deviate from normal
                 if (Math.abs(inj.vitals.HR - 80) > Math.abs(combinedVitals.HR - 80)) combinedVitals.HR = inj.vitals.HR;
                 if (Math.abs(inj.vitals.RR - 16) > Math.abs(combinedVitals.RR - 16)) combinedVitals.RR = inj.vitals.RR;
 
-                // Merge Deterioration
                 Object.entries(inj.deterioration || {}).forEach(([k, v]) => {
                     combinedDeterioration[k] = (combinedDeterioration[k] || 0) + v;
                 });
-
-                // Merge Interventions
                 Object.assign(interventions, inj.interventions);
+                
+                // Logic for entrapment (simplified)
+                if (context === 'rtc' && (inj.type === 'major' || inj.type === 'critical')) {
+                    entrapmentStatus = 'Physical (Dashboard/Door)';
+                } else if (context === 'rtc' && inj.type === 'moderate') {
+                    entrapmentStatus = 'Medical (Pain/C-Spine)';
+                }
             });
 
             return {
                 id: id,
                 age: Utils.randInt(18, 85),
+                role: (id === 0) ? 'Driver' : 'Passenger',
                 injuries: injuriesData,
                 visualDescription: visualDescriptions.join(' ') || "Patient appears stable.",
                 vitals: combinedVitals,
@@ -338,8 +254,10 @@
                 deterioration: combinedDeterioration,
                 interventions: interventions,
                 treatedInjuries: new Set(),
-                overrideState: 'normal', // normal, arrest, stabilised, handed_over
+                overrideState: 'normal',
                 vitalsHistory: [],
+                deteriorationAccumulator: {}, // Stores partial deterioration
+                entrapment: entrapmentStatus,
                 ample: {
                     A: Utils.choice(FrameworkData.ample.allergies),
                     M: Utils.choice(FrameworkData.ample.medications),
@@ -355,17 +273,12 @@
             const patientCount = parseInt(config.patients || 2);
             const vehicles = [];
             const casualties = [];
-            
-            // Layout
             const isTJunction = Math.random() > 0.5;
-
-            // Create Vehicles
             const vKeys = Object.keys(FrameworkData.vehicles);
+
             for(let i=0; i<vehicleCount; i++) {
                 const type = Utils.choice(vKeys);
                 const proto = FrameworkData.vehicles[type];
-                
-                // Position logic
                 let x, y, rotation;
                 if (isTJunction) {
                     x = (i===0) ? CONFIG.CANVAS_W * 0.45 : CONFIG.CANVAS_W * 0.55;
@@ -376,447 +289,210 @@
                     y = CONFIG.CANVAS_H * 0.5 + Utils.rand(-20, 20);
                     rotation = Utils.rand(-15, 15);
                 }
-
-                vehicles.push({
-                    id: i,
-                    label: String.fromCharCode(65+i),
-                    ...proto,
-                    x, y, rotation,
-                    color: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'][i % 4],
-                    damage: 'Frontal Impact'
+                vehicles.push({ 
+                    id: i, 
+                    label: String.fromCharCode(65+i), 
+                    ...proto, 
+                    x, y, rotation, 
+                    color: ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'][i % 4], 
+                    damage: (i===0 && isTJunction) ? 'Frontal Impact (Severe)' : 'Side Impact (Intrusion)',
+                    position: (Math.random() > 0.8) ? 'On Side' : 'Upright'
                 });
             }
 
-            // Create Casualties
-            for(let i=0; i<patientCount; i++) {
-                casualties.push(this.createCasualty(i, 'rtc', config.presetInjuries));
-            }
+            for(let i=0; i<patientCount; i++) casualties.push(this.createCasualty(i, 'rtc', config.presetInjuries));
+            vehicles.forEach((v, idx) => { v.passengers = casualties.filter((_, ci) => ci % vehicles.length === idx); });
 
-            // Assign Casualties to Vehicles (roughly)
-            vehicles.forEach((v, idx) => {
-                v.passengers = casualties.filter((_, ci) => ci % vehicles.length === idx);
-            });
-
-            // Hazards
             const hazards = [];
-            const hazardPool = FrameworkData.hazards;
-            
-            // Force hazards
             (config.forceHazards || []).forEach(hType => {
-                const templ = hazardPool.find(h => h.type === hType);
-                if(templ) hazards.push(this._spawnHazard(templ));
+                const templ = FrameworkData.hazards.find(h => h.type === hType);
+                if(templ) hazards.push({ ...templ, x: Utils.rand(100, CONFIG.CANVAS_W - 100), y: Utils.rand(100, CONFIG.CANVAS_H - 100), rotation: Utils.rand(0, 360) });
             });
-            
-            // Random hazards
             if (Math.random() < (config.hazardProb || 0.5)) {
-                const h = this._spawnHazard(Utils.choice(hazardPool));
-                if (h) hazards.push(h);
+                const h = FrameworkData.hazards[Math.floor(Math.random()*FrameworkData.hazards.length)];
+                hazards.push({ ...h, x: Utils.rand(100, CONFIG.CANVAS_W - 100), y: Utils.rand(100, CONFIG.CANVAS_H - 100), rotation: Utils.rand(0, 360) });
             }
 
-            return {
-                type: 'RTC',
-                title: 'Road Traffic Collision',
-                location: isTJunction ? 'Urban Junction' : 'A-Road',
-                timeLimit: 20,
-                vehicles,
-                casualties,
-                hazards,
-                layout: isTJunction ? 'T-Junction' : 'Head-On',
-                scoresheet: {}
-            };
+            return { type: 'RTC', title: 'Road Traffic Collision', location: isTJunction ? 'Urban Junction' : 'A-Road', timeLimit: 20, vehicles, casualties, hazards, layout: isTJunction ? 'T-Junction' : 'Head-On' };
         }
 
         static createTrauma(config) {
             const patientCount = parseInt(config.patients || 2);
             const casualties = [];
-            for(let i=0; i<patientCount; i++) {
-                casualties.push(this.createCasualty(i, 'trauma', config.presetInjuries));
-            }
-
-            const hazards = [];
-            (config.forceHazards || []).forEach(hType => {
-                const templ = FrameworkData.hazards.find(h => h.type === hType);
-                if(templ) hazards.push(this._spawnHazard(templ));
-            });
-
-            return {
-                type: 'Trauma',
-                title: 'Industrial/Domestic Trauma',
-                location: 'Industrial Estate',
-                timeLimit: 15,
-                vehicles: [],
-                casualties,
-                hazards,
-                layout: 'Open Area',
-                scoresheet: {}
-            };
-        }
-
-        static _spawnHazard(template) {
-            if(!template) return null;
-            return {
-                ...template,
-                x: Utils.rand(100, CONFIG.CANVAS_W - 100),
-                y: Utils.rand(100, CONFIG.CANVAS_H - 100),
-                rotation: Utils.rand(0, 360)
-            };
+            for(let i=0; i<patientCount; i++) casualties.push(this.createCasualty(i, 'trauma', config.presetInjuries));
+            return { type: 'Trauma', title: 'Trauma Challenge', location: 'Industrial Estate', timeLimit: 15, vehicles: [], casualties, hazards: [], layout: 'Open Area' };
         }
     }
 
-    /**
-     * Canvas Drawing Logic
-     */
+    /* ================= RENDERER ================= */
     class Renderer {
         static draw(canvas, scenario) {
             if(!canvas) return;
             const ctx = canvas.getContext('2d');
             const w = canvas.width;
             const h = canvas.height;
-
-            // Reset
             ctx.clearRect(0,0,w,h);
-
-            // Apply Zoom Scale (1.5x)
-            ctx.save();
-            ctx.translate(w / 2, h / 2);
-            ctx.scale(1.5, 1.5);
-            ctx.translate(-w / 2, -h / 2);
-
-            // Ground
-            ctx.fillStyle = '#e2e8f0'; // Road/Concrete
-            ctx.fillRect(0,0,w,h);
+            ctx.save(); ctx.translate(w / 2, h / 2); ctx.scale(1.5, 1.5); ctx.translate(-w / 2, -h / 2);
             
-            // Grass verges
-            ctx.fillStyle = '#dcfce7';
-            ctx.fillRect(0,0,w, h*0.1);
-            ctx.fillRect(0,h*0.9,w, h*0.1);
-
-            // Road Markings
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 4;
-            ctx.setLineDash([20, 20]);
+            // Background
+            ctx.fillStyle = '#e2e8f0'; ctx.fillRect(0,0,w,h);
+            ctx.fillStyle = '#dcfce7'; ctx.fillRect(0,0,w, h*0.1); ctx.fillRect(0,h*0.9,w, h*0.1);
             
+            // Road
+            ctx.strokeStyle = 'white'; ctx.lineWidth = 4; ctx.setLineDash([20, 20]);
             if (scenario.type === 'RTC') {
                 if (scenario.layout === 'T-Junction') {
-                    // Main road horizontal
                     ctx.beginPath(); ctx.moveTo(0, h/2); ctx.lineTo(w, h/2); ctx.stroke();
-                    // Side road vertical
                     ctx.beginPath(); ctx.moveTo(w/2, h/2); ctx.lineTo(w/2, h); ctx.stroke();
                 } else {
-                    // Single road
                     ctx.beginPath(); ctx.moveTo(0, h/2); ctx.lineTo(w, h/2); ctx.stroke();
                 }
             }
             ctx.setLineDash([]);
 
-            // Draw Hazards
+            // Objects
             scenario.hazards.forEach(haz => this._drawHazard(ctx, haz));
-
-            // Draw Vehicles
             scenario.vehicles.forEach(veh => this._drawVehicle(ctx, veh));
-
-            // Draw Casualties (if loose)
             if (scenario.type === 'Trauma') {
                 scenario.casualties.forEach((cas, i) => {
-                    const cx = w/2 + (i%2===0?50:-50) + Utils.rand(-20,20);
-                    const cy = h/2 + (Math.floor(i/2)*50) + Utils.rand(-20,20);
-                    this._drawCasualty(ctx, cx, cy, `C${i+1}`);
+                    this._drawCasualty(ctx, w/2 + (i%2===0?50:-50) + Utils.rand(-20,20), h/2 + (Math.floor(i/2)*50) + Utils.rand(-20,20), `C${i+1}`);
                 });
             }
-            
-            // Restore context (remove scale)
             ctx.restore();
         }
 
         static _drawVehicle(ctx, v) {
-            ctx.save();
-            ctx.translate(v.x, v.y);
-            ctx.rotate((v.rotation * Math.PI) / 180);
-
-            // Shadow
-            ctx.fillStyle = 'rgba(0,0,0,0.2)';
-            this._roundRect(ctx, -55, -28, 110, 56, 8, true, false);
-
-            // Body
-            ctx.fillStyle = v.color;
-            ctx.strokeStyle = '#334155';
-            ctx.lineWidth = 2;
-            this._roundRect(ctx, -50, -25, 100, 50, 6, true, true);
-
-            // Windscreen
-            ctx.fillStyle = '#cbd5e1';
-            this._roundRect(ctx, -35, -20, 70, 40, 4, true, false);
-
-            // Roof Label
-            ctx.fillStyle = 'rgba(255,255,255,0.8)';
-            ctx.font = 'bold 20px Inter';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(v.label, 0, 0);
-
-            // Indicators
-            if(v.isEV) {
-                ctx.fillStyle = '#10b981';
-                this._roundRect(ctx, -48, -45, 30, 15, 4, true, false);
-                ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Inter'; ctx.fillText('EV', -33, -37);
-            }
-            if(v.hasUHSS) {
-                ctx.fillStyle = '#64748b';
-                this._roundRect(ctx, 18, -45, 30, 15, 4, true, false);
-                ctx.fillStyle = '#fff'; ctx.font = 'bold 8px Inter'; ctx.fillText('UHSS', 33, -37);
-            }
-
-            // Casualties inside
-            if(v.passengers && v.passengers.length > 0) {
-                 v.passengers.forEach((p, idx) => {
-                     const px = (idx % 2 === 0) ? -10 : 10;
-                     const py = (idx < 2) ? -10 : 10;
-                     ctx.fillStyle = '#ef4444';
-                     ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
-                     ctx.fillStyle = 'white'; ctx.font='8px Inter'; ctx.fillText(`C${p.id+1}`, px, py);
-                 });
-            }
-
+            ctx.save(); ctx.translate(v.x, v.y); ctx.rotate((v.rotation * Math.PI) / 180);
+            ctx.fillStyle = 'rgba(0,0,0,0.2)'; this._roundRect(ctx, -55, -28, 110, 56, 8, true, false);
+            ctx.fillStyle = v.color; ctx.strokeStyle = '#334155'; ctx.lineWidth = 2; this._roundRect(ctx, -50, -25, 100, 50, 6, true, true);
+            ctx.fillStyle = '#cbd5e1'; this._roundRect(ctx, -35, -20, 70, 40, 4, true, false);
+            ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = 'bold 20px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(v.label, 0, 0);
+            if(v.isEV) { ctx.fillStyle = '#10b981'; this._roundRect(ctx, -48, -45, 30, 15, 4, true, false); ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Inter'; ctx.fillText('EV', -33, -37); }
+            if(v.hasUHSS) { ctx.fillStyle = '#64748b'; this._roundRect(ctx, 18, -45, 30, 15, 4, true, false); ctx.fillStyle = '#fff'; ctx.font = 'bold 8px Inter'; ctx.fillText('UHSS', 33, -37); }
+            if(v.passengers) v.passengers.forEach((p, idx) => { ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc((idx % 2 === 0) ? -10 : 10, (idx < 2) ? -10 : 10, 6, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = 'white'; ctx.font='8px Inter'; ctx.fillText(`C${p.id+1}`, (idx % 2 === 0) ? -10 : 10, (idx < 2) ? -10 : 10); });
             ctx.restore();
         }
 
         static _drawHazard(ctx, h) {
-            ctx.save();
-            ctx.translate(h.x, h.y);
-            ctx.rotate((h.rotation || 0) * Math.PI/180);
-
-            if (h.type.includes('Fire')) {
-                ctx.fillStyle = 'rgba(245, 158, 11, 0.4)';
-                ctx.beginPath(); ctx.arc(0,0, h.r || 30, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#dc2626';
-                ctx.font = '24px serif'; ctx.textAlign='center'; ctx.fillText('🔥', 0, 8);
-            } else if (h.type === 'Fuel Spill') {
-                ctx.fillStyle = 'rgba(59, 130, 246, 0.3)';
-                ctx.beginPath(); ctx.ellipse(0,0, 60, 30, 0, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#1e3a8a'; ctx.font='10px Inter'; ctx.fillText('Fuel', -10, 0);
-            } else if (h.type === 'Wall') {
-                ctx.fillStyle = '#71717a';
-                ctx.fillRect(-40, -5, 80, 10);
-            } else {
-                ctx.fillStyle = '#facc15';
-                ctx.beginPath(); ctx.moveTo(0, -15); ctx.lineTo(15, 10); ctx.lineTo(-15, 10); ctx.fill();
-                ctx.fillStyle = 'black'; ctx.font='bold 14px Inter'; ctx.textAlign='center'; ctx.fillText('!', 0, 5);
-            }
+            ctx.save(); ctx.translate(h.x, h.y); ctx.rotate((h.rotation || 0) * Math.PI/180);
+            if (h.type.includes('Fire')) { ctx.fillStyle = 'rgba(245, 158, 11, 0.4)'; ctx.beginPath(); ctx.arc(0,0, h.r || 30, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#dc2626'; ctx.font = '24px serif'; ctx.textAlign='center'; ctx.fillText('🔥', 0, 8); }
+            else if (h.type === 'Fuel Spill') { ctx.fillStyle = 'rgba(59, 130, 246, 0.3)'; ctx.beginPath(); ctx.ellipse(0,0, 60, 30, 0, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#1e3a8a'; ctx.font='10px Inter'; ctx.fillText('Fuel', -10, 0); }
+            else if (h.type === 'Wall') { ctx.fillStyle = '#71717a'; ctx.fillRect(-40, -5, 80, 10); }
+            else { ctx.fillStyle = '#facc15'; ctx.beginPath(); ctx.moveTo(0, -15); ctx.lineTo(15, 10); ctx.lineTo(-15, 10); ctx.fill(); ctx.fillStyle = 'black'; ctx.font='bold 14px Inter'; ctx.textAlign='center'; ctx.fillText('!', 0, 5); }
             ctx.restore();
         }
         
-        static _drawCasualty(ctx, x, y, label) {
-            ctx.fillStyle = '#ef4444';
-            ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = 'white'; ctx.font='bold 10px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(label, x, y);
-        }
-
-        static _roundRect(ctx, x, y, w, h, r, fill, stroke) {
-            ctx.beginPath();
-            ctx.roundRect(x, y, w, h, r);
-            if(fill) ctx.fill();
-            if(stroke) ctx.stroke();
-        }
+        static _drawCasualty(ctx, x, y, label) { ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = 'white'; ctx.font='bold 10px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(label, x, y); }
+        static _roundRect(ctx, x, y, w, h, r, fill, stroke) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); if(fill) ctx.fill(); if(stroke) ctx.stroke(); }
     }
 
-    /**
-     * Main App Controller
-     */
+    /* ================= APP CONTROLLER ================= */
     class App {
         constructor() {
-            this.state = {
-                view: 'menu', // menu, setup, live, debrief
-                scenario: null,
-                logs: [],
-                simRunning: false,
-                simTime: 0,
-                timers: {
-                    sim: null,
-                    clock: null
-                }
-            };
+            this.state = { view: 'menu', scenario: null, logs: [], simRunning: false, simTime: 0, timers: { sim: null, clock: null } };
             this.charts = {};
-            
-            // Try loading saved state
-            this.loadState();
-            
-            // Initialization
             this.render();
-        }
-
-        /* --- LOGIC --- */
-        
-        // --- Persistence Logic ---
-        saveState() {
-            // Because Sets can't be JSON serialized easily, we convert them to arrays
-            if(this.state.scenario) {
-                this.state.scenario.casualties.forEach(c => {
-                    c.treatedInjuriesArray = Array.from(c.treatedInjuries);
-                });
-            }
-            localStorage.setItem('ukro_sim_state', JSON.stringify(this.state));
-        }
-
-        loadState() {
-            const saved = localStorage.getItem('ukro_sim_state');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    this.state = parsed;
-                    
-                    // Rehydrate Sets
-                    if(this.state.scenario) {
-                         this.state.scenario.casualties.forEach(c => {
-                            c.treatedInjuries = new Set(c.treatedInjuriesArray || []);
-                        });
-                    }
-                    
-                    // If we were running, stay paused on reload so user can orient themselves
-                    if (this.state.view === 'live') {
-                         this.state.simRunning = false;
-                    }
-                } catch(e) {
-                    console.error("Failed to load save state", e);
-                    localStorage.removeItem('ukro_sim_state');
-                }
-            }
-        }
-        
-        clearState() {
-            localStorage.removeItem('ukro_sim_state');
-            this.state.scenario = null;
-            this.state.logs = [];
-            this.state.simTime = 0;
-            this.state.simRunning = false;
         }
 
         generateScenario(type, config) {
-            // Safety check
-            if (this.state.scenario && this.state.view !== 'menu' && !confirm("A scenario is currently active. Overwrite it?")) return;
-
-            if (type === 'rtc') {
-                this.state.scenario = ScenarioGenerator.createRTC(config);
-            } else {
-                this.state.scenario = ScenarioGenerator.createTrauma(config);
-            }
+            this.state.scenario = type === 'rtc' ? ScenarioGenerator.createRTC(config) : ScenarioGenerator.createTrauma(config);
             this.state.view = 'setup';
-            this.state.logs = []; // Clear logs
+            this.state.logs = [];
             this.addLog('Scenario generated.', 'system');
-            this.saveState();
             this.render();
-            
-            // Draw canvas after DOM update
-            setTimeout(() => {
-                const cvs = document.getElementById('setupCanvas');
-                if(cvs) Renderer.draw(cvs, this.state.scenario);
-            }, 50);
+            setTimeout(() => { const cvs = document.getElementById('setupCanvas'); if(cvs) Renderer.draw(cvs, this.state.scenario); }, 50);
         }
 
         startSimulation() {
             this.state.view = 'live';
             this.state.simRunning = true;
-            // Only reset time if it's 0 (fresh start)
-            if(this.state.simTime === 0) {
-                 this.addLog(`Simulation started. Time limit: ${this.state.scenario.timeLimit} mins.`, 'command');
-            } else {
-                 this.addLog(`Simulation resumed at ${Math.floor(this.state.simTime/60)}:${(this.state.simTime%60).toString().padStart(2,'0')}.`, 'system');
-            }
-            
-            this.saveState();
-            this.render(); // This re-renders, putting Briefing AND Live UI on screen
             this.startTimers();
-            
-            // Scroll into view
-            setTimeout(() => {
-                const liveSection = document.getElementById('live-container');
-                if(liveSection) liveSection.scrollIntoView({behavior: 'smooth'});
-            }, 100);
+            this.render(); 
+            // Draw canvas again as it was wiped
+            setTimeout(() => { const cvs = document.getElementById('setupCanvas'); if(cvs) Renderer.draw(cvs, this.state.scenario); }, 50);
         }
 
         startTimers() {
-            clearInterval(this.state.timers.clock);
-            clearInterval(this.state.timers.sim);
-
-            // Clock (1s)
+            clearInterval(this.state.timers.clock); clearInterval(this.state.timers.sim);
             this.state.timers.clock = setInterval(() => {
                 if(!this.state.simRunning) return;
                 this.state.simTime++;
                 const timerEl = document.getElementById('sim-timer');
-                if(timerEl) {
-                    const m = Math.floor(this.state.simTime/60).toString().padStart(2,'0');
-                    const s = (this.state.simTime%60).toString().padStart(2,'0');
-                    timerEl.textContent = `${m}:${s}`;
-                }
-                // Periodic Auto-save (every 10s)
-                if(this.state.simTime % 10 === 0) this.saveState();
+                if(timerEl) timerEl.textContent = `${Math.floor(this.state.simTime/60).toString().padStart(2,'0')}:${(this.state.simTime%60).toString().padStart(2,'0')}`;
             }, 1000);
-
-            // Simulation Tick (5s)
-            this.state.timers.sim = setInterval(() => {
-                if(!this.state.simRunning) return;
-                this.tick();
-            }, 5000);
+            this.state.timers.sim = setInterval(() => { if(this.state.simRunning) this.tick(); }, 5000);
         }
 
         togglePause() {
             this.state.simRunning = !this.state.simRunning;
-            const btn = document.getElementById('pauseBtn');
-            if(btn) {
-                btn.innerHTML = this.state.simRunning ? '<i class="fa-solid fa-pause mr-2"></i>Pause' : '<i class="fa-solid fa-play mr-2"></i>Resume';
-                btn.className = this.state.simRunning ? 'btn btn-secondary px-4 py-2 rounded shadow' : 'btn btn-primary px-4 py-2 rounded shadow';
-            }
+            this.renderLive(document.getElementById('live-container')); // Re-render controls
             this.addLog(this.state.simRunning ? 'Simulation Resumed' : 'Simulation Paused', 'system');
-            this.saveState();
         }
 
         tick() {
-            let updateNeeded = false;
             this.state.scenario.casualties.forEach(cas => {
-                // Record history
                 cas.vitalsHistory.push({ t: this.state.simTime, ...cas.vitals });
-
-                // Deterioration logic
+                
+                // Arrest State
                 if (cas.overrideState === 'arrest') {
-                    // Flatline
                     cas.vitals = { ACVPU: 'U', HR: 0, RR: 0, SBP: 0, SpO2: 0, CRT: 0 };
                     return;
                 }
                 
                 if (cas.overrideState === 'stabilised' || cas.overrideState === 'handed_over') return;
 
-                // Apply organic deterioration
-                let deteriorated = false;
-                Object.entries(cas.deterioration).forEach(([k, delta]) => {
-                    // Only if injuries relating to this aren't treated (simplified logic: check if any treated)
-                    // In a complex app, we'd map specific injuries to specific vitals. 
-                    // Here, we stop det. if ALL injuries are treated.
+                // PHYSIOLOGICAL LOGIC (From original)
+                // Check for hypovolaemic shock progression
+                if (cas.vitals.SBP < 60 && ACVPU_SCALE.indexOf(cas.vitals.ACVPU) > ACVPU_SCALE.indexOf('P')) {
+                     cas.vitals.ACVPU = 'P';
+                     this.addLog(`Casualty ${cas.id+1} consciousness dropped to Pain due to hypotension.`, 'bad');
+                }
+                if (cas.vitals.SBP < 50 && ACVPU_SCALE.indexOf(cas.vitals.ACVPU) > ACVPU_SCALE.indexOf('U')) {
+                     cas.vitals.ACVPU = 'U';
+                     this.addLog(`Casualty ${cas.id+1} consciousness dropped to Unresponsive due to severe hypotension.`, 'bad');
+                }
+                if (cas.vitals.SBP < 40) {
+                    cas.overrideState = 'arrest';
+                    this.addLog(`Casualty ${cas.id+1} CARDIAC ARREST (Hypovolaemia).`, 'bad');
+                    return;
+                }
+
+                // SLOW DETERIORATION LOGIC
+                if (Math.random() < 0.15) { 
                     const allTreated = cas.injuries.every(i => cas.treatedInjuries.has(i.key));
-                    
-                    if (!allTreated && delta !== 0) {
-                        const prev = cas.vitals[k];
-                        if (k === 'ACVPU') {
-                            const idx = ACVPU_SCALE.indexOf(prev);
-                            const newIdx = Utils.clamp(idx + delta, 0, 4);
-                            cas.vitals.ACVPU = ACVPU_SCALE[newIdx];
-                            if(idx !== newIdx) deteriorated = true;
-                        } else {
-                            cas.vitals[k] = Math.max(0, Math.round(prev + delta));
-                            if(cas.vitals[k] !== prev) deteriorated = true;
-                        }
+                    if (!allTreated) {
+                        Object.entries(cas.deterioration).forEach(([k, delta]) => {
+                            if (!cas.deteriorationAccumulator[k]) cas.deteriorationAccumulator[k] = 0;
+                            cas.deteriorationAccumulator[k] += delta;
+
+                            // Only apply if whole number reached
+                            if (Math.abs(cas.deteriorationAccumulator[k]) >= 1) {
+                                const change = Math.trunc(cas.deteriorationAccumulator[k]);
+                                cas.deteriorationAccumulator[k] -= change; // Keep remainder
+                                
+                                if (k === 'ACVPU') {
+                                    const idx = ACVPU_SCALE.indexOf(cas.vitals.ACVPU);
+                                    const newIdx = Utils.clamp(idx + change, 0, 4);
+                                    cas.vitals.ACVPU = ACVPU_SCALE[newIdx];
+                                } else {
+                                    cas.vitals[k] = Math.max(0, Math.round(cas.vitals[k] + change));
+                                }
+                            }
+                        });
+                        this.addLog(`Casualty ${cas.id+1} vital signs changing.`, 'bad');
                     }
-                });
+                }
 
-                // Random noise
-                cas.vitals.HR += Math.random() > 0.7 ? (Math.random()>0.5?1:-1) : 0;
-                cas.vitals.RR += Math.random() > 0.8 ? (Math.random()>0.5?1:-1) : 0;
-
-                // Check critical thresholds
-                if (cas.vitals.SBP < 50 && cas.vitals.HR > 0) {
-                    this.addLog(`Casualty ${cas.id+1} is CRITICAL (Hypovolaemia)`, 'bad');
-                    document.getElementById(`cas-card-${cas.id}`)?.classList.add('flash-red');
+                // Random noise (very slight)
+                if(Math.random() > 0.7) cas.vitals.HR += (Math.random()>0.5?1:-1);
+                
+                // CRITICAL LIMITS
+                // Cap HR at 210
+                if (cas.vitals.HR > 210) {
+                    cas.vitals.HR = 210;
+                    this.addLog(`Casualty ${cas.id+1} Tachycardia Critical (HR 210).`, 'bad');
                 }
             });
-
             this.updateLiveVitals();
         }
 
@@ -824,40 +500,54 @@
             const cas = this.state.scenario.casualties.find(c => c.id == casId);
             const inj = cas.injuries.find(i => i.key === injKey);
             const action = inj.interventions[intKey];
-
-            // Apply Effects
             Object.entries(action.effect || {}).forEach(([k,v]) => {
-                if(k === 'RR' || k === 'SpO2') cas.vitals[k] += v;
-                // etc
+                if (typeof v === 'number') cas.vitals[k] += v;
             });
-
-            if (action.stopsDeterioration) {
-                cas.treatedInjuries.add(injKey);
-            }
-
-            // UI Feedback
+            if (action.stopsDeterioration) cas.treatedInjuries.add(injKey);
             this.addLog(`C${parseInt(casId)+1}: ${action.feedback}`, 'good');
-            if(btn) {
-                btn.disabled = true;
-                btn.classList.add('opacity-50', 'cursor-not-allowed');
-                btn.innerHTML = `<i class="fa-solid fa-check mr-1"></i> Done`;
+            if(btn) { btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed'); btn.innerHTML = `<i class="fa-solid fa-check mr-1"></i> Done`; }
+        }
+        
+        toggleArrest(casId) {
+            const cas = this.state.scenario.casualties.find(c => c.id == casId);
+            if (cas.overrideState === 'arrest') {
+                // ROSC
+                cas.overrideState = 'normal';
+                cas.vitals = { ...cas.initialVitals, HR: 90, SBP: 100 }; // Return to some baseline
+                this.addLog(`C${parseInt(casId)+1}: ROSC Achieved.`, 'good');
+            } else {
+                // ARREST
+                cas.overrideState = 'arrest';
+                this.addLog(`C${parseInt(casId)+1}: CARDIAC ARREST CONFIRMED.`, 'bad');
             }
-            this.saveState();
+            this.renderLive(document.getElementById('live-container'));
         }
         
-        logAction(casId, actionText) {
-            this.addLog(`C${parseInt(casId)+1}: ${actionText}`, 'good');
-        }
-        
-        handoverPatient(casId) {
-            if(confirm("Confirm handover to ambulance service? Patient monitoring will stop.")) {
+        triggerEvent(type, casId = null) {
+            let msg = `Dynamic Event: ${type} triggered`;
+            if (casId !== null) {
+                msg += ` for Casualty ${casId+1}`;
                 const cas = this.state.scenario.casualties.find(c => c.id == casId);
-                cas.overrideState = 'handed_over';
-                this.addLog(`C${parseInt(casId)+1}: Handed over to Ambulance Service.`, 'command');
-                this.renderLive(document.getElementById('live-container')); // Re-render to update UI state
+                if (type === 'Seizure') {
+                    // Temporary vitals derangement
+                    cas.vitals.ACVPU = 'U';
+                    cas.vitals.HR = 140;
+                    cas.vitals.SpO2 = 85;
+                    setTimeout(() => { 
+                        cas.vitals.HR = 110; 
+                        cas.vitals.SpO2 = 92; 
+                        this.addLog(`C${casId+1}: Seizure activity ceasing. Post-ictal.`, 'info'); 
+                    }, 15000); 
+                }
+                if (type === 'Agitated') {
+                    cas.vitals.HR += 20;
+                    cas.vitals.RR += 10;
+                }
             }
+            this.addLog(msg, 'bad');
         }
 
+        logAction(casId, actionText) { this.addLog(`C${parseInt(casId)+1}: ${actionText}`, 'good'); }
         addLog(msg, type='info') {
             const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
             this.state.logs.push({ time, msg, type });
@@ -867,340 +557,253 @@
                 const div = document.createElement('div');
                 div.className = `text-sm py-1 border-b border-gray-100 ${color}`;
                 div.innerHTML = `<span class="text-xs text-gray-400 font-mono mr-2">[${time}]</span> ${msg}`;
-                logBox.prepend(div); // Add to top
-                // Limit log size in DOM for performance?
-                if(logBox.children.length > 100) logBox.lastChild.remove();
+                logBox.prepend(div);
             }
         }
 
-        endSimulation() {
-            clearInterval(this.state.timers.clock);
-            clearInterval(this.state.timers.sim);
-            this.state.view = 'debrief';
-            this.state.simRunning = false;
-            this.saveState();
-            this.render();
-            setTimeout(() => this.renderCharts(), 100);
-        }
-        
-        resetApp() {
-            if(confirm("Start a brand new scenario? This will clear current data.")) {
-                this.clearState();
-                this.state.view = 'menu';
-                this.render();
-            }
-        }
-        
         switchCasTab(casId, tabName) {
-            document.querySelectorAll(`#cas-card-${casId} .inner-tab-content`).forEach(el => el.classList.add('hidden'));
-            document.getElementById(`cas-tab-${casId}-${tabName}`).classList.remove('hidden');
+            document.querySelectorAll(`#cas-card-${casId} .inner-tab-content`).forEach(el => {
+                el.classList.remove('active');
+                el.style.display = 'none';
+            });
+            const target = document.getElementById(`cas-tab-${casId}-${tabName}`);
+            target.style.display = 'block';
+            setTimeout(()=>target.classList.add('active'), 10);
             
             document.querySelectorAll(`#cas-card-${casId} .inner-tab-btn`).forEach(el => el.classList.remove('active'));
             document.querySelector(`#cas-card-${casId} [data-tab="${tabName}"]`).classList.add('active');
         }
 
-        /* --- RENDERERS --- */
-
+        /* ================= UI RENDERERS ================= */
         render() {
             const app = document.getElementById('app');
             app.innerHTML = '';
-
-            if (this.state.view === 'menu') {
-                this.renderMenu(app);
-            } else if (this.state.view === 'setup') {
-                this.renderSetup(app);
-            } else if (this.state.view === 'live') {
-                // Combined View Strategy:
-                // 1. Render Setup (Briefing)
-                this.renderSetup(app);
+            if (this.state.view === 'menu') this.renderMenu(app);
+            else if (this.state.view === 'setup') this.renderSetup(app);
+            else if (this.state.view === 'live') {
+                this.renderSetup(app); // Briefing visible
+                const startBtn = app.querySelector('#startBtnContainer');
+                if(startBtn) startBtn.style.display = 'none';
                 
-                // 2. Hide the "Start" button group in the briefing
-                const startBtn = app.querySelector('button[onclick="app.startSimulation()"]');
-                if(startBtn && startBtn.parentElement) startBtn.parentElement.style.display = 'none';
-
-                // 3. Append Live Simulation Container BELOW it
                 const liveContainer = document.createElement('div');
                 liveContainer.id = 'live-container';
                 liveContainer.className = 'mt-8 pt-8 border-t-4 border-gray-300';
                 app.appendChild(liveContainer);
-                
-                // 4. Render Live controls into new container
                 this.renderLive(liveContainer);
-                
-                // 5. Ensure canvas is drawn (since renderSetup wiped it)
-                setTimeout(() => {
-                    const cvs = document.getElementById('setupCanvas');
-                    if(cvs) Renderer.draw(cvs, this.state.scenario);
-                }, 50);
-
-            } else if (this.state.view === 'debrief') {
-                this.renderDebrief(app);
             }
         }
 
         renderMenu(container) {
             container.innerHTML = `
             <div class="max-w-4xl mx-auto space-y-8 animate-fade-in">
-                <div class="text-center space-y-2">
-                    <h2 class="text-3xl font-bold text-gray-800">Select Scenario Type</h2>
-                    <p class="text-gray-500">Choose a template to generate a randomized high-fidelity scenario.</p>
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-gray-800">Select Scenario</h2>
+                    <p class="text-gray-500">Choose a template to generate a randomized scenario.</p>
                 </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- RTC Card -->
-                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-600 hover:shadow-xl transition cursor-pointer group" onclick="document.getElementById('rtc-config').classList.remove('hidden'); document.getElementById('menu-grid').classList.add('hidden')">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
-                                <i class="fa-solid fa-car-burst text-2xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800">RTC Scenario</h3>
-                        </div>
-                        <p class="text-sm text-gray-600">Road traffic collisions involving cars, heavy goods vehicles, or EVs. Includes entrapment and scene hazards.</p>
-                    </div>
-
-                    <!-- Trauma Card -->
-                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-red-600 hover:shadow-xl transition cursor-pointer group" onclick="document.getElementById('trauma-config').classList.remove('hidden'); document.getElementById('menu-grid').classList.add('hidden')">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="h-12 w-12 bg-red-100 rounded-lg flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition">
-                                <i class="fa-solid fa-user-injured text-2xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-800">Trauma Scenario</h3>
-                        </div>
-                        <p class="text-sm text-gray-600">Industrial accidents, falls from height, or medical emergencies in complex environments.</p>
-                    </div>
-                </div>
-
-                <!-- Config Forms (Hidden initially) -->
-                <div id="rtc-config" class="hidden bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                    <h3 class="font-bold text-lg mb-4 border-b pb-2">RTC Parameters</h3>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div><label class="text-xs font-bold text-gray-500">Vehicles</label><select id="rtc-v" class="w-full border p-2 rounded"><option>1</option><option selected>2</option><option>3</option></select></div>
-                        <div><label class="text-xs font-bold text-gray-500">Patients</label><select id="rtc-p" class="w-full border p-2 rounded"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="text-xs font-bold text-gray-500">Forced Hazards</label>
-                        <div class="flex gap-2 flex-wrap mt-1">
-                            ${FrameworkData.hazards.map(h => `<label class="inline-flex items-center gap-1 text-sm bg-gray-50 px-2 py-1 rounded border cursor-pointer"><input type="checkbox" value="${h.type}" class="rtc-h"> ${h.type}</label>`).join('')}
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-600 cursor-pointer hover:shadow-xl transition" onclick="const el = document.getElementById('rtc-opts'); if(el) el.classList.remove('hidden')">
+                        <h3 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-car-burst mr-2"></i>RTC Scenario</h3>
+                        <p class="text-sm text-gray-600 mt-2">Road traffic collisions involving cars, heavy goods vehicles, or EVs. Includes entrapment and scene hazards.</p>
+                        <div id="rtc-opts" class="hidden mt-4 space-y-3">
+                            <select id="rtc-v" class="w-full border p-2 rounded text-sm"><option value="1">1 Vehicle</option><option value="2" selected>2 Vehicles</option><option value="3">3 Vehicles</option></select>
+                            <select id="rtc-p" class="w-full border p-2 rounded text-sm"><option value="1">1 Patient</option><option value="2" selected>2 Patients</option><option value="3">3 Patients</option></select>
+                            <button onclick="event.stopPropagation(); app.generateScenario('rtc', {vehicles: document.getElementById('rtc-v').value, patients: document.getElementById('rtc-p').value})" class="btn btn-primary w-full py-2 rounded">Generate</button>
                         </div>
                     </div>
-                    <div class="flex gap-3">
-                        <button onclick="app.generateScenario('rtc', {vehicles: document.getElementById('rtc-v').value, patients: document.getElementById('rtc-p').value, forceHazards: [...document.querySelectorAll('.rtc-h:checked')].map(c=>c.value)})" class="btn btn-primary px-6 py-2 rounded-lg w-full">Generate</button>
-                        <button onclick="location.reload()" class="btn btn-ghost px-4 py-2 rounded-lg">Cancel</button>
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-red-600 cursor-pointer hover:shadow-xl transition" onclick="const el = document.getElementById('trauma-opts'); if(el) el.classList.remove('hidden')">
+                        <h3 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-user-injured mr-2"></i>Trauma Scenario</h3>
+                        <p class="text-sm text-gray-600 mt-2">Industrial accidents, falls from height, or medical emergencies in complex environments.</p>
+                         <div id="trauma-opts" class="hidden mt-4 space-y-3">
+                            <select id="trauma-p" class="w-full border p-2 rounded text-sm"><option value="1">1 Patient</option><option value="2" selected>2 Patients</option></select>
+                            <button onclick="event.stopPropagation(); app.generateScenario('trauma', {patients: document.getElementById('trauma-p').value})" class="btn btn-secondary w-full py-2 rounded">Generate</button>
+                        </div>
                     </div>
                 </div>
-
-                <div id="trauma-config" class="hidden bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                    <h3 class="font-bold text-lg mb-4 border-b pb-2">Trauma Parameters</h3>
-                    <div class="mb-4">
-                        <div><label class="text-xs font-bold text-gray-500">Patients</label><select id="trauma-p" class="w-full border p-2 rounded"><option>1</option><option selected>2</option><option>3</option></select></div>
-                    </div>
-                    <div class="flex gap-3">
-                        <button onclick="app.generateScenario('trauma', {patients: document.getElementById('trauma-p').value})" class="btn btn-secondary px-6 py-2 rounded-lg w-full">Generate</button>
-                        <button onclick="location.reload()" class="btn btn-ghost px-4 py-2 rounded-lg">Cancel</button>
-                    </div>
-                </div>
-                
-                <!-- ID for hiding grid -->
-                <div id="menu-grid"></div> 
-            </div>
-            `;
+            </div>`;
         }
 
         renderSetup(container) {
             const s = this.state.scenario;
             container.innerHTML = `
             <div class="space-y-6 animate-fade-in">
-                <!-- Top Bar -->
-                <div class="flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200 gap-4">
+                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-900"><i class="fa-solid fa-clipboard-list mr-2 text-blue-600"></i>Instructor Briefing</h2>
-                        <p class="text-sm text-gray-500">Review generated scenario before starting.</p>
+                        <h2 class="text-2xl font-bold text-gray-900">Instructor Briefing</h2>
+                        <p class="text-sm text-gray-500">Scenario: ${s.title} | Location: ${s.location} | Time Limit: ${s.timeLimit} mins</p>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="window.print()" class="btn btn-ghost px-4 py-2 rounded"><i class="fa-solid fa-print mr-1"></i> Print</button>
-                        <button onclick="app.startSimulation()" class="btn btn-primary px-6 py-2 rounded text-lg shadow-lg font-bold">Start Simulation <i class="fa-solid fa-play ml-2"></i></button>
+                    <div id="startBtnContainer" class="flex gap-2">
+                        <button onclick="window.print()" class="btn btn-ghost px-4 py-2 rounded">Print</button>
+                        <button onclick="app.startSimulation()" class="btn btn-primary px-6 py-2 rounded font-bold">Start Simulation</button>
                     </div>
                 </div>
-
+                
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Canvas Visualization -->
-                    <div class="lg:col-span-2 bg-white p-1 rounded-xl shadow border border-gray-200">
-                        <div class="bg-gray-100 rounded-t-lg p-2 flex justify-between items-center border-b">
-                            <span class="font-bold text-sm text-gray-600">Scene Layout: ${s.location}</span>
-                            <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full font-bold">Time Limit: ${s.timeLimit} mins</span>
+                    <!-- Left Column: Visuals -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="bg-white p-1 rounded-xl shadow border border-gray-200">
+                            <div class="p-2 bg-gray-100 border-b text-xs font-bold text-gray-500 uppercase">Scene Layout</div>
+                            <canvas id="setupCanvas" width="${CONFIG.CANVAS_W}" height="${CONFIG.CANVAS_H}" class="w-full h-auto bg-gray-50"></canvas>
                         </div>
-                        <canvas id="setupCanvas" width="${CONFIG.CANVAS_W}" height="${CONFIG.CANVAS_H}" class="w-full h-auto bg-gray-50"></canvas>
+                        
+                        <!-- Vehicle & Hazard Details -->
+                        <div class="bg-white p-4 rounded-xl shadow border border-gray-200">
+                            <h3 class="font-bold text-gray-800 mb-3 border-b pb-2">Scene Assets</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="text-sm font-bold text-blue-700 mb-2">Vehicles</h4>
+                                    ${s.vehicles.length ? s.vehicles.map(v => `
+                                        <div class="text-xs mb-2 p-2 bg-gray-50 rounded border">
+                                            <strong>Vehicle ${v.label}</strong>: ${v.type} (${v.color})<br>
+                                            Position: ${v.position}<br>
+                                            Damage: ${v.damage}<br>
+                                            ${v.isEV ? '<span class="bg-green-100 text-green-800 px-1 rounded font-bold">EV</span>' : ''}
+                                            ${v.hasUHSS ? '<span class="bg-gray-200 text-gray-800 px-1 rounded font-bold">UHSS</span>' : ''}
+                                        </div>
+                                    `).join('') : '<p class="text-xs text-gray-400">No vehicles present.</p>'}
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-amber-700 mb-2">Hazards</h4>
+                                    ${s.hazards.length ? s.hazards.map(h => `
+                                        <div class="text-xs mb-2 p-2 bg-amber-50 rounded border border-amber-200 text-amber-900">
+                                            <i class="fa-solid fa-triangle-exclamation mr-1"></i> <strong>${h.type}</strong>
+                                        </div>
+                                    `).join('') : '<p class="text-xs text-gray-400">No specific hazards detected.</p>'}
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Details Column -->
+                    <!-- Right Column: Casualties -->
                     <div class="space-y-4">
-                        <!-- Casualty Briefs -->
+                        <h3 class="font-bold text-xl text-gray-800">Casualty Profiles</h3>
                         ${s.casualties.map((c, i) => `
                         <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-red-500">
-                            <div class="flex justify-between items-start mb-2">
+                            <div class="flex justify-between items-center mb-2">
                                 <h4 class="font-bold text-lg">Casualty ${i+1}</h4>
-                                <span class="text-xs bg-gray-100 px-2 py-1 rounded">Age ${c.age}</span>
+                                <span class="text-xs bg-gray-100 px-2 py-1 rounded border">${c.role} (${c.age} yrs)</span>
                             </div>
-                            <div class="text-sm space-y-1 mb-3">
-                                <p><span class="font-bold text-gray-500">Injuries:</span> ${c.injuries.map(j => j.name).join(', ')}</p>
-                                <p><span class="font-bold text-gray-500">Vitals:</span> GCS ${c.vitals.ACVPU} | HR ${c.vitals.HR} | SpO2 ${c.vitals.SpO2}%</p>
-                            </div>
-                            <div class="bg-gray-50 p-2 rounded text-xs font-mono text-gray-600">
-                                <strong>AMPLE:</strong> A:${c.ample.A}, M:${c.ample.M}, P:${c.ample.P}, L:${c.ample.L}, E:${c.ample.E}
-                            </div>
-                        </div>
-                        `).join('')}
+                            
+                            <div class="space-y-2 text-sm">
+                                <div class="bg-red-50 p-2 rounded border border-red-100 text-red-800">
+                                    <strong>Injuries:</strong><br>
+                                    ${c.injuries.map(j => `• ${j.name}`).join('<br>')}
+                                </div>
+                                
+                                <div class="bg-yellow-50 p-2 rounded border border-yellow-100 text-yellow-800 text-xs">
+                                    <strong>Entrapment:</strong> ${c.entrapment}
+                                </div>
 
-                        <!-- Hazards -->
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                            <h4 class="font-bold mb-2">Hazards & Risks</h4>
-                            <div class="flex flex-wrap gap-2">
-                                ${s.hazards.length ? s.hazards.map(h => `<span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded border border-amber-200"><i class="fa-solid fa-triangle-exclamation mr-1"></i>${h.type}</span>`).join('') : '<span class="text-gray-400 text-sm">None detected</span>'}
+                                <div class="bg-blue-50 p-2 rounded border border-blue-100 text-blue-800 text-xs">
+                                    <strong class="block mb-1">Initial Vitals:</strong>
+                                    GCS ${c.initialVitals.ACVPU} | HR ${c.initialVitals.HR} | RR ${c.initialVitals.RR}<br>
+                                    BP ${c.initialVitals.SBP} | SpO2 ${c.initialVitals.SpO2}%
+                                </div>
+
+                                <div class="bg-gray-50 p-2 rounded border text-gray-600 text-xs font-mono">
+                                    <strong class="block border-b border-gray-200 mb-1 pb-1">AMPLE History</strong>
+                                    A: ${c.ample.A}<br>
+                                    M: ${c.ample.M}<br>
+                                    P: ${c.ample.P}<br>
+                                    L: ${c.ample.L}<br>
+                                    E: ${c.ample.E}
+                                </div>
                             </div>
-                        </div>
+                        </div>`).join('')}
                     </div>
                 </div>
-            </div>
-            `;
+            </div>`;
         }
 
         renderLive(container) {
             container.innerHTML = `
-            <div class="h-full flex flex-col gap-4 animate-fade-in">
-                <!-- Top Control Bar -->
+            <div class="flex flex-col gap-4 animate-fade-in">
+                <!-- Top Controls -->
                 <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200 flex justify-between items-center sticky top-0 z-10">
                     <div class="flex items-center gap-4">
-                        <div class="bg-gray-900 text-red-500 font-mono text-2xl px-4 py-1 rounded font-bold border border-gray-700 shadow-inner" id="sim-timer">
-                            ${Math.floor(this.state.simTime/60).toString().padStart(2,'0')}:${(this.state.simTime%60).toString().padStart(2,'0')}
-                        </div>
-                        <button id="pauseBtn" onclick="app.togglePause()" class="${this.state.simRunning ? 'btn btn-secondary' : 'btn btn-primary'} px-4 py-2 rounded shadow">
-                            <i class="fa-solid fa-${this.state.simRunning ? 'pause' : 'play'} mr-2"></i>${this.state.simRunning ? 'Pause' : 'Resume'}
-                        </button>
+                        <div class="bg-gray-900 text-red-500 font-mono text-2xl px-4 py-1 rounded font-bold" id="sim-timer">00:00</div>
+                        <button onclick="app.togglePause()" class="btn ${this.state.simRunning ? 'btn-secondary' : 'btn-primary'} px-4 py-2 rounded">${this.state.simRunning ? 'Pause' : 'Resume'}</button>
                     </div>
-                    
-                    <div class="flex gap-2">
-                        <button onclick="app.addLog('Log entry marker added', 'system')" class="btn btn-ghost px-3 py-1 text-sm rounded"><i class="fa-solid fa-bookmark text-blue-500 mr-1"></i> Mark</button>
-                        <button onclick="app.endSimulation()" class="btn btn-primary px-4 py-2 rounded shadow font-bold bg-red-700 border-red-900">Finish & Debrief</button>
-                    </div>
+                    <button onclick="alert('Simulation Ended. Debrief mode not in this demo.')" class="btn btn-tertiary px-4 py-2 rounded">Finish</button>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
-                    <!-- Left Column: Controls -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Control Column -->
                     <div class="space-y-4">
-                        
-                        <!-- Command & Control -->
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-gray-700 mb-3 border-b pb-2">Command & Control</h3>
-                            <div class="space-y-1">
-                                ${FrameworkData.scoresheets.command.map(txt => `<button onclick="app.addLog('${txt} completed', 'command'); this.classList.add('bg-green-100','text-green-800','border-green-200')" class="w-full p-2 text-xs border rounded hover:bg-gray-50 transition text-left"><i class="fa-solid fa-check-circle mr-1 text-gray-400"></i>${txt}</button>`).join('')}
-                            </div>
-                        </div>
-
-                        <!-- Incident Log (Moved Up) -->
+                        <!-- Incident Log -->
                         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex flex-col h-64">
-                            <div class="flex justify-between items-center mb-2">
-                                <h3 class="font-bold text-gray-700 text-sm">Incident Log</h3>
-                                <span class="text-xs text-gray-400">Live Feed</span>
-                            </div>
-                            <!-- Input moved to top -->
-                            <div class="mb-2 flex gap-1">
-                                <input type="text" id="manualLog" placeholder="Type entry..." class="flex-grow border rounded px-2 py-1 text-sm" onkeydown="if(event.key==='Enter') document.getElementById('logBtn').click()">
-                                <button id="logBtn" onclick="const i=document.getElementById('manualLog'); if(i.value){app.addLog(i.value, 'info'); i.value='';}" class="btn btn-primary px-3 py-1 rounded text-xs">Add</button>
-                            </div>
-                            <!-- Log Container -->
+                            <h3 class="font-bold text-gray-700 text-sm mb-2">Incident Log</h3>
                             <div id="log-container" class="flex-grow overflow-y-auto custom-scroll bg-gray-50 p-2 rounded border border-gray-100 font-mono text-xs flex flex-col-reverse"></div>
+                            <div class="mt-2 flex gap-1"><input id="manualLog" class="flex-grow border rounded px-2 text-sm"><button onclick="app.addLog(document.getElementById('manualLog').value, 'command');" class="btn btn-primary px-2 text-xs">Add</button></div>
                         </div>
-
-                        <!-- Technical Scoresheet (Separate) -->
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-gray-700 text-sm mb-2 border-b pb-1">Technical Assessments</h3>
-                            <div class="space-y-1 max-h-40 overflow-y-auto custom-scroll">
-                                ${FrameworkData.scoresheets.technical.map(i => `<label class="flex items-center gap-2 p-1 hover:bg-gray-50 rounded cursor-pointer text-sm"><input type="checkbox" onchange="app.addLog('Tech: ${i}', 'good')"> ${i}</label>`).join('')}
+                        
+                        <!-- Dynamic Events -->
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-red-200">
+                            <h3 class="font-bold text-red-700 text-sm mb-2"><i class="fa-solid fa-bolt mr-1"></i>Dynamic Events</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="app.triggerEvent('New Fire')" class="text-xs bg-red-100 text-red-800 border border-red-200 rounded p-2 hover:bg-red-200">Fire Starts</button>
+                                <button onclick="app.triggerEvent('Fuel Spill')" class="text-xs bg-blue-100 text-blue-800 border border-blue-200 rounded p-2 hover:bg-blue-200">Fuel Leak</button>
+                                ${this.state.scenario.casualties.map(c => `
+                                    <button onclick="app.triggerEvent('Seizure', ${c.id})" class="text-xs bg-purple-100 text-purple-800 border border-purple-200 rounded p-2 hover:bg-purple-200">C${c.id+1} Seizure</button>
+                                    <button onclick="app.triggerEvent('Agitated', ${c.id})" class="text-xs bg-orange-100 text-orange-800 border border-orange-200 rounded p-2 hover:bg-orange-200">C${c.id+1} Agitated</button>
+                                `).join('')}
                             </div>
                         </div>
 
-                        <!-- Medical Scoresheet (Separate) -->
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                            <h3 class="font-bold text-gray-700 text-sm mb-2 border-b pb-1">Medical Assessments</h3>
-                            <div class="space-y-1 max-h-40 overflow-y-auto custom-scroll">
-                                ${FrameworkData.scoresheets.trauma.map(i => `<label class="flex items-center gap-2 p-1 hover:bg-gray-50 rounded cursor-pointer text-sm"><input type="checkbox" onchange="app.addLog('Med: ${i}', 'good')"> ${i}</label>`).join('')}
-                            </div>
+                         <!-- Command Scoresheet -->
+                         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                            <h3 class="font-bold text-gray-700 text-sm mb-2">Scoresheet (Command)</h3>
+                            <div class="space-y-1 text-sm">${FrameworkData.scoresheets.command.map(x=>`<label class="flex items-center gap-2"><input type="checkbox"> ${x}</label>`).join('')}</div>
                         </div>
-
                     </div>
 
-                    <!-- Right Column: Casualties -->
-                    <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-min">
+                    <!-- Casualties Column -->
+                    <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                         ${this.state.scenario.casualties.map(c => this.renderCasualtyCard(c)).join('')}
                     </div>
                 </div>
-            </div>
-            `;
-            // Initial log population
+            </div>`;
             this.state.logs.forEach(l => this.addLog(l.msg, l.type));
         }
 
         renderCasualtyCard(c) {
-            if (c.overrideState === 'handed_over') {
-                return `
-                <div id="cas-card-${c.id}" class="bg-gray-100 rounded-xl border border-gray-200 p-6 text-center opacity-75">
-                    <h3 class="font-bold text-gray-500 mb-2">Casualty ${c.id+1} Handed Over</h3>
-                    <p class="text-sm text-gray-400">Patient care transferred to ambulance service.</p>
-                </div>`;
+            const btnClass = "text-left text-xs p-2 bg-gray-50 border rounded hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition";
+            const genBtns = (list) => list.map(a => `<button onclick="app.logAction(${c.id}, '${a}')" class="${btnClass}">${a}</button>`).join('');
+            
+            // ROSC vs ARREST Button logic
+            let arrestBtnHtml = '';
+            if (c.overrideState === 'arrest') {
+                arrestBtnHtml = `<button onclick="app.toggleArrest(${c.id})" class="text-xs border border-green-600 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 shadow-md animate-pulse font-bold">ROSC</button>`;
+            } else {
+                arrestBtnHtml = `<button onclick="app.toggleArrest(${c.id})" class="text-xs border border-red-200 text-red-700 px-2 py-1 rounded hover:bg-red-50">Arrest</button>`;
             }
 
-            // Generate Action Buttons based on Category
-            const generateActionButtons = (category, list) => {
-                return list.map(act => `<button onclick="app.logAction(${c.id}, '${act}')" class="text-left text-xs p-2 bg-gray-50 border rounded hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition">${act}</button>`).join('');
-            };
-
             return `
-            <div id="cas-card-${c.id}" class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden flex flex-col transition duration-300">
+            <div id="cas-card-${c.id}" class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden flex flex-col">
                 <div class="bg-gray-50 p-3 border-b border-gray-100 flex justify-between items-center">
-                    <h3 class="font-bold text-gray-800"><i class="fa-solid fa-user-injured mr-2"></i>Casualty ${c.id+1}</h3>
+                    <h3 class="font-bold text-gray-800">Casualty ${c.id+1}</h3>
                     <div class="flex gap-1">
-                        <button onclick="this.classList.toggle('bg-red-600'); this.classList.toggle('text-white'); app.state.scenario.casualties[${c.id}].overrideState = 'arrest'; app.addLog('C${c.id+1} ARREST triggered', 'bad')" class="text-xs border border-red-200 text-red-700 px-2 py-1 rounded hover:bg-red-50">Arrest</button>
-                        <button onclick="this.classList.toggle('bg-green-600'); this.classList.toggle('text-white'); app.state.scenario.casualties[${c.id}].overrideState = 'stabilised'; app.addLog('C${c.id+1} Stabilised', 'good')" class="text-xs border border-green-200 text-green-700 px-2 py-1 rounded hover:bg-green-50">Stable</button>
-                        <button onclick="app.handoverPatient(${c.id})" class="text-xs border border-blue-200 text-blue-700 px-2 py-1 rounded hover:bg-blue-50" title="Handover to Ambulance">Handover</button>
+                        ${arrestBtnHtml}
+                        <button class="text-xs border border-blue-200 text-blue-700 px-2 py-1 rounded hover:bg-blue-50">Handover</button>
                     </div>
                 </div>
-                
                 <div class="p-4 space-y-3 flex-grow">
-                    <!-- Visual Description -->
-                    <div class="text-xs text-gray-500 italic bg-yellow-50 p-2 rounded border border-yellow-100">
-                        <i class="fa-solid fa-eye mr-1"></i> ${c.visualDescription}
-                    </div>
-
-                    <!-- Vitals Display -->
-                    <div id="vitals-${c.id}" class="bg-gray-900 text-green-400 font-mono p-3 rounded text-center shadow-inner tracking-widest text-sm relative">
-                        Loading...
-                    </div>
-
-                    <!-- Inner Tabs -->
-                    <div class="flex border-b border-gray-200">
+                    <div class="text-xs text-gray-500 italic bg-yellow-50 p-2 rounded border border-yellow-100">${c.visualDescription}</div>
+                    <div id="vitals-${c.id}" class="bg-gray-900 text-green-400 font-mono p-3 rounded text-center text-sm">Loading Vitals...</div>
+                    <div class="flex border-b border-gray-200 gap-2">
                         <button class="inner-tab-btn active" data-tab="primary" onclick="app.switchCasTab(${c.id}, 'primary')">Primary Survey</button>
-                        <button class="inner-tab-btn" data-tab="interventions" onclick="app.switchCasTab(${c.id}, 'interventions')">Interventions</button>
                         <button class="inner-tab-btn" data-tab="drugs" onclick="app.switchCasTab(${c.id}, 'drugs')">Drugs</button>
                     </div>
-
-                    <!-- Tab Content: Primary Survey -->
-                    <div id="cas-tab-${c.id}-primary" class="inner-tab-content space-y-2">
-                        <div><p class="text-xs font-bold text-gray-400 mb-1">Airway</p><div class="grid grid-cols-2 gap-1">${generateActionButtons('Airway', FrameworkData.actions.Airway)}</div></div>
-                        <div><p class="text-xs font-bold text-gray-400 mb-1">Breathing</p><div class="grid grid-cols-2 gap-1">${generateActionButtons('Breathing', FrameworkData.actions.Breathing)}</div></div>
-                        <div><p class="text-xs font-bold text-gray-400 mb-1">Circulation</p><div class="grid grid-cols-2 gap-1">${generateActionButtons('Circulation', FrameworkData.actions.Circulation)}</div></div>
+                    <!-- COMBINED PRIMARY SURVEY TAB (A, B, C, D, E) -->
+                    <div id="cas-tab-${c.id}-primary" class="inner-tab-content active space-y-2">
+                        <div><p class="text-xs font-bold text-gray-400">Airway</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Airway)}</div></div>
+                        <div><p class="text-xs font-bold text-gray-400">Breathing</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Breathing)}</div></div>
+                        <div><p class="text-xs font-bold text-gray-400">Circulation</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Circulation)}</div></div>
+                        <div><p class="text-xs font-bold text-gray-400">Disability</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Disability)}</div></div>
+                        <div><p class="text-xs font-bold text-gray-400">Exposure</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Exposure)}</div></div>
                     </div>
-
-                    <!-- Tab Content: Interventions -->
-                    <div id="cas-tab-${c.id}-interventions" class="inner-tab-content hidden space-y-2">
-                        <div><p class="text-xs font-bold text-gray-400 mb-1">Disability & C-Spine</p><div class="grid grid-cols-2 gap-1">${generateActionButtons('Disability', FrameworkData.actions.Disability)}</div></div>
-                        <div><p class="text-xs font-bold text-gray-400 mb-1">Exposure & Environment</p><div class="grid grid-cols-2 gap-1">${generateActionButtons('Exposure', FrameworkData.actions.Exposure)}</div></div>
-                    </div>
-
-                    <!-- Tab Content: Drugs -->
                     <div id="cas-tab-${c.id}-drugs" class="inner-tab-content hidden space-y-2">
-                        <div><p class="text-xs font-bold text-gray-400 mb-1">Medication Admin</p><div class="grid grid-cols-2 gap-1">${generateActionButtons('Drugs', FrameworkData.actions.Drugs)}</div></div>
+                        <div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Drugs)}</div>
                     </div>
-
                 </div>
             </div>`;
         }
@@ -1208,143 +811,36 @@
         updateLiveVitals() {
             this.state.scenario.casualties.forEach(c => {
                 const el = document.getElementById(`vitals-${c.id}`);
-                if(el) {
-                    if (c.overrideState === 'handed_over') return;
-
-                    const v = c.vitals;
-                    // Comparison Arrows
-                    const arr = (curr, prev) => curr > prev ? '▲' : curr < prev ? '▼' : '-';
-                    // We need previous vitals (last in history)
-                    const len = c.vitalsHistory.length;
-                    const prev = len > 1 ? c.vitalsHistory[len-2] : c.initialVitals;
-
-                    let html = '';
-                    if (c.overrideState === 'arrest') {
-                        html = '<span class="text-red-500 font-bold animate-pulse">CARDIAC ARREST - NO OUTPUT</span>';
-                    } else {
-                        html = `
-                        <div class="grid grid-cols-3 gap-y-2">
-                            <div><span class="text-xs text-gray-500 block">ACVPU</span>${v.ACVPU}</div>
-                            <div><span class="text-xs text-gray-500 block">HR</span>${v.HR} <span class="text-xs">${arr(v.HR, prev.HR)}</span></div>
-                            <div><span class="text-xs text-gray-500 block">RR</span>${v.RR} <span class="text-xs">${arr(v.RR, prev.RR)}</span></div>
-                            <div><span class="text-xs text-gray-500 block">BP</span>${v.SBP}/<span class="text-xs">${Math.round(v.SBP*0.66)}</span></div>
-                            <div><span class="text-xs text-gray-500 block">SpO2</span>${v.SpO2}% <span class="text-xs">${arr(v.SpO2, prev.SpO2)}</span></div>
-                            <div><span class="text-xs text-gray-500 block">CRT</span>${v.CRT}s</div>
-                        </div>`;
-                    }
-                    el.innerHTML = html;
-                }
-            });
-        }
-
-        renderDebrief(container) {
-            container.innerHTML = `
-            <div class="space-y-6 animate-fade-in no-print">
-                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-                    <h2 class="text-2xl font-bold text-gray-900">Scenario Debrief</h2>
-                    <div class="flex gap-2">
-                         <button onclick="window.print()" class="btn btn-tertiary px-4 py-2 rounded">Download PDF</button>
-                         <button onclick="app.resetApp()" class="btn btn-primary px-4 py-2 rounded">New Scenario</button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Timeline -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="font-bold text-lg mb-4 text-blue-800">Incident Timeline</h3>
-                        <div class="space-y-2 font-mono text-sm max-h-96 overflow-y-auto border p-2 bg-gray-50 rounded">
-                            ${this.state.logs.map(l => `<div class="${l.type==='bad'?'text-red-600':l.type==='good'?'text-green-600':''}"><span class="text-gray-400">[${l.time}]</span> ${l.msg}</div>`).join('')}
-                        </div>
-                    </div>
-                    
-                    <!-- Casualty Outcomes -->
-                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <h3 class="font-bold text-lg mb-4 text-blue-800">Casualty Outcome</h3>
-                        <div class="space-y-4">
-                            ${this.state.scenario.casualties.map(c => `
-                                <div class="border-b pb-2">
-                                    <p class="font-bold">Casualty ${c.id+1}</p>
-                                    <div class="flex justify-between text-sm mt-1">
-                                        <span>Initial GCS: ${c.initialVitals.ACVPU}</span>
-                                        <span>Final GCS: ${c.vitals.ACVPU}</span>
-                                        ${c.overrideState === 'handed_over' ? '<span class="text-blue-600 font-bold">Handed Over</span>' : ''}
-                                    </div>
-                                    <div class="h-40 mt-2 relative w-full">
-                                        <canvas id="chart-${c.id}"></canvas>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- AMPLE Handover Summary -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <h3 class="font-bold text-lg mb-4 text-blue-800">Ambulance Handover (AMPLE)</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        ${this.state.scenario.casualties.map(c => `
-                            <div class="p-4 border rounded-lg bg-gray-50">
-                                <h4 class="font-bold text-md border-b pb-1 mb-2">Casualty ${c.id+1} (Age ${c.age})</h4>
-                                <ul class="text-sm space-y-1">
-                                    <li><strong>Allergies:</strong> ${c.ample.A}</li>
-                                    <li><strong>Medications:</strong> ${c.ample.M}</li>
-                                    <li><strong>Past History:</strong> ${c.ample.P}</li>
-                                    <li><strong>Last Meal:</strong> ${c.ample.L}</li>
-                                    <li><strong>Event:</strong> ${c.ample.E}</li>
-                                </ul>
-                                <div class="mt-2 pt-2 border-t text-xs text-gray-500">
-                                    <strong>Injuries:</strong> ${c.injuries.map(i=>i.name).join(', ')}
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-            `;
-        }
-        
-        renderCharts() {
-            this.state.scenario.casualties.forEach(c => {
-                const ctx = document.getElementById(`chart-${c.id}`);
-                if (!ctx) return;
+                if(!el) return;
+                const v = c.vitals;
                 
-                // Destroy old chart if exists (though we re-render DOM, just safe keeping)
-                if(this.charts[c.id]) this.charts[c.id].destroy();
-
-                const labels = c.vitalsHistory.map(h => {
-                    const m = Math.floor(h.t/60).toString().padStart(2,'0');
-                    return `${m}:${(h.t%60).toString().padStart(2,'0')}`;
-                });
-
-                this.charts[c.id] = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            { label: 'HR', data: c.vitalsHistory.map(h=>h.HR), borderColor: 'red', borderWidth: 2, pointRadius: 0 },
-                            { label: 'SBP', data: c.vitalsHistory.map(h=>h.SBP), borderColor: 'blue', borderWidth: 2, pointRadius: 0 },
-                            { label: 'SpO2', data: c.vitalsHistory.map(h=>h.SpO2), borderColor: 'green', borderWidth: 2, pointRadius: 0, yAxisID: 'y1' }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: { mode: 'index', intersect: false },
-                        scales: {
-                            x: { display: false },
-                            y: { beginAtZero: false },
-                            y1: { position: 'right', min: 50, max: 100, grid: { drawOnChartArea: false } }
-                        },
-                        plugins: { legend: { display: true, labels: { boxWidth: 10, font: { size: 10 } } } }
-                    }
-                });
+                // ARREST DISPLAY LOGIC
+                if (c.overrideState === 'arrest') {
+                    el.innerHTML = `
+                    <div class="grid grid-cols-3 gap-y-2 text-red-500">
+                        <div><span class="text-gray-500 block text-[10px]">ACVPU</span>U</div>
+                        <div><span class="text-gray-500 block text-[10px]">HR</span><span class="font-bold border border-red-600 px-1 rounded bg-red-900/50">ARREST</span></div>
+                        <div><span class="text-gray-500 block text-[10px]">RR</span>0</div>
+                        <div><span class="text-gray-500 block text-[10px]">BP</span>0/0</div>
+                        <div><span class="text-gray-500 block text-[10px]">SpO2</span>0%</div>
+                        <div><span class="text-gray-500 block text-[10px]">CRT</span>-</div>
+                    </div>`;
+                } else {
+                    el.innerHTML = `
+                    <div class="grid grid-cols-3 gap-y-2">
+                        <div><span class="text-xs text-gray-500 block">ACVPU</span>${v.ACVPU}</div>
+                        <div><span class="text-xs text-gray-500 block">HR</span>${v.HR}</div>
+                        <div><span class="text-xs text-gray-500 block">RR</span>${v.RR}</div>
+                        <div><span class="text-xs text-gray-500 block">BP</span>${v.SBP}/${Math.round(v.SBP*0.66)}</div>
+                        <div><span class="text-xs text-gray-500 block">SpO2</span>${v.SpO2}%</div>
+                        <div><span class="text-xs text-gray-500 block">CRT</span>${v.CRT}s</div>
+                    </div>`;
+                }
             });
         }
     }
 
-    /* ================= INITIALIZATION ================= */
     const app = new App();
-
   </script>
 </body>
 </html>
