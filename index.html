@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>UKRO High-Fidelity Scenario Simulator (v2.13)</title>
+  <title>UKRO High-Fidelity Scenario Simulator (v2.14)</title>
 
   <!-- External Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -35,18 +35,64 @@
     
     .custom-scroll::-webkit-scrollbar { width: 6px; }
     .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
-    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #555; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 3px; }
+    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #6b7280; }
 
-    .btn { transition: all 0.2s; border-bottom-width: 3px; position: relative; overflow: hidden; }
-    .btn:active { transform: translateY(2px); border-bottom-width: 1px; margin-top: 2px; }
+    /* Primary "Chunky" Buttons for App Control */
+    .btn { transition: all 0.15s ease-in-out; border-bottom-width: 4px; position: relative; overflow: hidden; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em; }
+    .btn:active { transform: translateY(2px); border-bottom-width: 2px; margin-top: 2px; }
+    
     .btn-primary { background-color: var(--ukro-blue); border-color: #00246f; color: white; }
-    .btn-primary:hover { filter: brightness(110%); }
+    .btn-primary:hover { background-color: #00246f; }
+    
     .btn-secondary { background-color: var(--ukro-red); border-color: #8f0d22; color: white; }
-    .btn-secondary:hover { filter: brightness(110%); }
+    .btn-secondary:hover { background-color: #9f122a; }
+    
     .btn-tertiary { background-color: #f59e0b; border-color: #b45309; color: white; }
-    .btn-ghost { background: white; color: var(--ukro-navy); border: 1px solid #e5e7eb; border-bottom: 3px solid #d1d5db; }
-    .btn-ghost:hover { background: #f9fafb; }
+    .btn-tertiary:hover { background-color: #d97706; }
+    
+    .btn-ghost { background: white; color: var(--ukro-navy); border: 1px solid #e5e7eb; border-bottom: 3px solid #d1d5db; text-transform: none; }
+    .btn-ghost:hover { background: #f9fafb; border-color: #d1d5db; }
+
+    /* Clinical Tile Buttons */
+    .btn-tile {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    .btn-tile:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        z-index: 10;
+    }
+    .btn-tile:active {
+        transform: scale(0.98);
+        box-shadow: none;
+    }
+
+    /* Scene Action Pills */
+    .btn-pill {
+        transition: all 0.2s;
+        border: 1px solid #e5e7eb;
+        background: white;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .btn-pill:hover {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .btn-pill:active {
+        transform: translateY(0);
+        background: #e5e7eb;
+    }
 
     .flash-red { animation: flash-red-anim 1.5s ease-in-out infinite; }
     @keyframes flash-red-anim {
@@ -59,8 +105,30 @@
 
     .inner-tab-content { display: none; }
     .inner-tab-content.active { display: block; animation: fadeIn 0.3s; }
-
-    /* Styles for Toggle Buttons handled via utility classes now for reliability */
+    
+    /* Custom tab styling */
+    .toggle-btn-group {
+        display: flex;
+        background: #f3f4f6;
+        padding: 4px;
+        border-radius: 8px;
+        gap: 4px;
+        margin-bottom: 12px;
+    }
+    .toggle-btn {
+        flex: 1;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #6b7280;
+        transition: all 0.2s;
+    }
+    .toggle-btn.active {
+        background: white;
+        color: var(--ukro-blue);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
 
     @media print {
       body { background: white; }
@@ -74,13 +142,13 @@
 <body class="min-h-screen flex flex-col">
 
   <!-- Header -->
-  <header class="ukro-header p-4 shadow-sm no-print">
+  <header class="ukro-header p-4 shadow-sm no-print sticky top-0 z-50">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-3">
         <!-- WMEBEM Logo -->
         <img src="images/wmebem-logo.png" alt="WMEBEM Logo" class="h-12 w-auto object-contain" onerror="this.style.display='none'">
         <div>
-            <h1 class="text-xl font-bold text-gray-900 leading-tight">UKRO Simulator <span class="text-blue-600 text-sm align-top">v2.13</span></h1>
+            <h1 class="text-xl font-bold text-gray-900 leading-tight">UKRO Simulator <span class="text-blue-600 text-sm align-top">v2.14</span></h1>
             <p class="text-xs text-gray-500 font-medium">High-Fidelity Instructor Tool</p>
         </div>
       </div>
@@ -551,12 +619,12 @@
             if (action.stopsDeterioration) cas.treatedInjuries.add(injKey);
             this.addLog(`C${parseInt(casId)+1}: ${action.feedback}`, 'good');
             if(btn) { 
-                btn.classList.remove('bg-indigo-50', 'text-indigo-700');
-                btn.classList.add('bg-green-600', 'text-white');
+                btn.classList.add('ring-2', 'ring-green-500', 'bg-green-50');
+                const icon = btn.querySelector('i');
+                if(icon) { icon.classList.remove('fa-star', 'text-yellow-400'); icon.classList.add('fa-check', 'text-green-600'); }
                 setTimeout(() => {
-                    btn.classList.remove('bg-green-600', 'text-white');
-                    btn.classList.add('bg-indigo-50', 'text-indigo-700');
-                }, 2000);
+                   btn.classList.remove('ring-2', 'ring-green-500', 'bg-green-50');
+                }, 1000);
             }
         }
         
@@ -581,10 +649,9 @@
                 this.addLog(`Scene: ${actionText}`, 'command');
                 if (btn) {
                      const originalClass = btn.className;
-                     btn.className = "text-white text-xs font-bold py-1 px-2 rounded shadow-sm bg-green-600";
-                     setTimeout(() => {
-                         btn.className = originalClass;
-                     }, 500);
+                     // Add success state for Global buttons
+                     btn.classList.add('bg-green-100', 'border-green-300', 'text-green-800');
+                     // Note: We don't remove it instantly for global scene actions as they are often "one-off" or state changes
                 }
                 return;
             }
@@ -599,29 +666,23 @@
                 
                 // Visual Feedback
                 if (btn) {
-                    const originalText = btn.innerText.split(' (')[0]; // remove old count
-                    btn.innerHTML = `<span>${originalText} (${cas.actionCounts[actionText]})</span><i class="fa-solid fa-check-circle text-white"></i>`;
-                    // Use specific styling for casualty buttons - now uses updated assessment class if matched
-                    const isIntervention = btn.classList.contains('btn-intervention');
+                    const originalText = btn.querySelector('span').innerText.split(' (')[0]; 
+                    btn.querySelector('span').innerText = `${originalText} (${cas.actionCounts[actionText]})`;
                     
-                    // Temporary success state
-                    btn.classList.remove('bg-blue-50', 'text-blue-700', 'border-blue-200'); 
-                    btn.classList.remove('bg-indigo-50', 'text-indigo-700', 'border-indigo-200');
+                    const icon = btn.querySelector('i');
+                    const originalIconClass = icon.className;
                     
-                    btn.classList.add('bg-green-600', 'text-white', 'border-green-700');
+                    // Flash success
+                    btn.classList.add('ring-2', 'ring-green-500', 'bg-green-50');
+                    icon.className = 'fa-solid fa-check text-green-600';
+                    icon.classList.remove('opacity-50');
                     
                     setTimeout(() => {
-                        btn.classList.remove('bg-green-600', 'text-white', 'border-green-700');
-                        // Restore original icon
-                         const iconClass = isIntervention ? "fa-hand-holding-medical text-indigo-300" : "fa-check-circle text-blue-300";
-                        btn.innerHTML = `<span>${originalText} (${cas.actionCounts[actionText]})</span><i class="fa-solid ${iconClass} opacity-50"></i>`;
-
-                        // Restore original style
-                        if(isIntervention) {
-                             btn.classList.add('bg-indigo-50', 'text-indigo-700', 'border-indigo-200');
-                        } else {
-                             btn.classList.add('bg-blue-50', 'text-blue-700', 'border-blue-200');
-                        }
+                         btn.classList.remove('ring-2', 'ring-green-500', 'bg-green-50');
+                         icon.className = originalIconClass;
+                         // Keep full opacity to show it's been clicked at least once
+                         icon.classList.remove('opacity-0');
+                         icon.classList.add('opacity-50');
                     }, 500); 
                 }
             }
@@ -669,12 +730,9 @@
 
             // Update tab buttons (specifically the toggle-btn class)
             card.querySelectorAll('.toggle-btn').forEach(btn => {
-                btn.classList.remove('active', 'bg-white', 'text-blue-700', 'shadow-sm', 'border-gray-200');
-                btn.classList.add('text-gray-500', 'hover:bg-gray-200');
-                
+                btn.classList.remove('active');
                 if (btn.dataset.tab === tabName) {
-                    btn.classList.add('active', 'bg-white', 'text-blue-700', 'shadow-sm', 'border-gray-200');
-                    btn.classList.remove('text-gray-500', 'hover:bg-gray-200');
+                    btn.classList.add('active');
                 }
             });
         }
@@ -726,7 +784,7 @@
                     <p class="text-gray-500">Choose a template or build a custom scenario.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-600 cursor-pointer hover:shadow-xl transition" onclick="const el = document.getElementById('rtc-opts'); if(el) el.classList.remove('hidden')">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-600 cursor-pointer hover:shadow-xl transition active:scale-[0.99]" onclick="const el = document.getElementById('rtc-opts'); if(el) el.classList.remove('hidden')">
                         <h3 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-car-burst mr-2"></i>RTC Random</h3>
                         <p class="text-sm text-gray-600 mt-2">Road traffic collisions involving cars, heavy goods vehicles, or EVs. Includes entrapment and scene hazards.</p>
                         <div id="rtc-opts" class="hidden mt-4 space-y-3">
@@ -735,7 +793,7 @@
                             <button onclick="event.stopPropagation(); app.generateScenario('rtc', {vehicles: document.getElementById('rtc-v').value, patients: document.getElementById('rtc-p').value})" class="btn btn-primary w-full py-2 rounded">Generate</button>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-red-600 cursor-pointer hover:shadow-xl transition" onclick="const el = document.getElementById('trauma-opts'); if(el) el.classList.remove('hidden')">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-red-600 cursor-pointer hover:shadow-xl transition active:scale-[0.99]" onclick="const el = document.getElementById('trauma-opts'); if(el) el.classList.remove('hidden')">
                         <h3 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-user-injured mr-2"></i>Trauma Random</h3>
                         <p class="text-sm text-gray-600 mt-2">Industrial accidents, falls from height, or medical emergencies in complex environments.</p>
                          <div id="trauma-opts" class="hidden mt-4 space-y-3">
@@ -743,7 +801,7 @@
                             <button onclick="event.stopPropagation(); app.generateScenario('trauma', {patients: document.getElementById('trauma-p').value})" class="btn btn-secondary w-full py-2 rounded">Generate</button>
                         </div>
                     </div>
-                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-amber-500 cursor-pointer hover:shadow-xl transition" onclick="app.customConfig = {type:'rtc', patients:[]}; app.state.view='custom'; app.render();">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-amber-500 cursor-pointer hover:shadow-xl transition active:scale-[0.99]" onclick="app.customConfig = {type:'rtc', patients:[]}; app.state.view='custom'; app.render();">
                         <h3 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-sliders mr-2"></i>Custom Setup</h3>
                         <p class="text-sm text-gray-600 mt-2">Manually configure patient numbers, specific injuries, and initial vital signs.</p>
                     </div>
@@ -911,10 +969,11 @@
         }
 
         renderLive(container) {
-            const actionButton = (label, color, type, dataAttrs = '') => `<button class="${type}-btn btn-assessment" ${dataAttrs}>${label}<i class="fa-solid fa-check-circle text-blue-300 opacity-50"></i></button>`;
-            const interventionButton = (label, color, type, dataAttrs = '') => `<button class="${type}-btn btn-intervention" ${dataAttrs}>${label}<i class="fa-solid fa-hand-holding-medical text-indigo-300 opacity-50"></i></button>`;
+            // New styles for action buttons
+            const actionButton = (label, color, type, dataAttrs = '') => `<button class="btn-tile border-l-4 border-l-blue-500 text-xs px-3 py-2 w-full rounded-r-md group" ${dataAttrs}><span>${label}</span><i class="fa-solid fa-check-circle text-blue-300 opacity-0 group-hover:opacity-50 transition-opacity"></i></button>`;
+            const interventionButton = (label, color, type, dataAttrs = '') => `<button class="btn-tile border-l-4 border-l-indigo-500 text-xs px-3 py-2 w-full rounded-r-md group" ${dataAttrs}><span>${label}</span><i class="fa-solid fa-hand-holding-medical text-indigo-300 opacity-0 group-hover:opacity-50 transition-opacity"></i></button>`;
             
-            const actionGroup = (title, actions, color, type, casId = null) => `<div class="mb-2"><p class="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">${title}</p><div class="flex flex-wrap gap-1">${actions.map(act => type === 'assessment' ? actionButton(act, color, type, `onclick="app.logAction(${casId}, '${act}', this)"`) : interventionButton(act, color, type, `onclick="app.logAction(${casId}, '${act}', this)"`)).join('')}</div></div>`;
+            const actionGroup = (title, actions, color, type, casId = null) => `<div class="mb-2"><p class="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-1">${title}</p><div class="grid grid-cols-2 gap-2">${actions.map(act => type === 'assessment' ? actionButton(act, color, type, `onclick="app.logAction(${casId}, '${act}', this)"`) : interventionButton(act, color, type, `onclick="app.logAction(${casId}, '${act}', this)"`)).join('')}</div></div>`;
 
             container.innerHTML = `
             <div class="flex flex-col gap-4 animate-fade-in">
@@ -929,9 +988,11 @@
                     <div class="space-y-4">
                         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
                             <h3 class="font-bold text-gray-700 text-sm mb-2 border-b pb-2">Scene & Global Actions</h3>
-                            <div class="flex flex-wrap gap-1">
+                            <div class="flex flex-wrap gap-2">
                                 ${['360 Survey', 'Stabilisation Complete', 'Glass Managed', 'Access Plan Agreed', 'Space Created', 'Full Access'].map(act => 
-                                    `<button class="text-xs border border-gray-300 bg-gray-50 text-gray-700 rounded p-1 hover:bg-gray-100" onclick="app.addLog('Scene: ${act}', 'command'); this.classList.add('bg-green-100','border-green-300')">${act}</button>`
+                                    `<button class="btn-pill px-3 py-1.5 rounded-full text-xs font-medium text-gray-700 flex items-center gap-2" onclick="app.logAction(null, '${act}', this)">
+                                        <i class="fa-solid fa-check text-gray-300"></i> ${act}
+                                    </button>`
                                 ).join('')}
                             </div>
                         </div>
@@ -950,16 +1011,17 @@
         }
 
         renderCasualtyCard(c) {
-            const assessmentClass = "text-left text-xs p-2 bg-blue-50 border border-blue-200 text-blue-700 rounded hover:bg-blue-100 transition btn-assessment w-full";
-            const interventionClass = "text-left text-xs p-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded hover:bg-indigo-100 transition btn-intervention w-full";
+            // Refined grid buttons - using btn-tile class defined in CSS
+            const assessmentBtn = (label) => `<button onclick="app.logAction(${c.id}, '${label}', this)" class="btn-tile border-l-4 border-l-blue-500 text-xs px-2 py-2 w-full rounded-r group"><span>${label}</span><i class="fa-solid fa-circle-plus opacity-0 group-hover:opacity-50 text-blue-400 transition-opacity"></i></button>`;
+            const interventionBtn = (label) => `<button onclick="app.logAction(${c.id}, '${label}', this)" class="btn-tile border-l-4 border-l-indigo-500 text-xs px-2 py-2 w-full rounded-r group"><span>${label}</span><i class="fa-solid fa-hand-holding-medical opacity-0 group-hover:opacity-50 text-indigo-400 transition-opacity"></i></button>`;
             
-            const genBtns = (list, cls) => list.map(a => `<button onclick="app.logAction(${c.id}, '${a}', this)" class="${cls}"><span>${a}</span><i class="fa-solid fa-circle-plus opacity-0 hover:opacity-100 transition-opacity"></i></button>`).join('');
+            const genBtns = (list, type) => list.map(a => type === 'assess' ? assessmentBtn(a) : interventionBtn(a)).join('');
             
             let arrestBtnHtml = '';
             if (c.overrideState === 'arrest') {
-                arrestBtnHtml = `<button onclick="app.toggleArrest(${c.id})" class="text-xs border border-green-600 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 shadow-md animate-pulse font-bold">ROSC</button>`;
+                arrestBtnHtml = `<button onclick="app.toggleArrest(${c.id})" class="btn btn-primary bg-green-600 border-green-800 text-white px-3 py-1 text-xs rounded shadow-md animate-pulse">ROSC</button>`;
             } else {
-                arrestBtnHtml = `<button onclick="app.toggleArrest(${c.id})" class="text-xs border border-red-200 text-red-700 px-2 py-1 rounded hover:bg-red-50">Arrest</button>`;
+                arrestBtnHtml = `<button onclick="app.toggleArrest(${c.id})" class="btn bg-white border border-red-200 text-red-700 px-2 py-1 text-xs rounded hover:bg-red-50" style="border-bottom-width:2px">Arrest</button>`;
             }
 
             return `
@@ -968,7 +1030,7 @@
                     <h3 class="font-bold text-gray-800">Casualty ${c.id+1}</h3>
                     <div class="flex gap-1">
                         ${arrestBtnHtml}
-                        <button class="text-xs border border-blue-200 text-blue-700 px-2 py-1 rounded hover:bg-blue-50">Handover</button>
+                        <button class="btn bg-white border border-blue-200 text-blue-700 px-2 py-1 text-xs rounded hover:bg-blue-50" style="border-bottom-width:2px">Handover</button>
                     </div>
                 </div>
                 <div class="p-4 space-y-3 flex-grow">
@@ -983,25 +1045,25 @@
                     
                     <!-- Assessment Tab -->
                     <div id="cas-tab-${c.id}-assessment" class="inner-tab-content active space-y-2">
-                        <div><p class="text-xs font-bold text-gray-400 mb-1">Airway Check</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Assessment.Airway, assessmentClass)}</div></div>
-                        <div><p class="text-xs font-bold text-gray-400 mb-1">Breathing Check</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Assessment.Breathing, assessmentClass)}</div></div>
-                        <div><p class="text-xs font-bold text-gray-400 mb-1">Circulation Check</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Assessment.Circulation, assessmentClass)}</div></div>
-                        <div><p class="text-xs font-bold text-gray-400 mb-1">Disability Check</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Assessment.Disability, assessmentClass)}</div></div>
-                        <div><p class="text-xs font-bold text-gray-400 mb-1">Exposure</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Assessment.Exposure, assessmentClass)}</div></div>
+                        <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Airway</p><div class="grid grid-cols-2 gap-2">${genBtns(FrameworkData.actions.Assessment.Airway, 'assess')}</div></div>
+                        <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Breathing</p><div class="grid grid-cols-2 gap-2">${genBtns(FrameworkData.actions.Assessment.Breathing, 'assess')}</div></div>
+                        <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Circulation</p><div class="grid grid-cols-2 gap-2">${genBtns(FrameworkData.actions.Assessment.Circulation, 'assess')}</div></div>
+                        <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Disability</p><div class="grid grid-cols-2 gap-2">${genBtns(FrameworkData.actions.Assessment.Disability, 'assess')}</div></div>
+                        <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Exposure</p><div class="grid grid-cols-2 gap-2">${genBtns(FrameworkData.actions.Assessment.Exposure, 'assess')}</div></div>
                     </div>
 
                     <!-- Interventions Tab -->
                     <div id="cas-tab-${c.id}-interventions" class="inner-tab-content hidden space-y-2">
-                         <div><p class="text-xs font-bold text-gray-400 mb-1">Airway</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Interventions.Airway, interventionClass)}</div></div>
-                         <div><p class="text-xs font-bold text-gray-400 mb-1">Breathing</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Interventions.Breathing, interventionClass)}</div></div>
-                         <div><p class="text-xs font-bold text-gray-400 mb-1">Circulation</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Interventions.Circulation, interventionClass)}</div></div>
-                         <div><p class="text-xs font-bold text-gray-400 mb-1">Disability</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Interventions.Disability, interventionClass)}</div></div>
-                         <div><p class="text-xs font-bold text-gray-400 mb-1">Exposure</p><div class="grid grid-cols-2 gap-1">${genBtns(FrameworkData.actions.Interventions.Exposure, interventionClass)}</div></div>
+                         <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Airway</p><div class="grid grid-cols-2 gap-2">${genBtns(FrameworkData.actions.Interventions.Airway, 'int')}</div></div>
+                         <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Breathing</p><div class="grid grid-cols-2 gap-2">${genBtns(FrameworkData.actions.Interventions.Breathing, 'int')}</div></div>
+                         <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Circulation</p><div class="grid grid-cols-2 gap-2">${genBtns(FrameworkData.actions.Interventions.Circulation, 'int')}</div></div>
+                         <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Disability</p><div class="grid grid-cols-2 gap-2">${genBtns(FrameworkData.actions.Interventions.Disability, 'int')}</div></div>
+                         <div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Exposure</p><div class="grid grid-cols-2 gap-2">${genBtns(FrameworkData.actions.Interventions.Exposure, 'int')}</div></div>
                          
-                         <p class="text-xs text-gray-500 mb-1 mt-2 pt-2 border-t">Specific Injury Actions:</p>
-                         <div class="grid grid-cols-1 gap-1">
+                         <p class="text-[10px] text-gray-500 font-bold uppercase pt-2 border-t mt-2">Specific Injury Actions</p>
+                         <div class="grid grid-cols-1 gap-2">
                             ${(c.injuries||[]).flatMap(inj => Object.values(inj.interventions||{}).map(iv=> 
-                                `<button onclick="app.applyIntervention(${c.id}, '${inj.key}', '${iv.key}', this)" class="${interventionClass}"><span>${iv.key}</span><i class="fa-solid fa-star text-yellow-400"></i></button>`
+                                `<button onclick="app.applyIntervention(${c.id}, '${inj.key}', '${iv.key}', this)" class="btn-tile border-l-4 border-l-yellow-400 text-xs px-3 py-2 w-full rounded-r group"><span>${iv.key}</span><i class="fa-solid fa-star text-yellow-400"></i></button>`
                             )).join('') || '<span class="text-xs text-gray-400 italic">No specific interventions available.</span>'}
                          </div>
                     </div>
@@ -1027,8 +1089,8 @@
                 <div class="flex justify-between items-center pb-4 border-b">
                     <h2 class="text-2xl font-bold text-gray-800">Post-Scenario Debrief</h2>
                     <div class="flex gap-3">
-                        <button id="exportPdfBtn" onclick="window.print()" class="btn bg-gray-800 text-white hover:bg-gray-700 px-4 py-2 rounded shadow flex items-center gap-2"><i class="fa-solid fa-print"></i> Print PDF</button>
-                        <button onclick="app.state.view='menu'; app.render()" class="btn bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded shadow flex items-center gap-2"><i class="fa-solid fa-plus"></i> New Scenario</button>
+                        <button id="exportPdfBtn" onclick="window.print()" class="btn btn-primary bg-gray-800 border-gray-900 text-white hover:bg-gray-700 px-4 py-2 rounded shadow flex items-center gap-2"><i class="fa-solid fa-print"></i> Print PDF</button>
+                        <button onclick="app.state.view='menu'; app.render()" class="btn btn-primary bg-blue-600 border-blue-800 text-white hover:bg-blue-700 px-4 py-2 rounded shadow flex items-center gap-2"><i class="fa-solid fa-plus"></i> New Scenario</button>
                     </div>
                 </div>
                 <div class="bg-gray-50 p-4 rounded-lg border"><h3 class="text-xl font-bold text-amber-600">Incident Timeline</h3><div class="mt-2 space-y-1 font-mono text-sm max-h-96 overflow-y-auto border p-2 bg-white rounded">${logHtml}</div></div>
