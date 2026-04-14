@@ -79,7 +79,25 @@ const FrameworkData = {
         { id: 'M09', title: 'EV Thermal Runaway Fire', category: 'Hazmat and Trauma', entrapment: 'Rapid snatch rescue required due to battery fire.', actorBrief: 'Cough violently. Complain of airway burns and heat exposure.', vehicles: ['Tesla Model 3'] },
         { id: 'M10', title: 'Agricultural Machinery Collision', category: 'Impalement', entrapment: 'Fence post through windscreen. Angle grinder needed near casualty.', actorBrief: 'Do not move your torso. Take rapid short breaths. Panic if rescuers touch the post.', vehicles: ['Van'] },
         { id: 'M11', title: 'Electric SUV Under-ride', category: 'Complex EV Rescue', entrapment: 'Roof sheared off. Battery floorpan severely compromised. High voltage risk.', actorBrief: 'State you feel a tingling sensation. Complain of a strange chemical smell.', vehicles: ['SUV', 'Full HGV'] },
-        { id: 'M12', title: 'EV vs Pedestrian', category: 'Silent Collision', entrapment: 'Pedestrian trapped under EV floorpan. Isolation plug must be pulled before lifting.', actorBrief: 'Groan in severe pain. You are trapped flat on your back.', vehicles: ['Hatchback'] }
+        { id: 'M12', title: 'EV vs Pedestrian', category: 'Silent Collision', entrapment: 'Pedestrian trapped under EV floorpan. Isolation plug must be pulled before lifting.', actorBrief: 'Groan in severe pain. You are trapped flat on your back.', vehicles: ['Hatchback'] },
+        { id: 'M13', title: 'Van into Water', category: 'Environmental', entrapment: 'Vehicle partially submerged. Winch and water rescue PPE required.', actorBrief: 'Shiver violently. Cough up water. Speak with slurred words.', vehicles: ['Van'] },
+        { id: 'M14', title: 'Multiple Saloon Pile-up', category: 'Complex Trauma', entrapment: 'Vehicles stacked. Extensive stabilisation and simultaneous extrications required.', actorBrief: 'Act highly confused. Ask repeatedly what happened to your car.', vehicles: ['Saloon Car', 'Saloon Car', 'Hatchback'] },
+        { id: 'M15', title: 'HGV vs Bus', category: 'Mass Casualty', entrapment: 'Bus side ripped open. Multiple walking wounded and trapped passengers.', actorBrief: 'Act panicked. Scream for help. Hold your arm tightly.', vehicles: ['Full HGV', 'Double Decker Bus'] },
+        { id: 'M16', title: 'Car vs Lamppost', category: 'Side Crush', entrapment: 'Lamppost embedded in driver side door. Winch or complex cutting required.', actorBrief: 'Complain of severe chest pain. Breathe in short gasps.', vehicles: ['Saloon Car'] },
+        { id: 'M17', title: 'Rollover with Ejection', category: 'Complex Trauma', entrapment: 'Casualty thrown from vehicle into dense brush. Search required.', actorBrief: 'Lie completely still. Do not respond to voice commands.', vehicles: ['SUV'] },
+        { id: 'M18', title: 'Van vs Motorbike', category: 'Crush Syndrome', entrapment: 'Motorbike wedged beneath van front bumper. Lift required.', actorBrief: 'Scream when responders touch the van. Complain your leg is entirely numb.', vehicles: ['Van', 'Motorbike'] },
+        { id: 'M19', title: 'EV Battery Compromise', category: 'Hazmat', entrapment: 'Vehicle struck debris. Battery casing ruptured. High voltage hazard.', actorBrief: 'Point to the floor of the car. Say it is getting extremely hot.', vehicles: ['Tesla Model 3'] },
+        { id: 'M20', title: 'Full HGV vs Pedestrian', category: 'Catastrophic Trauma', entrapment: 'Pedestrian caught in rear axles. Specialised lifting gear needed.', actorBrief: 'You are unresponsive. Breathe very shallowly.', vehicles: ['Full HGV'] },
+        { id: 'M21', title: 'Saloon Head-On Collision', category: 'High Energy', entrapment: 'Both vehicles locked together. Winch separation and dash rolls required.', actorBrief: 'Clutch your stomach. Complain of severe abdominal pain.', vehicles: ['Saloon Car', 'Saloon Car'] },
+        { id: 'M22', title: 'Bus Rollover', category: 'Mass Casualty', entrapment: 'Bus on its side. Roof hatches must be used for access.', actorBrief: 'Crawl out if possible. Act dazed and disoriented.', vehicles: ['Double Decker Bus'] },
+        { id: 'M23', title: 'SUV vs Tree', category: 'High Energy', entrapment: 'Engine block pushed into cabin. Massive space creation needed.', actorBrief: 'Complain of bilateral leg pain. State you cannot feel your toes.', vehicles: ['SUV'] },
+        { id: 'M24', title: 'Motorbike High Sider', category: 'Ejection', entrapment: 'Rider thrown over safety barrier down embankment. Rope rescue required.', actorBrief: 'Groan loudly. Complain of neck and back pain.', vehicles: ['Motorbike'] },
+        { id: 'M25', title: 'Van vs Brick Wall', category: 'Crush', entrapment: 'Wall collapsed onto vehicle roof. Heavy debris removal required.', actorBrief: 'Protect your head with your arms. Act terrified of falling debris.', vehicles: ['Van'] },
+        { id: 'M26', title: 'Electric SUV vs Pole', category: 'Complex EV Rescue', entrapment: 'Pole severed battery lines. Immediate isolation essential before touch.', actorBrief: 'Act unresponsive. No breathing.', vehicles: ['SUV'] },
+        { id: 'M27', title: 'HGV Cab Crush', category: 'Complex', entrapment: 'Load shifted forward crushing the cab. Heavy lifting and cutting required.', actorBrief: 'Scream for help. State you cannot breathe due to the steering wheel.', vehicles: ['HGV Cab'] },
+        { id: 'M28', title: 'Saloon vs Chemical Drum', category: 'Hazmat', entrapment: 'Vehicle struck unknown chemicals. Decontamination setup required.', actorBrief: 'Cough. Rub your eyes constantly. Complain your skin burns.', vehicles: ['Saloon Car'] },
+        { id: 'M29', title: 'Motorbike vs EV Hatchback', category: 'Complex', entrapment: 'Bike embedded in EV side panel. Battery integrity unknown.', actorBrief: 'Rider is unresponsive. Car driver is frantic.', vehicles: ['Motorbike', 'Hatchback'] },
+        { id: 'M30', title: 'Multi-Vehicle Junction Crash', category: 'High Energy', entrapment: 'Complex stabilisation needed for three interlocking vehicles.', actorBrief: 'Argue with the other drivers. Refuse to sit down.', vehicles: ['Saloon Car', 'Van', 'SUV'] }
     ],
     environments: [
         { weather: 'Clear', timeOfDay: 'Day', modifier: 'Standard' },
@@ -94,33 +112,37 @@ const FrameworkData = {
 
         this.baseMedicalEvents.forEach(medical => {
             this.environments.forEach(env => {
-                [1, 2, 3].forEach(cCount => {
-                    let requiredSeverities = [];
-                    if (cCount === 1) requiredSeverities = ['major'];
-                    if (cCount === 2) requiredSeverities = ['major', 'minor'];
-                    if (cCount === 3) requiredSeverities = ['critical', 'major', 'minor'];
+                let requiredSeverities = ['major'];
+                let casCount = 1;
 
-                    generated.push({
-                        id: `PRE-${counter.toString().padStart(3, '0')}`,
-                        title: `${medical.title} (${cCount} Cas, ${env.weather})`,
-                        category: medical.category,
-                        config: {
-                            vCount: medical.vehicles.length,
-                            vehicleTypes: medical.vehicles,
-                            cCount: cCount,
-                            weather: env.weather,
-                            timeOfDay: env.timeOfDay,
-                            requiredSeverities: requiredSeverities,
-                            entrapment: medical.entrapment,
-                            actorBrief: medical.actorBrief,
-                            equipment: { 
-                                frs: ['Hydraulic Rams', 'Spreaders', 'Cutters', 'Step Chocks', 'Glass Management', 'Dry Powder Extinguisher', 'Electrical Gloves'], 
-                                medical: ['Trauma Bag', 'Oxygen Cylinder', 'Pelvic Binder', 'Tourniquets', 'Splints'] 
-                            }
+                if (medical.category === 'Mass Casualty' || medical.category === 'Complex Trauma') {
+                    requiredSeverities = ['critical', 'major', 'minor'];
+                    casCount = 3;
+                } else if (medical.vehicles.length > 1) {
+                    requiredSeverities = ['major', 'minor'];
+                    casCount = 2;
+                }
+
+                generated.push({
+                    id: `PRE-${counter.toString().padStart(3, '0')}`,
+                    title: `${medical.title} (${env.modifier})`,
+                    category: medical.category,
+                    config: {
+                        vCount: medical.vehicles.length,
+                        vehicleTypes: medical.vehicles,
+                        cCount: casCount,
+                        weather: env.weather,
+                        timeOfDay: env.timeOfDay,
+                        requiredSeverities: requiredSeverities,
+                        entrapment: medical.entrapment,
+                        actorBrief: medical.actorBrief,
+                        equipment: { 
+                            frs: ['Hydraulic Rams', 'Spreaders', 'Cutters', 'Step Chocks', 'Glass Management', 'Dry Powder Extinguisher', 'Electrical Gloves'], 
+                            medical: ['Trauma Bag', 'Oxygen Cylinder', 'Pelvic Binder', 'Tourniquets', 'Splints'] 
                         }
-                    });
-                    counter++;
+                    }
                 });
+                counter++;
             });
         });
         return generated;
