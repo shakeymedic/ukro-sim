@@ -3,101 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>UKRO High-Fidelity Scenario Simulator (v9.0)</title>
+  <title>UKRO High-Fidelity Scenario Simulator</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
   
   <script src="scenarios.js"></script>
 
   <style>
-    :root{
-      --ukro-blue:#0033A0;
-      --ukro-red:#C8102E;
-      --ukro-navy:#001B44;
-      --bg-light: #f3f4f6;
-      --card-bg: #ffffff;
-    }
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: #1f2937; }
-    
-    .ukro-header { background: linear-gradient(to right, #ffffff, #f0fdf4); border-bottom: 4px solid var(--ukro-blue); }
-    
+    :root{ --ukro-blue:#0033A0; --ukro-red:#C8102E; --ukro-navy:#001B44; }
+    body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }
     .custom-scroll::-webkit-scrollbar { width: 6px; }
     .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
     .custom-scroll::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 3px; }
-    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #6b7280; }
-
-    .btn { transition: all 0.15s ease-in-out; border-bottom-width: 4px; position: relative; overflow: hidden; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em; }
+    .btn { transition: all 0.15s ease-in-out; border-bottom-width: 4px; font-weight: 600; text-transform: uppercase; }
     .btn:active:not(:disabled) { transform: translateY(2px); border-bottom-width: 2px; margin-top: 2px; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; border-bottom-width: 1px; }
     .btn-primary { background-color: var(--ukro-blue); border-color: #00246f; color: white; }
     .btn-secondary { background-color: var(--ukro-red); border-color: #8f0d22; color: white; }
     .btn-tertiary { background-color: #f59e0b; border-color: #b45309; color: white; }
-    .btn-ghost { background: white; color: var(--ukro-navy); border: 1px solid #e5e7eb; border-bottom: 3px solid #d1d5db; text-transform: none; }
-
-    .btn-tile { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); position: relative; text-align: left; display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
-    .btn-tile:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 10; }
-    .btn-tile:active { transform: scale(0.98); box-shadow: none; }
-
+    .btn-tile { transition: all 0.2s; position: relative; text-align: left; display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .btn-tile:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .fade-in { animation: fadeIn 0.3s ease-in; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
     .inner-tab-content { display: none; }
     .inner-tab-content.active { display: block; animation: fadeIn 0.3s; }
-    
     .toggle-btn-group { display: flex; background: #f3f4f6; padding: 4px; border-radius: 8px; gap: 4px; margin-bottom: 12px; }
     .toggle-btn { flex: 1; padding: 6px 12px; border-radius: 6px; font-size: 0.875rem; font-weight: 600; color: #6b7280; transition: all 0.2s; }
     .toggle-btn.active { background: white; color: var(--ukro-blue); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-
-    .map-item { position: absolute; cursor: grab; user-select: none; touch-action: none; transform-origin: center center; }
-    .map-item:active { cursor: grabbing; }
-
-    @media print {
-      body { background: white; }
-      .no-print { display: none !important; }
-      canvas { border: 1px solid #000; }
-    }
+    .map-item { position: absolute; user-select: none; }
+    .map-element-draggable { cursor: grab; }
+    .map-element-draggable:active { cursor: grabbing; }
+    @media print { .no-print { display: none !important; } }
   </style>
 </head>
 
 <body class="min-h-screen flex flex-col">
 
-  <header class="ukro-header p-4 shadow-sm no-print sticky top-0 z-50">
+  <header class="bg-white border-b-4 border-blue-800 p-4 shadow-sm no-print sticky top-0 z-50">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <img src="images/wmebem-logo.png" alt="WMEBEM Logo" class="h-12 w-auto object-contain" onerror="this.style.display='none'">
+        <img src="https://iili.io/KGQOvkl.md.png" alt="WMEBEM Logo" class="h-12 w-auto object-contain" onerror="this.style.display='none'">
         <div>
-            <h1 class="text-xl font-bold text-gray-900 leading-tight">UKRO Simulator <span class="text-blue-600 text-sm align-top">v9.0</span></h1>
+            <h1 class="text-xl font-bold text-gray-900 leading-tight">UKRO Simulator</h1>
             <p class="text-xs text-gray-500 font-medium">EXIT Compliant Framework</p>
         </div>
       </div>
       <div class="flex gap-3 items-center">
-         <button onclick="document.documentElement.requestFullscreen()" class="btn btn-ghost px-3 py-1 text-sm rounded-lg font-semibold" title="Fullscreen">
+         <button onclick="document.documentElement.requestFullscreen()" class="px-3 py-1 text-sm rounded bg-gray-200" title="Fullscreen">
             <i class="fa-solid fa-expand"></i>
          </button>
-         <button onclick="document.getElementById('help-modal').showModal()" class="btn btn-ghost px-3 py-1 text-sm rounded-lg font-semibold">
+         <button onclick="document.getElementById('help-modal').showModal()" class="px-3 py-1 text-sm rounded font-semibold bg-gray-100 border border-gray-300">
            <i class="fa-solid fa-circle-question mr-1"></i> Help
          </button>
-         <img src="images/UKRO logo.png" alt="UKRO Logo" class="h-10 w-auto object-contain ml-2 hidden sm:block" onerror="this.style.display='none'">
       </div>
     </div>
   </header>
 
   <main class="flex-grow w-full max-w-7xl mx-auto p-4 md:p-6">
-    <div id="app" class="w-full">
-      <div class="flex justify-center items-center h-64">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-800"></div>
-      </div>
-    </div>
+    <div id="app" class="w-full"></div>
   </main>
 
   <dialog id="help-modal" class="p-0 rounded-xl shadow-2xl backdrop:bg-gray-900/50">
@@ -107,7 +75,7 @@
         <button onclick="document.getElementById('help-modal').close()" class="text-white hover:text-gray-200"><i class="fa-solid fa-xmark fa-lg"></i></button>
       </div>
       <div class="p-6 text-center">
-         <img src="images/ustepout.png" alt="U-STEP OUT Guide" class="max-w-full h-auto mx-auto rounded border border-gray-200 shadow-sm" onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<p class=text-red-500>Image missing: images/ustepout.png</p>')">
+         <img src="images/ustepout.png" alt="U-STEP OUT Guide" class="max-w-full h-auto mx-auto rounded border border-gray-200 shadow-sm" onerror="this.insertAdjacentHTML('afterend', '<p class=text-red-500>Ensure images/ustepout.png is hosted correctly.</p>')">
          <div class="mt-6 flex justify-end">
           <button onclick="document.getElementById('help-modal').close()" class="btn btn-primary px-4 py-2 rounded">Close</button>
         </div>
@@ -116,165 +84,12 @@
   </dialog>
 
   <script>
-    const CONFIG = { CANVAS_W: 900, CANVAS_H: 520 };
     const ACVPU_SCALE = ['U', 'P', 'V', 'C', 'A'];
 
-    const Utils = {
-        rand: (min, max) => Math.random() * (max - min) + min,
-        randInt: (min, max) => Math.floor(Math.random() * (max - min + 1) + min),
-        choice: (arr) => arr[Math.floor(Math.random() * arr.length)],
-        clamp: (v, lo, hi) => Math.max(lo, Math.min(hi, v)),
-        formatTime: (secs) => `${Math.floor(secs / 60).toString().padStart(2, '0')}:${(secs % 60).toString().padStart(2, '0')}`
+    const UtilsApp = {
+        formatTime: (secs) => `${Math.floor(secs / 60).toString().padStart(2, '0')}:${(secs % 60).toString().padStart(2, '0')}`,
+        clamp: (v, lo, hi) => Math.max(lo, Math.min(hi, v))
     };
-
-    class ScenarioGenerator {
-        static createCasualty(id, context, forcedInjuries = [], customVitals = null, targetSeverities = null) {
-            let injuryKeys = [];
-            
-            if (targetSeverities && targetSeverities.length > 0) {
-                const targetLevel = targetSeverities[id];
-                const possible = Object.keys(FrameworkData.injuries).filter(k => FrameworkData.injuries[k].type === targetLevel);
-                injuryKeys.push(possible.length > 0 ? Utils.choice(possible) : 'Uninjured');
-            } else if (!forcedInjuries || forcedInjuries.length === 0) {
-                const possible = Object.keys(FrameworkData.injuries).filter(k => FrameworkData.injuries[k].context.includes(context));
-                injuryKeys.push(Math.random() > 0.3 ? Utils.choice(possible) : 'Uninjured');
-            } else {
-                forcedInjuries.forEach(val => {
-                    if (val === 'Random') {
-                        const possible = Object.keys(FrameworkData.injuries).filter(k => k !== 'Uninjured');
-                        injuryKeys.push(Utils.choice(possible));
-                    } else if (val && val !== 'None') {
-                        injuryKeys.push(val);
-                    }
-                });
-            }
-            
-            injuryKeys = [...new Set(injuryKeys)];
-            if (injuryKeys.length === 0) injuryKeys.push('Uninjured');
-
-            const injuriesData = injuryKeys.map(k => ({...FrameworkData.injuries[k], key: k}));
-            
-            let combinedVitals = customVitals ? { ...customVitals } : { ACVPU: 'A', HR: 80, RR: 16, SBP: 120, SpO2: 99, CRT: 2 };
-            let combinedDeterioration = {};
-            let interventions = {};
-            let visualDescriptions = [];
-            let entrapmentStatus = 'None';
-            let severity = 'minor';
-
-            if (!customVitals) {
-                injuriesData.forEach(inj => {
-                    if(inj.visual) visualDescriptions.push(inj.visual);
-                    if (ACVPU_SCALE.indexOf(inj.vitals.ACVPU) < ACVPU_SCALE.indexOf(combinedVitals.ACVPU)) combinedVitals.ACVPU = inj.vitals.ACVPU;
-                    if (inj.vitals.SBP < combinedVitals.SBP) combinedVitals.SBP = inj.vitals.SBP;
-                    if (inj.vitals.SpO2 < combinedVitals.SpO2) combinedVitals.SpO2 = inj.vitals.SpO2;
-                    if (inj.vitals.CRT > combinedVitals.CRT) combinedVitals.CRT = inj.vitals.CRT;
-                    if (Math.abs(inj.vitals.HR - 80) > Math.abs(combinedVitals.HR - 80)) combinedVitals.HR = inj.vitals.HR;
-                    if (Math.abs(inj.vitals.RR - 16) > Math.abs(combinedVitals.RR - 16)) combinedVitals.RR = inj.vitals.RR;
-
-                    Object.entries(inj.deterioration || {}).forEach(([k, v]) => { combinedDeterioration[k] = (combinedDeterioration[k] || 0) + v; });
-                    Object.assign(interventions, inj.interventions);
-                    
-                    if (inj.type === 'critical') severity = 'critical';
-                    else if (inj.type === 'major' && severity !== 'critical') severity = 'major';
-
-                    if (context === 'rtc' && (inj.type === 'major' || inj.type === 'critical')) entrapmentStatus = 'Physical (Dashboard/Door)';
-                    else if (context === 'rtc' && inj.type === 'minor') entrapmentStatus = 'Medical (Pain/C-Spine)';
-                });
-            } else {
-                 injuriesData.forEach(inj => {
-                    if(inj.visual) visualDescriptions.push(inj.visual);
-                    Object.entries(inj.deterioration || {}).forEach(([k, v]) => { combinedDeterioration[k] = (combinedDeterioration[k] || 0) + v; });
-                    Object.assign(interventions, inj.interventions);
-                 });
-                 severity = 'custom';
-            }
-
-            return {
-                id: id,
-                age: Utils.randInt(18, 85),
-                role: (id === 0) ? 'Driver' : 'Passenger',
-                injuries: injuriesData,
-                severity: severity,
-                visualDescription: visualDescriptions.join(' ') || "Patient appears stable.",
-                vitals: combinedVitals,
-                initialVitals: {...combinedVitals},
-                deterioration: combinedDeterioration,
-                interventions: interventions,
-                treatedInjuries: new Set(),
-                overrideState: 'normal',
-                vitalsHistory: [],
-                deteriorationAccumulator: {},
-                entrapment: entrapmentStatus,
-                actionCounts: {},
-                extricated: false,
-                x: Utils.randInt(100, 500),
-                y: Utils.randInt(100, 300),
-                ample: { A: Utils.choice(FrameworkData.ample.allergies), M: Utils.choice(FrameworkData.ample.medications), P: Utils.choice(FrameworkData.ample.pastHistory), L: Utils.choice(FrameworkData.ample.lastMeal), E: Utils.choice(FrameworkData.ample.events) }
-            };
-        }
-
-        static createRTC(config) {
-            const vehicleCount = parseInt(config.vehicles || 2);
-            const patientCount = parseInt(config.patients || 2);
-            const vehicles = [];
-            const casualties = [];
-            const isTJunction = Math.random() > 0.5;
-            const vKeys = Object.keys(FrameworkData.vehicles);
-            let hasEV = false;
-
-            for(let i=0; i<vehicleCount; i++) {
-                const type = (config.vehicleTypes && config.vehicleTypes[i]) ? config.vehicleTypes[i] : Utils.choice(vKeys);
-                const proto = FrameworkData.vehicles[type];
-                if (proto.isEV) hasEV = true;
-                
-                let x = (isTJunction && i===0) ? CONFIG.CANVAS_W * 0.45 : CONFIG.CANVAS_W * (0.35 + i*0.2);
-                let y = (isTJunction && i===0) ? CONFIG.CANVAS_H * 0.4 : CONFIG.CANVAS_H * 0.5 + Utils.rand(-20, 20);
-                let rotation = (isTJunction && i===0) ? Utils.rand(-10, 10) : Utils.rand(-15, 15);
-                
-                vehicles.push({ id: i, label: String.fromCharCode(65+i), ...proto, x, y, rotation, damage: 'Impact Damage', position: 'Upright' });
-            }
-
-            for(let i=0; i<patientCount; i++) {
-                if (config.customPatients && config.customPatients[i]) {
-                    casualties.push(this.createCasualty(i, 'rtc', [config.customPatients[i].injury], config.customPatients[i].vitals));
-                } else if (config.requiredSeverities) {
-                    casualties.push(this.createCasualty(i, 'rtc', null, null, config.requiredSeverities));
-                } else {
-                    casualties.push(this.createCasualty(i, 'rtc', config.presetInjuries));
-                }
-            }
-
-            const hazards = [];
-            (config.forceHazards || []).forEach(hType => {
-                const templ = FrameworkData.hazards.find(h => h.type === hType);
-                if(templ) hazards.push({ ...templ, x: Utils.rand(100, CONFIG.CANVAS_W - 100), y: Utils.rand(100, CONFIG.CANVAS_H - 100), rotation: Utils.rand(0, 360) });
-            });
-
-            return { 
-                type: 'RTC', title: config.title || 'Road Traffic Collision', location: isTJunction ? 'Urban Junction' : 'A-Road', timeLimit: 20, 
-                vehicles, casualties, hazards, layout: isTJunction ? 'T-Junction' : 'Head-On', 
-                containsEV: hasEV, entrapment: config.entrapment || 'Standard', actorBrief: config.actorBrief || 'Follow instructor.',
-                marks: FrameworkData.markingCriteria.map(m => ({ ...m, checked: false, time: null }))
-            };
-        }
-
-        static createTrauma(config) {
-            const patientCount = parseInt(config.patients || 2);
-            const casualties = [];
-            for(let i=0; i<patientCount; i++) {
-                 if (config.customPatients && config.customPatients[i]) {
-                    casualties.push(this.createCasualty(i, 'trauma', [config.customPatients[i].injury], config.customPatients[i].vitals));
-                } else {
-                    casualties.push(this.createCasualty(i, 'trauma', config.presetInjuries));
-                }
-            }
-            return { 
-                type: 'Trauma', title: 'Trauma Challenge', location: 'Industrial Estate', timeLimit: 15, 
-                vehicles: [], casualties, hazards: [], layout: 'Open Area', containsEV: false, entrapment: 'None', actorBrief: 'Follow instructor.',
-                marks: FrameworkData.markingCriteria.map(m => ({ ...m, checked: false, time: null }))
-            };
-        }
-    }
 
     class App {
         constructor() {
@@ -316,7 +131,7 @@
                 if(!this.state.simRunning) return;
                 this.state.simTime++;
                 const timerEl = document.getElementById('sim-timer');
-                if(timerEl) timerEl.textContent = Utils.formatTime(this.state.simTime);
+                if(timerEl) timerEl.textContent = UtilsApp.formatTime(this.state.simTime);
             }, 1000);
             this.state.timers.sim = setInterval(() => { if(this.state.simRunning) this.tick(); }, 5000);
         }
@@ -359,7 +174,7 @@
                                 
                                 if (k === 'ACVPU') {
                                     const idx = ACVPU_SCALE.indexOf(cas.vitals.ACVPU);
-                                    cas.vitals.ACVPU = ACVPU_SCALE[Utils.clamp(idx + change, 0, 4)];
+                                    cas.vitals.ACVPU = ACVPU_SCALE[UtilsApp.clamp(idx + change, 0, 4)];
                                 } else {
                                     cas.vitals[k] = Math.max(0, Math.round(cas.vitals[k] + change));
                                 }
@@ -367,7 +182,6 @@
                         });
                     }
                 }
-
                 if(Math.random() > 0.7) cas.vitals.HR += (Math.random()>0.5?1:-1);
             });
             this.updateLiveVitals();
@@ -375,12 +189,10 @@
 
         applyGlobalFRS(action) {
             this.addLog(`${action} Completed.`, 'command');
-            
             if (action === 'High Voltage Isolated') {
                 this.state.frsMilestones.evIsolated = true;
                 this.addLog('EV high voltage confirmed safe.', 'good');
             }
-
             if (['Door Removed', 'B-Pillar Rip', 'Dash Relocated', 'Roof Removed'].includes(action)) {
                 this.state.frsMilestones.spaceCreation = true;
                 this.addLog('EXIT Protocol: Space Creation achieved. Casualties can be extricated if hazards are clear.', 'good');
@@ -465,8 +277,16 @@
             }
         }
 
+        logCustomEvent() {
+            const input = document.getElementById('custom-log-input');
+            if (input.value.trim() !== '') {
+                this.addLog(input.value.trim(), 'command');
+                input.value = '';
+            }
+        }
+
         addLog(msg, type='info') {
-            const time = Utils.formatTime(this.state.simTime);
+            const time = UtilsApp.formatTime(this.state.simTime);
             this.state.logs.unshift({ timeRaw: this.state.simTime, time, msg, type });
             const logBox = document.getElementById('log-container');
             if (logBox) {
@@ -515,7 +335,6 @@
             });
         }
 
-        // CUSTOM BUILDER
         updateCustomPatient(index, injury) {
             if (!injury || injury === 'Uninjured') {
                 this.customConfig.patients[index] = { injury: 'Uninjured', vitals: { ACVPU: 'A', HR: 80, RR: 16, SBP: 120, SpO2: 99, CRT: 2 } };
@@ -530,7 +349,6 @@
             if (this.customConfig.patients[index]) this.customConfig.patients[index].vitals[key] = value;
         }
 
-        // DRAG AND DROP MAP
         setupDragEvents() {
             const mapArea = document.getElementById('scene-map');
             if (!mapArea) return;
@@ -548,7 +366,7 @@
         }
 
         startDrag(e) {
-            const target = e.target.closest('.map-item');
+            const target = e.target.closest('.map-element-draggable');
             if (!target) return;
             e.preventDefault();
             const pos = this.getEventPos(e);
@@ -579,27 +397,15 @@
             const top = parseFloat(ds.element.style.top);
 
             if (ds.type === 'vehicle') {
-                const v = this.state.scenario.vehicles.find(x => x.id == ds.id);
+                const v = this.state.scenario.vehicles.find(x => x.id === ds.id);
                 if(v) { v.x = left; v.y = top; }
-            } else if (ds.type === 'casualty') {
-                const c = this.state.scenario.casualties.find(x => x.id == ds.id);
-                if(c) { c.x = left; c.y = top; }
+            } else if (ds.type === 'hazard') {
+                const h = this.state.scenario.hazards[ds.id];
+                if(h) { h.x = left; h.y = top; }
             }
             this.state.dragState = null;
         }
 
-        rotateItem(type, id) {
-            if (type === 'vehicle') {
-                const v = this.state.scenario.vehicles.find(x => x.id == id);
-                if (v) {
-                    v.rotation = (v.rotation + 45) % 360;
-                    const el = document.querySelector(`.map-item[data-id="${id}"]`);
-                    if (el) el.style.transform = `rotate(${v.rotation}deg)`;
-                }
-            }
-        }
-
-        /* ================= RENDERING VIEWS ================= */
         render() {
             const app = document.getElementById('app');
             app.innerHTML = '';
@@ -720,25 +526,38 @@
             const s = this.state.scenario;
             let html = '';
             const pointerEvents = isStatic ? 'pointer-events: none;' : '';
+            const dragClass = isStatic ? '' : 'map-element-draggable';
 
             s.vehicles.forEach(v => {
-                html += `<div class="map-item border-2 border-white shadow-md flex items-center justify-center text-white font-bold text-xs rounded" 
+                const svgString = FrameworkData.svgAssets[v.svgKey] || FrameworkData.svgAssets['Saloon Car (Intact)'];
+                
+                // Nesting casualties inside the vehicle div if they are assigned to it
+                const passengersHtml = s.casualties.filter(c => c.vehicleId === v.id).map(c => `
+                    <div class="absolute bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-[10px] shadow border border-white"
+                         style="left: calc(50% + ${c.offsetX}px - 12px); top: calc(50% + ${c.offsetY}px - 12px);">
+                         C${c.id+1}
+                    </div>
+                `).join('');
+
+                html += `<div class="map-item ${dragClass} flex items-center justify-center" 
                               data-type="vehicle" data-id="${v.id}" 
-                              style="left: ${v.x}px; top: ${v.y}px; width: ${v.width || 100}px; height: ${v.height || 50}px; background-color: ${v.color}; transform: rotate(${v.rotation}deg); ${pointerEvents}"
+                              style="left: ${v.x}px; top: ${v.y}px; width: ${v.width}px; height: ${v.height}px; transform: rotate(${v.rotation}deg); ${pointerEvents}"
                               ${isStatic ? '' : `ondblclick="app.rotateItem('vehicle', '${v.id}')"`}>
-                              ${v.type}
-                              ${v.isEV ? `<div class="absolute -top-2 -right-2 bg-yellow-400 text-black text-[10px] px-1 rounded font-bold shadow border border-black"><i class="fa-solid fa-bolt"></i> EV</div>` : ''}
+                              ${svgString}
+                              ${passengersHtml}
+                              ${v.isEV ? `<div class="absolute -top-3 -right-3 bg-yellow-400 text-black text-[10px] px-1 rounded font-bold shadow border border-black"><i class="fa-solid fa-bolt"></i> EV</div>` : ''}
                          </div>`;
             });
 
-            s.casualties.forEach(c => {
-                html += `<div class="map-item bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-xs shadow-lg border-2 border-white"
+            // Draw casualties that are NOT in a vehicle
+            s.casualties.filter(c => !c.vehicleId).forEach(c => {
+                html += `<div class="map-item ${dragClass} bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-xs shadow-lg border-2 border-white"
                               data-type="casualty" data-id="${c.id}"
                               style="left: ${c.x}px; top: ${c.y}px; ${pointerEvents}">C${c.id+1}</div>`;
             });
             
             s.hazards.forEach((h, i) => {
-                html += `<div class="map-item border border-yellow-500 bg-yellow-100/50 flex items-center justify-center font-bold text-xs shadow-sm rounded"
+                html += `<div class="map-item ${dragClass} border border-yellow-500 bg-yellow-100/50 flex items-center justify-center font-bold text-xs shadow-sm rounded"
                               data-type="hazard" data-id="${i}"
                               style="left: ${h.x}px; top: ${h.y}px; width: ${h.width || 40}px; height: ${h.height || 40}px; ${pointerEvents}">
                               ${h.type}
@@ -764,7 +583,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-2 space-y-4">
-                        <div class="bg-white p-1 rounded-xl shadow border border-gray-200 h-64 flex flex-col">
+                        <div class="bg-white p-1 rounded-xl shadow border border-gray-200 h-96 flex flex-col">
                             <div class="p-2 bg-gray-100 border-b text-xs font-bold text-gray-500 uppercase">Scene Layout (Logistics)</div>
                             <div class="relative flex-grow bg-gray-200 overflow-hidden rounded-b">
                                 ${this.renderMapItems(true)}
@@ -835,7 +654,7 @@
             <div class="flex flex-col gap-4 animate-fade-in">
                 <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200 flex justify-between items-center sticky top-0 z-10">
                     <div class="flex items-center gap-4">
-                        <div class="bg-gray-900 text-red-500 font-mono text-3xl px-4 py-1 rounded font-bold" id="sim-timer">${Utils.formatTime(this.state.simTime)}</div>
+                        <div class="bg-gray-900 text-red-500 font-mono text-3xl px-4 py-1 rounded font-bold" id="sim-timer">${UtilsApp.formatTime(this.state.simTime)}</div>
                         <button onclick="app.togglePause()" class="btn ${this.state.simRunning ? 'btn-secondary' : 'btn-primary'} px-4 py-2 rounded">${this.state.simRunning ? 'Pause' : 'Resume'}</button>
                     </div>
                     <div class="flex gap-2">
@@ -846,7 +665,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div class="lg:col-span-3 flex flex-col gap-4">
-                        <div class="bg-white rounded-xl shadow border border-gray-200 flex flex-col h-48">
+                        <div class="bg-white rounded-xl shadow border border-gray-200 flex flex-col h-64">
                             <div class="p-2 border-b bg-gray-50 font-bold text-sm text-gray-600">Scene Map</div>
                             <div id="scene-map" class="relative flex-grow bg-gray-200 overflow-hidden">
                                 ${this.renderMapItems(false)}
@@ -1006,7 +825,7 @@
                 <div class="flex justify-between items-end border-b-4 border-ukro-blue pb-4">
                     <div>
                         <h2 class="text-3xl font-bold uppercase">Official Debrief Record</h2>
-                        <p class="text-gray-500">Duration: ${Utils.formatTime(this.state.simTime)}</p>
+                        <p class="text-gray-500">Duration: ${UtilsApp.formatTime(this.state.simTime)}</p>
                     </div>
                     <div class="no-print space-x-2">
                         <button onclick="window.print()" class="btn btn-primary px-4 py-2 rounded">Print PDF</button>
@@ -1021,7 +840,7 @@
                         <ul class="space-y-2 text-sm">
                             ${(s.marks || []).map(m => `
                                 <li class="flex justify-between border-b pb-1">
-                                    <span>${m.text} ${m.time !== null ? `<span class="text-gray-400 font-mono ml-2">[${Utils.formatTime(m.time)}]</span>` : ''}</span>
+                                    <span>${m.text} ${m.time !== null ? `<span class="text-gray-400 font-mono ml-2">[${UtilsApp.formatTime(m.time)}]</span>` : ''}</span>
                                     <span class="font-bold ${m.checked ? 'text-green-600' : 'text-red-600'}">${m.checked ? 'Achieved' : 'Missed'}</span>
                                 </li>
                             `).join('')}
@@ -1061,14 +880,14 @@
                 const ctx = document.getElementById(`chart-${c.id}`);
                 if (!ctx) return;
                 
-                const labels = c.vitalsHistory.map(d => Utils.formatTime(d.t));
+                const labels = c.vitalsHistory.map(d => UtilsApp.formatTime(d.t));
                 const annotations = {};
                 
                 (c.interventions || []).forEach((inv, i) => {
                     annotations[`line${i}`] = {
                         type: 'line',
-                        xMin: Utils.formatTime(inv.time),
-                        xMax: Utils.formatTime(inv.time),
+                        xMin: UtilsApp.formatTime(inv.time),
+                        xMax: UtilsApp.formatTime(inv.time),
                         borderColor: '#8b5cf6',
                         borderWidth: 2,
                         borderDash: [5, 5],
