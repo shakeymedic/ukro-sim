@@ -21,7 +21,7 @@ const FrameworkData = {
             Exposure: ['Check Back', 'Expose Injury Site']
         },
         Interventions: {
-            Airway: ['Open Airway', 'Suction', 'OPA', 'NPA', 'i-gel'],
+            Airway: ['Open Airway', 'Suction', 'OPA', 'NPA', 'SGA'],
             Breathing: ['15L O2', 'Titrated O2', 'BVM', 'Chest Seal'],
             Circulation: ['Direct Pressure', 'Tourniquet', 'Wound Packing', 'Pelvic Binder', 'IV Access'],
             Disability: ['C-Collar', 'Head Blocks', 'Manual Inline Stab'],
