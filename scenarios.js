@@ -45,7 +45,7 @@ const FrameworkData = {
     ample: {
         allergies: ['NKDA', 'Penicillin', 'Latex', 'Nuts', 'Morphine', 'Codeine'],
         medications: ['None', 'Warfarin', 'Apixaban', 'Insulin', 'Salbutamol', 'Bisoprolol', 'Ramipril', 'Metformin'],
-        pastHistory: ['Asthma', 'T2 Diabetes', 'Hypertension', 'Ischemic Heart Disease', 'Epilepsy', 'None', 'COPD', 'Previous MI'],
+        pastHistory: ['Asthma', 'T2 Diabetes', 'Hypertension', 'Ischaemic Heart Disease', 'Epilepsy', 'None', 'COPD', 'Previous MI'],
         lastMeal: ['Breakfast 2hrs ago', 'Sandwich at lunch', 'Tea', 'Fasted', 'Snack 1hr ago'],
         events: ['Driving home from work', 'Passenger in vehicle', 'Cyclist struck by car', 'Working at height', 'Industrial machinery accident', 'Fell down stairs']
     },
